@@ -2,6 +2,7 @@ const logger = require('./logger');
 const { Sequelize } = require('sequelize');
 const { database } = require('./config');
 const { host, port, db, user, password } = database;
+
 const sequelize = new Sequelize(`mariadb://${user}:${password}@${host}:${port}/${db}`);
 
 const connectDb = sequelize.authenticate().then(() => {
