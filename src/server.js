@@ -5,12 +5,6 @@ const logger = require('./config/logger');
 
 let server;
 
-connectDb.then(() => {
-  server = app.listen(config.port, () => {
-    logger.info(`Listening to port ${config.port}`);
-  });
-}).catch(() => (exitHandler()));
-
 const exitHandler = () => {
   if (server) {
     server.close(() => {
@@ -21,6 +15,14 @@ const exitHandler = () => {
     process.exit(1);
   }
 };
+
+connectDb
+  .then(() => {
+    server = app.listen(config.port, () => {
+      logger.info(`Listening to port ${config.port}`);
+    });
+  })
+  .catch(() => exitHandler());
 
 const unexpectedErrorHandler = (error) => {
   logger.error(error);
