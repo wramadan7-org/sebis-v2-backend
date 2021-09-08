@@ -19,6 +19,30 @@ const { value: envVars, error } = envVarsSchema.prefs({ errors: { label: 'key' }
 
 if (error) throw new Error(`Config validation error: ${error.message}`);
 
+const dbCredentials = {
+  production: {
+    username: `${envVars.DB_USER}`,
+    password: `${envVars.DB_PASSWORD}`,
+    database: `${envVars.DB_NAME}`,
+    host: `${envVars.DB_HOST}`,
+    dialect: "mariadb",
+  },
+  development: {
+    username: `${envVars.DB_USER}`,
+    password: `${envVars.DB_PASSWORD}`,
+    database: `${envVars.DB_NAME}-development`,
+    host: `${envVars.DB_HOST}`,
+    dialect: "mariadb",
+  },
+  test: {
+    username: `${envVars.DB_USER}`,
+    password: `${envVars.DB_PASSWORD}`,
+    database: `${envVars.DB_NAME}-test`,
+    host: `${envVars.DB_HOST}`,
+    dialect: "mariadb",
+  },
+}
+
 module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
@@ -32,4 +56,5 @@ module.exports = {
   jwt: {
     secret: envVars.JWT_SECRET,
   },
+  dbCredentials,
 };
