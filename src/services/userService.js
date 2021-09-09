@@ -2,7 +2,6 @@ const httpStatus = require('http-status');
 const { User } = require('../models/User');
 const ApiError = require('../utils/ApiError');
 const Joi = require('joi');
-const bcrypt = require("bcrypt");
 
 const createUser = async (userBody) => {
   const userSchema = Joi.object({
