@@ -38,6 +38,7 @@ module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   database: {
+    dialect: envVars.DB_DIALECT,
     host: envVars.DB_HOST,
     port: envVars.DB_PORT,
     db: envVars.DB_NAME,
