@@ -7,7 +7,7 @@ const register = {
     firstName: Joi.string().max(12).required(),
     lastName: Joi.string().max(32).required(),
   }),
-}
+};
 
 const login = {
   body: Joi.object().keys({
