@@ -1,20 +1,8 @@
 const httpStatus = require('http-status');
-const Joi = require('joi');
 const { User } = require('../models/User');
 const ApiError = require('../utils/ApiError');
 
 const createUser = async (userBody) => {
-  const userSchema = Joi.object({
-    email: Joi.string().email().max(32).required(),
-    password: Joi.string().min(8).required(),
-    firstName: Joi.string().max(12).required(),
-    lastName: Joi.string().max(32).required(),
-  });
-
-  const { error } = userSchema.validate(userBody);
-
-  if (error) throw new ApiError(httpStatus.BAD_REQUEST, error);
-
   const user = await User.findOne({
     where: {
       email: userBody.email,
