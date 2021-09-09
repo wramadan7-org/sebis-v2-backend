@@ -20,6 +20,14 @@ if (config.env !== 'test') {
   app.use(morgan.errorHandler);
 }
 
+// set response wrapper
+app.response.sendWrapped = function (data, statusCode = httpStatus.OK) {
+  return this.status(statusCode).send({
+    status: statusCode,
+    data,
+  });
+};
+
 // set security HTTP headers
 app.use(helmet());
 
