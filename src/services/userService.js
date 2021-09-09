@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const { User } = require('../models/User');
 const ApiError = require('../utils/ApiError');
 const Joi = require('joi');
+const bcrypt = require("bcrypt");
 
 const createUser = async (userBody) => {
   const userSchema = Joi.object({
@@ -34,6 +35,12 @@ const getUserByEmail = async (email) => {
   });
 };
 
+const validatePassword = async (user, password) => {
+  const filterPassword = password === undefined ? '' : password;
+  const loginValid = await bcrypt.compare(filterPassword, user.password);
+  if (!loginValid) throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid identity combination.');
+}
+
 const updateUserById = async (userId, userBody) => {
   const user = await User.findByPk(userId);
 
@@ -58,6 +65,7 @@ const deleteUserById = async (userId) => {
 module.exports = {
   createUser,
   getUserByEmail,
+  validatePassword,
   updateUserById,
   deleteUserById,
 };
