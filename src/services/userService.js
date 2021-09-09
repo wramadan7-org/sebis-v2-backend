@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
+const Joi = require('joi');
 const { User } = require('../models/User');
 const ApiError = require('../utils/ApiError');
-const Joi = require('joi');
 
 const createUser = async (userBody) => {
   const userSchema = Joi.object({
@@ -18,7 +18,7 @@ const createUser = async (userBody) => {
   const user = await User.findOne({
     where: {
       email: userBody.email,
-    }
+    },
   });
 
   if (user !== null && user.email === userBody.email) throw new ApiError(httpStatus.CONFLICT, 'Email already taken.');
@@ -26,13 +26,11 @@ const createUser = async (userBody) => {
   return User.create(userBody);
 };
 
-const getUserByEmail = async (email) => {
-  return User.findOne({
-    where: {
-      email,
-    }
-  });
-};
+const getUserByEmail = async (email) => User.findOne({
+  where: {
+    email,
+  },
+});
 
 const updateUserById = async (userId, userBody) => {
   const user = await User.findByPk(userId);
