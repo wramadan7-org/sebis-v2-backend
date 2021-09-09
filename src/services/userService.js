@@ -35,12 +35,6 @@ const getUserByEmail = async (email) => {
   });
 };
 
-const validatePassword = async (user, password) => {
-  const filterPassword = password === undefined ? '' : password;
-  const loginValid = await bcrypt.compare(filterPassword, user.password);
-  if (!loginValid) throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid identity combination.');
-}
-
 const updateUserById = async (userId, userBody) => {
   const user = await User.findByPk(userId);
 
@@ -65,7 +59,6 @@ const deleteUserById = async (userId) => {
 module.exports = {
   createUser,
   getUserByEmail,
-  validatePassword,
   updateUserById,
   deleteUserById,
 };
