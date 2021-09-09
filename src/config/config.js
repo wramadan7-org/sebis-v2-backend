@@ -22,6 +22,8 @@ const envVarsSchema = Joi.object().keys({
   NODE_ENV: Joi.string().valid('production', 'development', 'test').required().description('Node app environment'),
   PORT: Joi.number().default(3000).description('Node app listen port'),
   JWT_SECRET: Joi.string().required().description('JWT secret key'),
+  JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().default(30).description('minutes after which access tokens expire'),
+  JWT_REFRESH_EXPIRATION_DAYS: Joi.number().default(30).description('days after which refresh tokens expire'),
   DB_DIALECT: Joi.string().default('mysql').description('Database dialect'),
   DB_HOST: Joi.string().default('localhost').description('Database host'),
   DB_PORT: Joi.number().default(3306).description('Database port'),
@@ -47,5 +49,7 @@ module.exports = {
   },
   jwt: {
     secret: envVars.JWT_SECRET,
+    accessExpirationMinutes: envVars.accessExpirationMinutes,
+    refreshExpirationDays: envVars.refreshExpirationDays,
   },
 };
