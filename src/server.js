@@ -2,6 +2,7 @@ const app = require('./app');
 const config = require('./config/config');
 const { connectDb } = require('./config/database');
 const logger = require('./config/logger');
+const setupSequelizeAssociations = require('./models');
 
 let server;
 
@@ -18,6 +19,7 @@ const exitHandler = () => {
 
 connectDb
   .then(() => {
+    setupSequelizeAssociations();
     server = app.listen(config.port, () => {
       logger.info(`Listening to port ${config.port}`);
     });
