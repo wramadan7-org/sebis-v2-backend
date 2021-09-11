@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-const { createUser } = require('../services/userService');
-const { loginWithIdentityAndPassword } = require('../services/authService');
+const { createUser, getUserById} = require('../services/userService');
+const { loginWithIdentityAndPassword, refreshAuth} = require('../services/authService');
 const { generateAuthTokens } = require('../services/tokenService');
 const { revokeToken } = require('../services/tokenService');
 const { tokenTypes } = require('../config/tokens');
@@ -19,6 +19,14 @@ const login = catchAsync(async (req, res) => {
   res.sendWrapped(token, httpStatus.OK);
 });
 
+const refreshTokens = catchAsync(async (req, res) => {
+  const { refreshToken } = req.body;
+  const tokenData = await refreshAuth(refreshToken);
+  const user = await getUserById(tokenData.userId);
+  const token = await generateAuthTokens(user);
+  res.sendWrapped(token, httpStatus.OK);
+});
+
 const logout = catchAsync(async (req, res) => {
   const userId = req.user.id;
   const userToken = req.token;
@@ -28,6 +36,7 @@ const logout = catchAsync(async (req, res) => {
 
 module.exports = {
   login,
+  refreshTokens,
   register,
   logout,
 };
