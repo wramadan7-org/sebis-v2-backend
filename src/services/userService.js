@@ -20,6 +20,12 @@ const getUserByEmail = async (email) => User.findOne({
   },
 });
 
+const getUserById = async (userId) => {
+  const user = await User.findByPk(userId);
+  if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
+  return user;
+};
+
 const updateUserById = async (userId, userBody) => {
   const user = await User.findByPk(userId);
 
@@ -44,6 +50,7 @@ const deleteUserById = async (userId) => {
 module.exports = {
   createUser,
   getUserByEmail,
+  getUserById,
   updateUserById,
   deleteUserById,
 };
