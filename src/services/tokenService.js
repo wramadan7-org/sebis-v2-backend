@@ -64,7 +64,17 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
 
 const signUser = (user) => {
   const redisKey = `${redisUserLoginKey}:${user.id}`;
-  return redis.setObject(redisKey, user);
+  return redis.setObject(redisKey, {
+    id: user.id,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+  });
+};
+
+const revokeUser = (userId) => {
+  const redisKey = `${redisUserLoginKey}:${userId}`;
+  return redis.delKey(redisKey);
 };
 
 const generateAuthTokens = async (user) => {
@@ -79,13 +89,7 @@ const generateAuthTokens = async (user) => {
   signRefreshToken(user.id, refreshToken, refreshTokenExpires.diff(moment(), 'seconds'));
 
   // save user data to redis
-  const userObject = user.toJSON();
-  signUser({
-    id: userObject.id,
-    email: userObject.email,
-    firstName: userObject.firstName,
-    lastName: userObject.lastName,
-  });
+  signUser(user.toJSON());
 
   return {
     access: {
@@ -102,6 +106,7 @@ const generateAuthTokens = async (user) => {
 module.exports = {
   generateAuthTokens,
   revokeToken,
+  revokeUser,
   revokeRefreshToken,
   isTokenActive,
   isRefreshTokenActive,
