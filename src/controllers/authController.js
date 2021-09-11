@@ -3,6 +3,8 @@ const catchAsync = require('../utils/catchAsync');
 const { createUser } = require('../services/userService');
 const { loginWithIdentityAndPassword } = require('../services/authService');
 const { generateAuthTokens } = require('../services/tokenService');
+const { revokeToken } = require('../services/tokenService');
+const { tokenTypes } = require('../config/tokens');
 
 const register = catchAsync(async (req, res) => {
   const userBody = req.body;
@@ -17,7 +19,15 @@ const login = catchAsync(async (req, res) => {
   res.sendWrapped(token, httpStatus.OK);
 });
 
+const logout = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const userToken = req.token;
+  await revokeToken(userId, tokenTypes.ACCESS, userToken);
+  res.sendWrapped('Logout success.', httpStatus.OK);
+});
+
 module.exports = {
   login,
   register,
+  logout,
 };
