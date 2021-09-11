@@ -1,5 +1,11 @@
 const { redisClient } = require('../config/redis');
 
+/**
+ * Set redis map data
+ * @param {string} key
+ * @param {Object} object
+ * @returns {Promise<Object>}
+ */
 const setObject = (key, object) => new Promise((resolve, reject) => {
   redisClient.hmset(key, object, (error, data) => {
     if (error) reject(error);
@@ -7,6 +13,11 @@ const setObject = (key, object) => new Promise((resolve, reject) => {
   });
 });
 
+/**
+ * Get redis map data
+ * @param {string} key
+ * @returns {Promise<Object>}
+ */
 const getObject = (key) => new Promise((resolve, reject) => {
   redisClient.hgetall(key, (error, data) => {
     if (error) reject(error);
@@ -14,6 +25,12 @@ const getObject = (key) => new Promise((resolve, reject) => {
   });
 });
 
+/**
+ * Set redis expires
+ * @param {string} key
+ * @param {number} expires
+ * @returns {void}
+ */
 const setExpire = (key, expires = 0) => {
   redisClient.expire(key, expires);
 };
