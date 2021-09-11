@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const config = require('../config/config');
 const { tokenTypes } = require('../config/tokens');
-const { redisClient } = require('../config/redis');
 const redis = require('../utils/redis');
 
 const redisTokenKey = (userId, type) => `user:jwt:${type}:${userId}`;
@@ -24,10 +23,10 @@ const revokeToken = (userId, type, token) => {
 };
 
 const isTokenActive = (userId, type, token) => new Promise((resolve, reject) => {
-  redisClient.hgetall(`${redisTokenKey(userId, type)}:${token}`, (error, value) => {
-    if (error) reject(error);
-    resolve(value !== null && value.blacklist === 'false');
-  });
+  const redisKey = `${redisTokenKey(userId, type)}:${token}`;
+  redis.getObject(redisKey).then((data) => {
+    resolve(data.blacklist === 'false');
+  }).catch((error) => (reject(error)));
 });
 
 const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
