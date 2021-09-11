@@ -3,18 +3,22 @@ const moment = require('moment');
 const config = require('../config/config');
 const { tokenTypes } = require('../config/tokens');
 const { redisClient } = require('../config/redis');
+const redis = require('../utils/redis');
 
 const redisTokenKey = (userId, type) => `user:jwt:${type}:${userId}`;
 
 const signToken = (userId, type, token, ttl = -1) => {
-  redisClient.hmset(`${redisTokenKey(userId, type)}:${token}`, {
+  const redisKey = `${redisTokenKey(userId, type)}:${token}`;
+  redis.setObject(redisKey, {
     blacklist: false,
+  }).then(() => {
+    if (ttl > 0) redis.setExpire(redisKey, ttl);
   });
-  if (ttl > 0) redisClient.expire(`${redisTokenKey(userId, type)}:${token}`, ttl);
 };
 
 const revokeToken = (userId, type, token) => {
-  redisClient.hmset(`${redisTokenKey(userId, type)}:${token}`, {
+  const redisKey = `${redisTokenKey(userId, type)}:${token}`;
+  return redis.setObject(redisKey, {
     blacklist: true,
   });
 };
