@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-const { createUser, getUserById} = require('../services/userService');
-const { loginWithIdentityAndPassword, refreshAuth} = require('../services/authService');
+const { createUser, getUserById } = require('../services/userService');
+const { loginWithIdentityAndPassword, refreshAuth } = require('../services/authService');
 const { generateAuthTokens } = require('../services/tokenService');
 const { revokeToken } = require('../services/tokenService');
 const { tokenTypes } = require('../config/tokens');
@@ -36,7 +36,7 @@ const logout = catchAsync(async (req, res) => {
 
 const testProtected = catchAsync(async (req, res) => {
   res.sendWrapped('Access granted.', httpStatus.OK);
-})
+});
 
 module.exports = {
   login,
