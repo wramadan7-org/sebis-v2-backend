@@ -3,7 +3,7 @@ const moment = require('moment');
 const config = require('../config/config');
 const { tokenTypes } = require('../config/tokens');
 const redis = require('../utils/redis');
-const { redisTokenKey, redisRefreshTokenKey } = require('../config/redis');
+const { redisTokenKey, redisRefreshTokenKey, redisUserDetailKey } = require('../config/redis');
 
 const signToken = (userId, type, token, ttl = -1) => {
   const redisKey = `${redisTokenKey(userId, type)}:${token}`;
@@ -62,6 +62,11 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
   return jwt.sign(payload, secret);
 };
 
+const signUser = (user) => {
+  const redisKey = `${redisUserDetailKey}:${user.id}`;
+  return redis.setObject(redisKey, user);
+};
+
 const generateAuthTokens = async (user) => {
   const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
   const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS);
@@ -72,6 +77,15 @@ const generateAuthTokens = async (user) => {
   // save token to redis
   signToken(user.id, tokenTypes.ACCESS, accessToken, accessTokenExpires.diff(moment(), 'seconds'));
   signRefreshToken(user.id, refreshToken, refreshTokenExpires.diff(moment(), 'seconds'));
+
+  // save user data to redis
+  const userObject = user.toJSON();
+  signUser({
+    id: userObject.id,
+    email: userObject.email,
+    firstName: userObject.firstName,
+    lastName: userObject.lastName,
+  });
 
   return {
     access: {
