@@ -1,11 +1,19 @@
 const passport = require('passport');
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
+const { isTokenActive } = require('../services/tokenService');
+const { tokenTypes } = require('../config/tokens');
 
 const verifyCallback = (req, resolve, reject) => async (err, user, info) => {
   if (err || info || user === null) {
     return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate.'));
   }
+
+  // check for valid token
+  const token = req.headers.authorization.split('Bearer ')[1];
+  if (!await isTokenActive(user.id, tokenTypes.ACCESS, token)) return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Token expired.'));
+
+  req.token = token;
   req.user = user;
   resolve();
 };
