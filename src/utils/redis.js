@@ -35,8 +35,18 @@ const setExpire = (key, expires = 0) => {
   redisClient.expire(key, expires);
 };
 
+/**
+ * Remove redis record
+ * @param {string} key
+ * @returns {void}
+ */
+const delKey =(key) => {
+  redisClient.del(key);
+}
+
 module.exports = {
   setObject,
   getObject,
   setExpire,
+  delKey,
 };
