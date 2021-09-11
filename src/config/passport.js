@@ -2,8 +2,8 @@ const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 const config = require('./config');
 const { tokenTypes } = require('./tokens');
 const { User } = require('../models/User');
-const { redisUserLoginKey } = require('../config/redis');
-const redis  = require('../utils/redis');
+const { redisUserLoginKey } = require('./redis');
+const redis = require('../utils/redis');
 
 const jwtOptions = {
   secretOrKey: config.jwt.secret,
