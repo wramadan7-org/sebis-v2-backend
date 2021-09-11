@@ -5,9 +5,19 @@ const { tokenTypes } = require('../config/tokens');
 const redis = require('../utils/redis');
 
 const redisTokenKey = (userId, type) => `user:jwt:${type}:${userId}`;
+const redisRefreshTokenKey = 'user:jwt:refresh';
 
 const signToken = (userId, type, token, ttl = -1) => {
   const redisKey = `${redisTokenKey(userId, type)}:${token}`;
+  redis.setObject(redisKey, {
+    blacklist: false,
+  }).then(() => {
+    if (ttl > 0) redis.setExpire(redisKey, ttl);
+  });
+};
+
+const signRefreshToken = (refreshToken, ttl = -1) => {
+  const redisKey = `${redisRefreshTokenKey}:${refreshToken}`;
   redis.setObject(redisKey, {
     blacklist: false,
   }).then(() => {
@@ -22,8 +32,22 @@ const revokeToken = (userId, type, token) => {
   });
 };
 
+const revokeRefreshToken = (refreshToken) => {
+  const redisKey = `${redisRefreshTokenKey}:${refreshToken}`;
+  return redis.setObject(redisKey, {
+    blacklist: true,
+  });
+};
+
 const isTokenActive = (userId, type, token) => new Promise((resolve, reject) => {
   const redisKey = `${redisTokenKey(userId, type)}:${token}`;
+  redis.getObject(redisKey).then((data) => {
+    resolve(data.blacklist === 'false');
+  }).catch((error) => (reject(error)));
+});
+
+const isRefreshTokenActive = (refreshToken) => new Promise((resolve, reject) => {
+  const redisKey = `${redisRefreshTokenKey}:${refreshToken}`;
   redis.getObject(redisKey).then((data) => {
     resolve(data.blacklist === 'false');
   }).catch((error) => (reject(error)));
@@ -48,7 +72,7 @@ const generateAuthTokens = async (user) => {
 
   // save token to redis
   signToken(user.id, tokenTypes.ACCESS, accessToken, accessTokenExpires.diff(moment(), 'seconds'));
-  signToken(user.id, tokenTypes.REFRESH, refreshToken, refreshTokenExpires.diff(moment(), 'seconds'));
+  signRefreshToken(refreshToken, refreshTokenExpires.diff(moment(), 'seconds'))
 
   return {
     access: {
@@ -65,5 +89,7 @@ const generateAuthTokens = async (user) => {
 module.exports = {
   generateAuthTokens,
   revokeToken,
+  revokeRefreshToken,
   isTokenActive,
+  isRefreshTokenActive,
 };
