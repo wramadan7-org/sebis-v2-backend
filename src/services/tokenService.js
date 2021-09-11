@@ -48,6 +48,7 @@ const generateAuthTokens = async (user) => {
 
   // save token to redis
   signToken(user.id, tokenTypes.ACCESS, accessToken, accessTokenExpires.diff(moment(), 'seconds'));
+  signToken(user.id, tokenTypes.REFRESH, refreshToken, refreshTokenExpires.diff(moment(), 'seconds'));
 
   return {
     access: {
