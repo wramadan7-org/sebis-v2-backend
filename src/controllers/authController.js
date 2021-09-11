@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { createUser, getUserById } = require('../services/userService');
 const { loginWithIdentityAndPassword, refreshAuth } = require('../services/authService');
-const { generateAuthTokens } = require('../services/tokenService');
+const { generateAuthTokens, revokeUser } = require('../services/tokenService');
 const { revokeToken } = require('../services/tokenService');
 const { tokenTypes } = require('../config/tokens');
 
@@ -30,7 +30,8 @@ const refreshTokens = catchAsync(async (req, res) => {
 const logout = catchAsync(async (req, res) => {
   const userId = req.user.id;
   const userToken = req.token;
-  await revokeToken(userId, tokenTypes.ACCESS, userToken);
+  revokeToken(userId, tokenTypes.ACCESS, userToken);
+  revokeUser(userId);
   res.sendWrapped('Logout success.', httpStatus.OK);
 });
 
