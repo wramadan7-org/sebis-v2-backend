@@ -41,7 +41,7 @@ const revokeRefreshToken = async (refreshToken) => {
 const isTokenActive = (userId, type, token) => new Promise((resolve, reject) => {
   const redisKey = `${redisTokenKey(userId, type)}:${token}`;
   redis.getObject(redisKey).then((data) => {
-    resolve(data.blacklist === 'false');
+    resolve(data && data.blacklist === 'false');
   }).catch((error) => (reject(error)));
 });
 
