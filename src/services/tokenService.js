@@ -14,9 +14,10 @@ const signToken = (userId, type, token, ttl = -1) => {
   });
 };
 
-const signRefreshToken = (refreshToken, ttl = -1) => {
+const signRefreshToken = (userId, refreshToken, ttl = -1) => {
   const redisKey = `${redisRefreshTokenKey}:${refreshToken}`;
   redis.setObject(redisKey, {
+    userId,
     blacklist: false,
   }).then(() => {
     if (ttl > 0) redis.setExpire(redisKey, ttl);
@@ -30,11 +31,11 @@ const revokeToken = (userId, type, token) => {
   });
 };
 
-const revokeRefreshToken = (refreshToken) => {
+const revokeRefreshToken = async (refreshToken) => {
   const redisKey = `${redisRefreshTokenKey}:${refreshToken}`;
-  return redis.setObject(redisKey, {
-    blacklist: true,
-  });
+  const refreshTokenData = await redis.getObject(redisKey);
+  refreshTokenData.blacklist = 'true';
+  return redis.setObject(redisKey, refreshTokenData);
 };
 
 const isTokenActive = (userId, type, token) => new Promise((resolve, reject) => {
@@ -70,7 +71,7 @@ const generateAuthTokens = async (user) => {
 
   // save token to redis
   signToken(user.id, tokenTypes.ACCESS, accessToken, accessTokenExpires.diff(moment(), 'seconds'));
-  signRefreshToken(refreshToken, refreshTokenExpires.diff(moment(), 'seconds'))
+  signRefreshToken(user.id, refreshToken, refreshTokenExpires.diff(moment(), 'seconds'))
 
   return {
     access: {
