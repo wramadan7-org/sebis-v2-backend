@@ -34,9 +34,14 @@ const logout = catchAsync(async (req, res) => {
   res.sendWrapped('Logout success.', httpStatus.OK);
 });
 
+const testProtected = catchAsync(async (req, res) => {
+  res.sendWrapped('Access granted.', httpStatus.OK);
+})
+
 module.exports = {
   login,
   refreshTokens,
   register,
   logout,
+  testProtected,
 };

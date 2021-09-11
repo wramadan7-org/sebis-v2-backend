@@ -10,5 +10,6 @@ router.post('/register', validate(register), authController.register);
 router.post('/login', validate(login), authController.login);
 router.post('/logout', auth, authController.logout);
 router.post('/refresh', validate(refresh), authController.refreshTokens);
+router.get('/protected', auth, authController.testProtected);
 
 module.exports = router;
