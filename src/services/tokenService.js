@@ -3,7 +3,7 @@ const moment = require('moment');
 const config = require('../config/config');
 const { tokenTypes } = require('../config/tokens');
 const redis = require('../utils/redis');
-const { redisTokenKey, redisRefreshTokenKey, redisUserDetailKey } = require('../config/redis');
+const { redisTokenKey, redisRefreshTokenKey, redisUserLoginKey } = require('../config/redis');
 
 const signToken = (userId, type, token, ttl = -1) => {
   const redisKey = `${redisTokenKey(userId, type)}:${token}`;
@@ -63,7 +63,7 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
 };
 
 const signUser = (user) => {
-  const redisKey = `${redisUserDetailKey}:${user.id}`;
+  const redisKey = `${redisUserLoginKey}:${user.id}`;
   return redis.setObject(redisKey, user);
 };
 
