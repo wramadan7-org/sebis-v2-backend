@@ -40,9 +40,9 @@ const setExpire = (key, expires = 0) => {
  * @param {string} key
  * @returns {void}
  */
-const delKey =(key) => {
+const delKey = (key) => {
   redisClient.del(key);
-}
+};
 
 module.exports = {
   setObject,
