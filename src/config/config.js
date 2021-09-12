@@ -1,21 +1,21 @@
 const dotenv = require('dotenv');
 const path = require('path');
 const Joi = require('joi');
-const fs = require('fs');
+// const fs = require('fs');
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 // load database configuration from config.json instead of .env file
-const { NODE_ENV } = process.env;
-const dbConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')));
-Object.assign(process.env, {
-  DB_DIALECT: dbConfig[NODE_ENV].dialect,
-  DB_HOST: dbConfig[NODE_ENV].host,
-  DB_PORT: dbConfig[NODE_ENV].port,
-  DB_NAME: dbConfig[NODE_ENV].database,
-  DB_USER: dbConfig[NODE_ENV].username,
-  DB_PASSWORD: dbConfig[NODE_ENV].password,
-});
+// const { NODE_ENV } = process.env;
+// const dbConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')));
+// Object.assign(process.env, {
+//   DB_DIALECT: dbConfig[NODE_ENV].dialect,
+//   DB_HOST: dbConfig[NODE_ENV].host,
+//   DB_PORT: dbConfig[NODE_ENV].port,
+//   DB_NAME: dbConfig[NODE_ENV].database,
+//   DB_USER: dbConfig[NODE_ENV].username,
+//   DB_PASSWORD: dbConfig[NODE_ENV].password,
+// });
 
 // validate configuration
 const envVarsSchema = Joi.object().keys({
@@ -28,7 +28,7 @@ const envVarsSchema = Joi.object().keys({
   DB_HOST: Joi.string().default('localhost').description('Database host'),
   DB_PORT: Joi.number().default(3306).description('Database port'),
   DB_NAME: Joi.string().required().description('Database name'),
-  DB_USER: Joi.string().required().description('Database user'),
+  DB_USER: Joi.string().default('root').required().description('Database user'),
   DB_PASSWORD: Joi.string().required().description('Database password'),
 }).unknown();
 
@@ -36,17 +36,30 @@ const { value: envVars, error } = envVarsSchema.prefs({ errors: { label: 'key' }
 
 if (error) throw new Error(`Config validation error: ${error.message}`);
 
+const defaultDbConfiguration = {
+  username: envVars.DB_USER,
+  password: envVars.DB_PASSWORD,
+  database: envVars.DB_NAME,
+  host: envVars.DB_HOST,
+  port: envVars.DB_PORT,
+  dialect: envVars.DB_DIALECT,
+};
+
+const tmpDbConfiguration = { ...defaultDbConfiguration };
+
+const developmentDbConfiguration = Object.assign(tmpDbConfiguration, { database: `${envVars.DB_NAME}-development` });
+
+const testDbConfiguration = Object.assign(tmpDbConfiguration, { database: `${envVars.DB_NAME}-test` });
+
 module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   database: {
-    dialect: envVars.DB_DIALECT,
-    host: envVars.DB_HOST,
-    port: envVars.DB_PORT,
-    db: envVars.DB_NAME,
-    user: envVars.DB_USER,
-    password: envVars.DB_PASSWORD,
+    ...defaultDbConfiguration, // from sequelize production database configuration
   },
+  production: defaultDbConfiguration, // default sequelize database configuration
+  development: developmentDbConfiguration, // sequelize development database configuration
+  test: testDbConfiguration, // sequelize test database configuration
   jwt: {
     secret: envVars.JWT_SECRET,
     accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION_MINUTES,

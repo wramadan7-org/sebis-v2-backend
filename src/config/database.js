@@ -3,10 +3,10 @@ const logger = require('./logger');
 const { database } = require('./config');
 
 const {
-  dialect, host, port, db, user, password,
+  dialect, username, password, host, port, database: dbName,
 } = database;
 
-const sequelize = new Sequelize(`${dialect}://${user}:${password}@${host}:${port}/${db}`);
+const sequelize = new Sequelize(`${dialect}://${username}:${password}@${host}:${port}/${dbName}`);
 
 const connectDb = sequelize.authenticate().then(() => {
   logger.info('Connection has been established successfully.');
