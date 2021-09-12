@@ -30,6 +30,11 @@ const envVarsSchema = Joi.object().keys({
   DB_NAME: Joi.string().required().description('Database name'),
   DB_USER: Joi.string().default('root').required().description('Database user'),
   DB_PASSWORD: Joi.string().required().description('Database password'),
+  REDIS_PROTOCOL: Joi.string().default('redis').valid('redis', 'rediss').description('Redis protocol'),
+  REDIS_HOST: Joi.string().default('localhost').description('Redis host'),
+  REDIS_PORT: Joi.number().default(6379).description('Redis listen port'),
+  REDIS_USER: Joi.string().default('').description('Redis user'),
+  REDIS_PASSWORD: Joi.string().default('').description('Redis password'),
 }).unknown();
 
 const { value: envVars, error } = envVarsSchema.prefs({ errors: { label: 'key' } }).validate(process.env);
@@ -44,6 +49,9 @@ const defaultDbConfiguration = {
   port: envVars.DB_PORT,
   dialect: envVars.DB_DIALECT,
 };
+
+// change default database configuration depend on node environment
+if (envVars.NODE_ENV !== 'production') Object.assign(defaultDbConfiguration, { database: `${envVars.DB_NAME}-${envVars.NODE_ENV}` });
 
 const tmpDbConfiguration = { ...defaultDbConfiguration };
 
@@ -64,5 +72,12 @@ module.exports = {
     secret: envVars.JWT_SECRET,
     accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION_MINUTES,
     refreshExpirationDays: envVars.JWT_REFRESH_EXPIRATION_DAYS,
+  },
+  redis: {
+    protocol: envVars.REDIS_PROTOCOL,
+    host: envVars.REDIS_HOST,
+    port: envVars.REDIS_PORT,
+    user: envVars.REDIS_USER,
+    password: envVars.REDIS_PASSWORD,
   },
 };
