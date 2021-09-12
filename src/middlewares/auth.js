@@ -10,7 +10,8 @@ const verifyCallback = (req, resolve, reject) => async (err, user, info) => {
   }
 
   // check for valid token
-  const token = req.headers.authorization.split('Bearer ')[1];
+  const bearer = 'Bearer ';
+  const token = req.headers.authorization.replace(bearer, '');
   if (!await isTokenActive(user.id, tokenTypes.ACCESS, token)) return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Token expired.'));
 
   req.token = token;
