@@ -4,6 +4,7 @@ const { tokenTypes } = require('./tokens');
 const { User } = require('../models/User');
 const { redisUserLoginKey } = require('./redis');
 const redis = require('../utils/redis');
+const { signUser } = require('../services/tokenService');
 
 const jwtOptions = {
   secretOrKey: config.jwt.secret,
@@ -20,7 +21,10 @@ const jwtVerify = async (payload, done) => {
     let user = await redis.getObject(`${redisUserLoginKey}:${payload.sub}`);
 
     // Get user from database if data not exist in redis
-    if (!user) user = await User.findByPk(payload.sub);
+    if (!user) {
+      user = await User.findByPk(payload.sub);
+      signUser(user);
+    }
 
     // verify jwt failed
     if (!user) return done(null, false);
