@@ -1,13 +1,13 @@
 /**
  * Create pagination setting, used by getPagingData fn
  * @param {number} page
- * @param {number} size
+ * @param {number} perPage
  * @returns {Object}
  */
-const getPagination = (page, size) => {
+const getPagination = (page, perPage) => {
   const limitMax = 50;
   let limit;
-  limit = (size && size > 0) ? +size : 10;
+  limit = (perPage && perPage > 0) ? +perPage : 10;
   if (limit > limitMax) limit = limitMax; // force maximum limit
   const offset = (page && page > 0) ? (+page - 1) * limit : 0;
 
