@@ -4,7 +4,7 @@ const fcm = require('../utils/fcm');
 const teacherQueueName = 'teacher';
 const studentQueueName = 'student';
 
-// teacher consumer
+// teacher producer
 const addTeacherQueue = (registrationIds, title, body, { data = {}, opts = {} } = {}) => {
   fcmQueue.add(teacherQueueName, {
     registrationIds,
@@ -14,7 +14,7 @@ const addTeacherQueue = (registrationIds, title, body, { data = {}, opts = {} } 
   }, { ...opts });
 };
 
-// student consumer
+// student producer
 const addStudentQueue = (registrationIds, title, body, { data = {}, opts = {} } = {}) => {
   fcmQueue.add(studentQueueName, {
     registrationIds,
