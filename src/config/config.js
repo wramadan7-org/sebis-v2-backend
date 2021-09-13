@@ -35,6 +35,8 @@ const envVarsSchema = Joi.object().keys({
   REDIS_PORT: Joi.number().default(6379).description('Redis listen port'),
   REDIS_USER: Joi.string().default('').description('Redis user'),
   REDIS_PASSWORD: Joi.string().default('').description('Redis password'),
+  FCM_TEACHER_KEY: Joi.string().required().description('FCM teacher server key'),
+  FCM_STUDENT_KEY: Joi.string().required().description('FCM student server key'),
 }).unknown();
 
 const { value: envVars, error } = envVarsSchema.prefs({ errors: { label: 'key' } }).validate(process.env);
@@ -80,4 +82,8 @@ module.exports = {
     user: envVars.REDIS_USER,
     password: envVars.REDIS_PASSWORD,
   },
+  fcm: {
+    teacherKey: envVars.FCM_TEACHER_KEY,
+    studentKey: envVars.FCM_STUDENT_KEY,
+  }
 };
