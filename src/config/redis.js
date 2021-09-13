@@ -16,4 +16,5 @@ module.exports = {
   redisTokenKey,
   redisRefreshTokenKey,
   redisUserLoginKey,
+  redisConfiguration,
 };
