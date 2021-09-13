@@ -9,7 +9,7 @@ const createUser = async (userBody) => {
     },
   });
 
-  if (user !== null && user.email === userBody.email) throw new ApiError(httpStatus.CONFLICT, 'Email already taken.');
+  if (user && user.email === userBody.email) throw new ApiError(httpStatus.CONFLICT, 'Email already taken.');
 
   return User.create(userBody);
 };
@@ -29,7 +29,7 @@ const getUserById = async (userId) => {
 const updateUserById = async (userId, userBody) => {
   const user = await User.findByPk(userId);
 
-  if (user === null) throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
+  if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
 
   Object.assign(user, userBody);
   await user.save();
@@ -40,7 +40,7 @@ const updateUserById = async (userId, userBody) => {
 const deleteUserById = async (userId) => {
   const user = await User.findByPk(userId);
 
-  if (user === null) throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
+  if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
 
   await user.destroy();
 

@@ -5,7 +5,7 @@ const { isTokenActive } = require('../services/tokenService');
 const { tokenTypes } = require('../config/tokens');
 
 const verifyCallback = (req, resolve, reject) => async (err, user, info) => {
-  if (err || info || user === null) {
+  if (err || info || !user) {
     return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate.'));
   }
 
