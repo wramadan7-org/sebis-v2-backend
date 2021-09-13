@@ -1,7 +1,7 @@
 const FCM = require('fcm-node');
 const { fcm } = require('../config/config');
+
 const { teacherKey, studentKey } = fcm;
-const { h } = require('../queues/reminderQueue')
 
 const fcmTeacher = new FCM(teacherKey);
 const fcmStudent = new FCM(studentKey);
