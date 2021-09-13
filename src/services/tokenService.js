@@ -106,6 +106,7 @@ const generateAuthTokens = async (user) => {
 module.exports = {
   generateAuthTokens,
   revokeToken,
+  signUser,
   revokeUser,
   revokeRefreshToken,
   isTokenActive,
