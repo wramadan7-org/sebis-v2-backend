@@ -18,18 +18,18 @@ const getPagination = (page, size) => {
  * Create pagination object
  * @param {Object} data
  * @param {number} page
- * @param {number} limit
+ * @param {number} perPage
  * @returns {Object}
  */
-const getPagingData = (data, page, limit) => {
+const getPagingData = (data, page, perPage) => {
   const { count: totalItems, rows: items } = data;
-  const totalPages = Math.ceil(totalItems / limit);
+  const totalPages = Math.ceil(totalItems / +perPage);
   const currentPage = (page && page > 0) ? +page : 1;
   const previousPage = currentPage > 1 ? currentPage - 1 : null;
   const nextPage = (page && currentPage < totalPages) ? currentPage + 1 : null;
 
   return {
-    limit, currentPage, previousPage, nextPage, totalPages, totalItems, items,
+    perPage, currentPage, previousPage, nextPage, totalPages, totalItems, items,
   };
 };
 
