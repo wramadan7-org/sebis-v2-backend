@@ -14,7 +14,7 @@ const fcmStudent = new FCM(studentKey);
  * @param {Object} data
  * @returns {Object}
  */
-const sendNotificationTeacher = (registrationIds, title, body, data = {}) => {
+const sendNotificationTeacher = (registrationIds, title, body, { data = {} } = {}) => {
   const notificationData = {
     registration_ids: registrationIds,
     notification: {
@@ -35,7 +35,7 @@ const sendNotificationTeacher = (registrationIds, title, body, data = {}) => {
  * @param {Object} data
  * @returns {Object}
  */
-const sendNotificationStudent = (registrationIds, title, body, data = {}) => {
+const sendNotificationStudent = (registrationIds, title, body, { data = {} } = {}) => {
   const notificationData = {
     registration_ids: registrationIds,
     notification: {
