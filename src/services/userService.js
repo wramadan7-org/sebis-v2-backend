@@ -2,6 +2,11 @@ const httpStatus = require('http-status');
 const { User } = require('../models/User');
 const ApiError = require('../utils/ApiError');
 
+/**
+ * Create user
+ * @param userBody
+ * @returns {Promise<User>}
+ */
 const createUser = async (userBody) => {
   const user = await User.findOne({
     where: {
@@ -14,12 +19,23 @@ const createUser = async (userBody) => {
   return User.create(userBody);
 };
 
+/**
+ * Get user by email
+ * @param email
+ * @returns {Promise<User | null>}
+ */
 const getUserByEmail = async (email) => User.findOne({
   where: {
     email,
   },
 });
 
+/**
+ * Get user by id
+ * @param userId
+ * @param opts
+ * @returns {Promise<User | ApiError>}
+ */
 const getUserById = async (userId, { opts = {} } = {}) => {
   const user = await User.findOne(
     {
@@ -33,6 +49,12 @@ const getUserById = async (userId, { opts = {} } = {}) => {
   return user;
 };
 
+/**
+ * Update user by id
+ * @param userId
+ * @param userBody
+ * @returns {Promise<User | ApiError>}
+ */
 const updateUserById = async (userId, userBody) => {
   const user = await User.findByPk(userId);
 
@@ -44,6 +66,11 @@ const updateUserById = async (userId, userBody) => {
   return user;
 };
 
+/**
+ * Delete user by id
+ * @param userId
+ * @returns {Promise<User | ApiError>}
+ */
 const deleteUserById = async (userId) => {
   const user = await User.findByPk(userId);
 
