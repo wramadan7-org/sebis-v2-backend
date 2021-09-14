@@ -85,5 +85,5 @@ module.exports = {
   fcm: {
     teacherKey: envVars.FCM_TEACHER_KEY,
     studentKey: envVars.FCM_STUDENT_KEY,
-  }
+  },
 };
