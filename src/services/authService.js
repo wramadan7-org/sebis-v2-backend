@@ -30,8 +30,8 @@ const refreshAuth = async (refreshToken) => {
 
 /**
  *
- * @param userId
- * @param newPassword
+ * @param {string} userId
+ * @param {string} newPassword
  * @returns {Promise<User | ApiError>}
  */
 const updatePassword = async (userId, newPassword) => {
