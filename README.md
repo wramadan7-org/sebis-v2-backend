@@ -38,7 +38,7 @@ cd src && sequelize db:migrate --config config/config.js
 
 ## Features
 
-- **MariaDB**: [MongoDB](https://www.mongodb.com) object data modeling using [Mongoose](https://mongoosejs.com)
+- **MariaDB**: [MariaDB](https://mariadb.org) object data modeling using [Sequelize](https://sequelize.org)
 - **Authentication and authorization**: using [passport](http://www.passportjs.org)
 - **Validation**: request data validation using [Joi](https://github.com/hapijs/joi)
 - **Logging**: using [winston](https://github.com/winstonjs/winston) and [morgan](https://github.com/expressjs/morgan)
