@@ -4,7 +4,7 @@ const ApiError = require('../utils/ApiError');
 
 /**
  * Create user
- * @param userBody
+ * @param {object} userBody
  * @returns {Promise<User>}
  */
 const createUser = async (userBody) => {
@@ -21,7 +21,7 @@ const createUser = async (userBody) => {
 
 /**
  * Get user by email
- * @param email
+ * @param {string} email
  * @returns {Promise<User | null>}
  */
 const getUserByEmail = async (email) => User.findOne({
@@ -32,8 +32,8 @@ const getUserByEmail = async (email) => User.findOne({
 
 /**
  * Get user by id
- * @param userId
- * @param opts
+ * @param {string} userId
+ * @param {object} opts
  * @returns {Promise<User | ApiError>}
  */
 const getUserById = async (userId, { opts = {} } = {}) => {
@@ -51,8 +51,8 @@ const getUserById = async (userId, { opts = {} } = {}) => {
 
 /**
  * Update user by id
- * @param userId
- * @param userBody
+ * @param {string} userId
+ * @param {object} userBody
  * @returns {Promise<User | ApiError>}
  */
 const updateUserById = async (userId, userBody) => {
@@ -68,7 +68,7 @@ const updateUserById = async (userId, userBody) => {
 
 /**
  * Delete user by id
- * @param userId
+ * @param {string} userId
  * @returns {Promise<User | ApiError>}
  */
 const deleteUserById = async (userId) => {
