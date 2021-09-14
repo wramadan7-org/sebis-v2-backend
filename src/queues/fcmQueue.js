@@ -4,7 +4,15 @@ const fcm = require('../utils/fcm');
 const teacherQueueName = 'teacher';
 const studentQueueName = 'student';
 
-// teacher producer
+/**
+ * Teacher push notification queue producer
+ * @param {string[]} registrationIds
+ * @param {string} title
+ * @param {string} body
+ * @param {Object} data
+ * @param {Object} opts
+ * @returns {void}
+ */
 const addTeacherQueue = (registrationIds, title, body, { data = {}, opts = {} } = {}) => {
   fcmQueue.add(teacherQueueName, {
     registrationIds,
@@ -14,7 +22,15 @@ const addTeacherQueue = (registrationIds, title, body, { data = {}, opts = {} } 
   }, { ...opts });
 };
 
-// student producer
+/**
+ * Student push notification queue producer
+ * @param {string[]} registrationIds
+ * @param {string} title
+ * @param {string} body
+ * @param {Object} data
+ * @param {Object} opts
+ * @returns {void}
+ */
 const addStudentQueue = (registrationIds, title, body, { data = {}, opts = {} } = {}) => {
   fcmQueue.add(studentQueueName, {
     registrationIds,

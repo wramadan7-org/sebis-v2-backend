@@ -4,7 +4,16 @@ const { fcmTypes } = require('../config/fcm');
 
 const lessonQueueName = 'lesson';
 
-// reminder producer
+/**
+ * Reminder producer
+ * @param {string} role
+ * @param {string[]} registrationIds
+ * @param {string} title
+ * @param {string} body
+ * @param {Object} data
+ * @param {Object} opts
+ * @returns {void}
+ */
 const addReminderQueue = (role, registrationIds, title, body, { data = {}, opts = {} } = {}) => {
   reminderQueue.add(lessonQueueName, {
     registrationIds,
