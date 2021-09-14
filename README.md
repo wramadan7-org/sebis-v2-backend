@@ -30,7 +30,6 @@ cd src && sequelize db:migrate --config config/config.js
 - [Commands](#commands)
 - [Environment Variables](#environment-variables)
 - [Project Structure](#project-structure)
-- [API Documentation](#api-documentation)
 - [Error Handling](#error-handling)
 - [Validation](#validation)
 - [Authentication](#authentication)
