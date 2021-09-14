@@ -5,6 +5,14 @@ const { tokenTypes } = require('../config/tokens');
 const redis = require('../utils/redis');
 const { redisTokenKey, redisRefreshTokenKey, redisUserLoginKey } = require('../config/redis');
 
+/**
+ * Sign token to redis
+ * @param {string} userId
+ * @param {string} type
+ * @param {string} token
+ * @param {number} ttl
+ * @return {void}
+ */
 const signToken = (userId, type, token, ttl = -1) => {
   const redisKey = `${redisTokenKey(userId, type)}:${token}`;
   redis.setObject(redisKey, {
@@ -14,6 +22,13 @@ const signToken = (userId, type, token, ttl = -1) => {
   });
 };
 
+/**
+ * Sign refresh token to redis
+ * @param {string} userId
+ * @param {string} refreshToken
+ * @param {number} ttl
+ * @return {void}
+ */
 const signRefreshToken = (userId, refreshToken, ttl = -1) => {
   const redisKey = `${redisRefreshTokenKey}:${refreshToken}`;
   redis.setObject(redisKey, {
@@ -24,6 +39,13 @@ const signRefreshToken = (userId, refreshToken, ttl = -1) => {
   });
 };
 
+/**
+ * Revoke token from redis
+ * @param {string} userId
+ * @param {string} type
+ * @param {string} token
+ * @return {Promise<Object>}
+ */
 const revokeToken = (userId, type, token) => {
   const redisKey = `${redisTokenKey(userId, type)}:${token}`;
   return redis.setObject(redisKey, {
@@ -31,6 +53,11 @@ const revokeToken = (userId, type, token) => {
   });
 };
 
+/**
+ * Revoke refresh token from redis
+ * @param {string} refreshToken
+ * @return {Promise<Object>}
+ */
 const revokeRefreshToken = async (refreshToken) => {
   const redisKey = `${redisRefreshTokenKey}:${refreshToken}`;
   const refreshTokenData = await redis.getObject(redisKey);
@@ -38,6 +65,13 @@ const revokeRefreshToken = async (refreshToken) => {
   return redis.setObject(redisKey, refreshTokenData);
 };
 
+/**
+ * Check token is active
+ * @param {string} userId
+ * @param {string} type
+ * @param {string} token
+ * @return {Promise<object | Error>}
+ */
 const isTokenActive = (userId, type, token) => new Promise((resolve, reject) => {
   const redisKey = `${redisTokenKey(userId, type)}:${token}`;
   redis.getObject(redisKey).then((data) => {
@@ -45,6 +79,11 @@ const isTokenActive = (userId, type, token) => new Promise((resolve, reject) => 
   }).catch((error) => (reject(error)));
 });
 
+/**
+ * Check refresh token is active
+ * @param refreshToken
+ * @return {Promise<object | Error>}
+ */
 const isRefreshTokenActive = (refreshToken) => new Promise((resolve, reject) => {
   const redisKey = `${redisRefreshTokenKey}:${refreshToken}`;
   redis.getObject(redisKey).then((data) => {
@@ -52,6 +91,14 @@ const isRefreshTokenActive = (refreshToken) => new Promise((resolve, reject) => 
   }).catch((error) => (reject(error)));
 });
 
+/**
+ * Generate JWT token
+ * @param {string} userId
+ * @param {number} expires
+ * @param {string} type
+ * @param {string} secret
+ * @return {string}
+ */
 const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
   const payload = {
     sub: userId,
@@ -62,6 +109,11 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
   return jwt.sign(payload, secret);
 };
 
+/**
+ * Sign user to redis
+ * @param {User} user
+ * @return {Promise<Object | Error>}
+ */
 const signUser = (user) => {
   const redisKey = `${redisUserLoginKey}:${user.id}`;
   return redis.setObject(redisKey, {
@@ -72,11 +124,20 @@ const signUser = (user) => {
   });
 };
 
+/**
+ * Revoke user from redis
+ * @param {string} userId
+ */
 const revokeUser = (userId) => {
   const redisKey = `${redisUserLoginKey}:${userId}`;
   return redis.delKey(redisKey);
 };
 
+/**
+ *
+ * @param {User} user
+ * @return {Promise<{access: {expires: Date, token: string}, refresh: {expires: Date, token: string}}>}
+ */
 const generateAuthTokens = async (user) => {
   const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
   const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS);
