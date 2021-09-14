@@ -4,7 +4,7 @@ const userService = require('../services/userService');
 
 const currentProfile = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const user = await userService.getUserById(userId);
+  const user = await userService.getUserById(userId, { opts: { include: ['school'] } });
   res.sendWrapped(user, httpStatus.OK);
 });
 
