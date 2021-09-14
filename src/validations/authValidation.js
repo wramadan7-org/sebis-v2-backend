@@ -22,8 +22,15 @@ const refresh = {
   }),
 };
 
+const resetPassword = {
+  body: Joi.object().keys({
+    password: Joi.string().min(8).max(32).required(),
+  }),
+};
+
 module.exports = {
   register,
   login,
   refresh,
+  resetPassword,
 };
