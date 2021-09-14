@@ -20,8 +20,15 @@ const getUserByEmail = async (email) => User.findOne({
   },
 });
 
-const getUserById = async (userId) => {
-  const user = await User.findByPk(userId);
+const getUserById = async (userId, { opts = {} } = {}) => {
+  const user = await User.findOne(
+    {
+      where: {
+        id: userId,
+      },
+      ...opts,
+    },
+  );
   if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
   return user;
 };
