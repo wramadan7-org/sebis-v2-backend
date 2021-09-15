@@ -57,9 +57,13 @@ if (envVars.NODE_ENV !== 'production') Object.assign(defaultDbConfiguration, { d
 
 const tmpDbConfiguration = { ...defaultDbConfiguration };
 
-const developmentDbConfiguration = Object.assign(tmpDbConfiguration, { database: `${envVars.DB_NAME}-development` });
+const developmentDbConfiguration = {
+  ...Object.assign(tmpDbConfiguration, { database: `${envVars.DB_NAME}-development` }),
+};
 
-const testDbConfiguration = Object.assign(tmpDbConfiguration, { database: `${envVars.DB_NAME}-test` });
+const testDbConfiguration = {
+  ...Object.assign(tmpDbConfiguration, { database: `${envVars.DB_NAME}-test` }),
+};
 
 module.exports = {
   env: envVars.NODE_ENV,
