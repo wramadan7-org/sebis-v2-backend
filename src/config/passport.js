@@ -22,8 +22,13 @@ const jwtVerify = async (payload, done) => {
 
     // Get user from database if data not exist in redis
     if (!user) {
-      user = await User.findByPk(payload.sub);
-      signUser(user);
+      user = await User.findOne({
+        where: {
+          id: payload.sub,
+        },
+        include: 'role',
+      });
+      if (user) await signUser(user);
     }
 
     // verify jwt failed
