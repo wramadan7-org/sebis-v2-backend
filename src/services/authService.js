@@ -12,7 +12,7 @@ const { redisRefreshTokenKey } = require('../config/redis');
  * @returns {Promise<User>}
  */
 const loginWithIdentityAndPassword = async (identity, password) => {
-  const user = await userService.getUserByEmail(identity);
+  const user = await userService.getUserByEmail(identity, { opts: { include: 'role' } });
   if (!user || !await bcrypt.compare(password, user.password)) throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid identity combination.');
   return user;
 };
