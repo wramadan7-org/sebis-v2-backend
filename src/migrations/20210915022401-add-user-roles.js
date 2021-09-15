@@ -8,7 +8,7 @@ module.exports = {
         allowNull: false,
       },
       roleName: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('teacher', 'student'),
         unique: true,
         allowNull: false,
       },
