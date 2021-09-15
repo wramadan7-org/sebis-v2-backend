@@ -22,12 +22,14 @@ const createUser = async (userBody) => {
 /**
  * Get user by email
  * @param {string} email
+ * @param {object} opts
  * @returns {Promise<User | null>}
  */
-const getUserByEmail = async (email) => User.findOne({
+const getUserByEmail = async (email, { opts = {} } = {}) => User.findOne({
   where: {
     email,
   },
+  ...opts,
 });
 
 /**
