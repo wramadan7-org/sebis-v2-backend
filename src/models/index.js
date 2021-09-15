@@ -1,6 +1,6 @@
 const { User } = require('./User');
 const { School } = require('./School');
-const { Role } = require("./Role");
+const { Role } = require('./Role');
 
 const setupSequelizeAssociations = () => {
   User.belongsTo(School);
