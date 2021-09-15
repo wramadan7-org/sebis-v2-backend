@@ -6,6 +6,8 @@ const register = {
     password: Joi.string().min(8).max(32).required(),
     firstName: Joi.string().max(12).required(),
     lastName: Joi.string().max(32).required(),
+    schoolId: Joi.string().min(8).max(64),
+    roleId: Joi.string().min(8).max(64).required(),
   }),
 };
 
