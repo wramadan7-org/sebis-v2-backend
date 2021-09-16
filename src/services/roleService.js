@@ -4,14 +4,14 @@ const ApiError = require('../utils/ApiError');
 
 /**
  * Create new role
- * @param roleBody
+ * @param {Object} roleBody
  * @return {Promise<void | Role>}
  */
 const createRole = async (roleBody) => Role.create(roleBody);
 
 /**
  * Get role by ID
- * @param roleId
+ * @param {string} roleId
  * @return {Promise<ApiError | Role>}
  */
 const getRoleById = async (roleId) => {
@@ -22,8 +22,8 @@ const getRoleById = async (roleId) => {
 
 /**
  * Update role by ID
- * @param roleId
- * @param roleBody
+ * @param {string} roleId
+ * @param {Object} roleBody
  * @return {Promise<ApiError|Role>}
  */
 const updateRoleById = async (roleId, roleBody) => {
@@ -37,7 +37,7 @@ const updateRoleById = async (roleId, roleBody) => {
 
 /**
  * Delete role by ID
- * @param roleId
+ * @param {string} roleId
  * @return {Promise<ApiError|Role>}
  */
 const deleteRoleById = async (roleId) => {
