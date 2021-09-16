@@ -16,7 +16,7 @@ const createUser = async (userBody) => {
 
   if (user && user.email === userBody.email) throw new ApiError(httpStatus.CONFLICT, 'Email already taken.');
 
-  return User.create(userBody, { include: ['role', 'school',] });
+  return User.create(userBody);
 };
 
 /**
