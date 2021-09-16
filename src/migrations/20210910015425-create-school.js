@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('schools', {
+    return queryInterface.createTable('schools', {
       id: {
         type: Sequelize.STRING,
         primaryKey: true,
@@ -18,9 +18,12 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      deletedAt: {
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('schools');
+    return queryInterface.dropTable('schools');
   },
 };

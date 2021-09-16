@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.addColumn(
+    return queryInterface.addColumn(
       'users',
       'schoolId',
       {
@@ -11,12 +11,13 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
+        after: 'lastName',
       },
     );
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.removeColumn(
+    return queryInterface.removeColumn(
       'users',
       'schoolId',
     );
