@@ -1,25 +1,21 @@
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    return queryInterface.addColumn(
-      'users',
-      'schoolId',
-      {
-        type: Sequelize.STRING,
-        references: {
-          model: 'schools',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
-        after: 'lastName',
+  up: async (queryInterface, Sequelize) => queryInterface.addColumn(
+    'users',
+    'schoolId',
+    {
+      type: Sequelize.STRING,
+      references: {
+        model: 'schools',
+        key: 'id',
       },
-    );
-  },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+      after: 'lastName',
+    },
+  ),
 
-  down: async (queryInterface, Sequelize) => {
-    return queryInterface.removeColumn(
-      'users',
-      'schoolId',
-    );
-  },
+  down: async (queryInterface, Sequelize) => queryInterface.removeColumn(
+    'users',
+    'schoolId',
+  ),
 };
