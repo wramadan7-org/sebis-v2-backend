@@ -12,6 +12,8 @@ const School = sequelize.define('school', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+}, {
+  paranoid: true,
 });
 
 module.exports = {

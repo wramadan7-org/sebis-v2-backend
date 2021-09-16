@@ -13,6 +13,8 @@ const Role = sequelize.define('role', {
     unique: true,
     allowNull: false,
   },
+}, {
+  paranoid: true,
 });
 
 module.exports = {
