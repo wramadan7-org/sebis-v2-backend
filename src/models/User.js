@@ -24,6 +24,7 @@ const User = sequelize.define('user', {
   },
   lastName: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
 }, {
   paranoid: true,
