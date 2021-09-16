@@ -7,7 +7,7 @@ const ApiError = require('../utils/ApiError');
  * @param roleBody
  * @return {Promise<void | Role>}
  */
-const createRole = async (roleBody) => Role.create(roleBody, { include: ['role', 'school'] });
+const createRole = async (roleBody) => Role.create(roleBody);
 
 /**
  * Get role by ID
