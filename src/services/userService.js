@@ -16,7 +16,7 @@ const createUser = async (userBody) => {
 
   if (user && user.email === userBody.email) throw new ApiError(httpStatus.CONFLICT, 'Email already taken.');
 
-  return User.create(userBody);
+  return User.create(userBody, { include: ['role', 'school',] });
 };
 
 /**
@@ -58,9 +58,7 @@ const getUserById = async (userId, { opts = {} } = {}) => {
  * @returns {Promise<User | ApiError>}
  */
 const updateUserById = async (userId, userBody) => {
-  const user = await User.findByPk(userId);
-
-  if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
+  const user = await getUserById(userId);
 
   Object.assign(user, userBody);
   await user.save();
@@ -74,9 +72,7 @@ const updateUserById = async (userId, userBody) => {
  * @returns {Promise<User | ApiError>}
  */
 const deleteUserById = async (userId) => {
-  const user = await User.findByPk(userId);
-
-  if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
+  const user = await getUserById(userId);
 
   await user.destroy();
 
