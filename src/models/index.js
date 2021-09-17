@@ -3,9 +3,11 @@ const { School } = require('./School');
 const { Role } = require('./Role');
 
 const setupSequelizeAssociations = () => {
-  User.belongsTo(School);
-  School.hasMany(User);
   User.belongsTo(Role);
+  User.belongsTo(School);
+
+  School.hasMany(User);
+
   Role.hasMany(User);
 };
 
