@@ -25,7 +25,7 @@ const createUser = async (userBody) => {
  * @param {object} opts
  * @returns {Promise<User | null>}
  */
-const getUserByEmail = async (email, { opts = {} } = {}) => User.findOne({
+const getUserByEmail = async (email, opts = {}) => User.findOne({
   where: {
     email,
   },
@@ -38,7 +38,7 @@ const getUserByEmail = async (email, { opts = {} } = {}) => User.findOne({
  * @param {object} opts
  * @returns {Promise<User | ApiError>}
  */
-const getUserById = async (userId, { opts = {} } = {}) => {
+const getUserById = async (userId, opts = {}) => {
   const user = await User.findOne(
     {
       where: {
