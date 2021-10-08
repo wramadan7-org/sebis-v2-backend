@@ -5,6 +5,6 @@ const studentController = require('../../controllers/studentController');
 
 const router = express.Router();
 
-router.get('/view-cart', auth, student, studentController.viewCart);
+router.get('/cart', auth, student, studentController.viewCart);
 
 module.exports = router;
