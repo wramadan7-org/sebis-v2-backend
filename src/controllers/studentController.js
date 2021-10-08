@@ -3,8 +3,8 @@ const catchAsync = require('../utils/catchAsync');
 const cartService = require('../services/cartService');
 
 const viewCart = catchAsync(async (req, res) => {
-  const userId = req.user.id;
-  const cart = await cartService.findOrCreateCart(userId);
+  const studentId = req.user.id;
+  const cart = await cartService.findOrCreateCart(studentId);
   res.sendWrapped(cart[0], httpStatus.OK);
 });
 
