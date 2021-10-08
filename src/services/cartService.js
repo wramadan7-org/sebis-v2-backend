@@ -17,11 +17,11 @@ const getCartByUserId = async (userId) => {
 };
 
 /**
- * Create cart
+ * Find or create cart
  * @param {String} userId
- * @return {Promise<Cart | ApiError>}
+ * @return {Promise<[Cart, Boolean] | ApiError>}
  */
-const createCart = async (userId) => {
+const findOrCreateCart = async (userId) => {
   await userService.getUserById(userId);
 
   return Cart.findOrCreate({
@@ -33,5 +33,5 @@ const createCart = async (userId) => {
 
 module.exports = {
   getCartByUserId,
-  createCart,
+  findOrCreateCart,
 };
