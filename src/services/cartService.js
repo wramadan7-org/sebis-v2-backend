@@ -5,12 +5,14 @@ const userService = require('./userService');
 
 /**
  * Get cart by user ID
- * @param {String} userId
+ * @param {String} studentId
  * @return {Promise<Cart | ApiError>}
  */
-const getCartByUserId = async (userId) => {
+const getCartByStudentId = async (studentId) => {
   const cart = await Cart.findOne({
-    userId,
+    where: {
+      studentId,
+    },
   });
   if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found.');
   return cart;
@@ -18,20 +20,20 @@ const getCartByUserId = async (userId) => {
 
 /**
  * Find or create cart
- * @param {String} userId
+ * @param {String} studentId
  * @return {Promise<[Cart, Boolean] | ApiError>}
  */
-const findOrCreateCart = async (userId) => {
-  await userService.getUserById(userId);
+const findOrCreateCart = async (studentId) => {
+  await userService.getUserById(studentId);
 
   return Cart.findOrCreate({
     where: {
-      userId,
+      studentId,
     },
   });
 };
 
 module.exports = {
-  getCartByUserId,
+  getCartByStudentId,
   findOrCreateCart,
 };
