@@ -5,7 +5,7 @@ module.exports = {
       primaryKey: true,
       allowNull: false,
     },
-    userId: {
+    studentId: {
       type: Sequelize.STRING,
       allowNull: false,
       references: {
