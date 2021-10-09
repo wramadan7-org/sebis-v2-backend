@@ -1,4 +1,4 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const logger = require('./logger');
 const { database } = require('./config');
 
@@ -7,6 +7,7 @@ const {
 } = database;
 
 const sequelize = new Sequelize(`${dialect}://${username}:${password}@${host}:${port}/${dbName}`);
+const SequelizeInstance = sequelize.Sequelize;
 
 const connectDb = sequelize.authenticate().then(() => {
   logger.info('Connection has been established successfully.');
@@ -19,4 +20,6 @@ const connectDb = sequelize.authenticate().then(() => {
 module.exports = {
   connectDb,
   sequelize,
+  SequelizeInstance,
+  DataTypes,
 };
