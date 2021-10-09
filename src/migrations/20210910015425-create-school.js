@@ -9,6 +9,9 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    schoolAddress: {
+      type: Sequelize.STRING,
+    },
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,
