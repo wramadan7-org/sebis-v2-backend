@@ -20,10 +20,11 @@ const exitHandler = () => {
 
 connectDb
   .then(() => {
-    setupSequelizeAssociations();
-    initializeQueue();
-    server = app.listen(config.port, () => {
-      logger.info(`Listening to port ${config.port}`);
+    setupSequelizeAssociations().then(() => {
+      initializeQueue();
+      server = app.listen(config.port, () => {
+        logger.info(`Listening to port ${config.port}`);
+      });
     });
   })
   .catch(() => exitHandler());
