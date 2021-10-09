@@ -1,11 +1,10 @@
-const { DataTypes, Sequelize } = require('sequelize');
-const { sequelize } = require('../config/database');
+const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
 
 const Role = sequelize.define('role', {
   id: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.STRING,
     primaryKey: true,
-    defaultValue: Sequelize.UUIDV4,
+    defaultValue: SequelizeInstance.UUIDV4,
     allowNull: false,
   },
   roleName: {

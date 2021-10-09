@@ -1,16 +1,18 @@
-const { DataTypes, Sequelize } = require('sequelize');
-const { sequelize } = require('../config/database');
+const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
 
 const School = sequelize.define('school', {
   id: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.STRING,
     primaryKey: true,
-    defaultValue: Sequelize.UUIDV4,
+    defaultValue: SequelizeInstance.UUIDV4,
     allowNull: false,
   },
   schoolName: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  schoolAddress: {
+    type: DataTypes.STRING,
   },
 }, {
   paranoid: true,

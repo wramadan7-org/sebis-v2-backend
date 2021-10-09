@@ -1,12 +1,11 @@
-const { DataTypes, Sequelize } = require('sequelize');
 const bcrypt = require('bcrypt');
-const { sequelize } = require('../config/database');
+const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
 
 const User = sequelize.define('user', {
   id: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.STRING,
     primaryKey: true,
-    defaultValue: Sequelize.UUIDV4,
+    defaultValue: SequelizeInstance.UUIDV4,
     allowNull: false,
   },
   email: {
