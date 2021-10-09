@@ -1,9 +1,10 @@
+const { sequelize } = require('../config/database');
 const { User } = require('./User');
 const { School } = require('./School');
 const { Role } = require('./Role');
 const { Cart } = require('./Cart');
 
-const setupSequelizeAssociations = () => {
+const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
   User.belongsTo(School);
   User.hasOne(Cart, {
@@ -15,8 +16,11 @@ const setupSequelizeAssociations = () => {
   Role.hasMany(User);
 
   Cart.belongsTo(User, {
-    foreignKey: 'id',
+    foreignKey: 'studentId',
   });
+
+  // finally sync sequelize
+  await sequelize.sync();
 };
 
 module.exports = setupSequelizeAssociations;
