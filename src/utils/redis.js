@@ -72,27 +72,32 @@ const delKey = (key) => {
 /**
  *
  * @param {string} key
- * @param {promise} promise
+ * @param {Promise<*>} promise
+ * @param {boolean} showDetails
  * @return {Promise<object>}
  */
-const getData = async (key, promise) => {
+const getData = async (key, promise, showDetails = true) => {
   let data;
   let isCached = false;
 
   const result = await getString(key);
 
   if (!result) {
-    data = await promise;
-    await setString(key, JSON.stringify(data));
+    const value = await promise;
+
+    // save data to redis
+    await setString(key, JSON.stringify(value));
+
+    data = value;
   } else {
     isCached = true;
     data = JSON.parse(result);
   }
 
-  return {
+  return showDetails ? {
     data,
     isCached,
-  };
+  } : data;
 };
 
 module.exports = {
