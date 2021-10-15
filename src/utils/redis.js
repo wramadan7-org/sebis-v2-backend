@@ -1,6 +1,31 @@
 const { redisClient } = require('../config/redis');
 
 /**
+ * Set redis string data
+ * @param {string} key
+ * @param {string} value
+ * @return {Promise<unknown>}
+ */
+const setString = (key, value) => new Promise((resolve, reject) => {
+  redisClient.set(key, value, (error, data) => {
+    if (error) reject(error);
+    resolve(data);
+  });
+});
+
+/**
+ * Get redis string data
+ * @param {string} key
+ * @return {Promise<any>}
+ */
+const getString = (key) => new Promise((resolve, reject) => {
+  redisClient.get(key, (error, data) => {
+    if (error) reject(error);
+    resolve(data);
+  });
+});
+
+/**
  * Set redis map data
  * @param {string} key
  * @param {Object} object
@@ -44,9 +69,33 @@ const delKey = (key) => {
   redisClient.del(key);
 };
 
+/**
+ *
+ * @param {string} key
+ * @param {promise} promise
+ * @return {Promise<any>}
+ */
+const getData = async (key, promise) => {
+  let data;
+
+  const result = await getString(key);
+
+  if (!result) {
+    data = await promise;
+    await setString(key, JSON.stringify(data));
+  } else {
+    data = JSON.parse(result);
+  }
+
+  return data;
+};
+
 module.exports = {
+  setString,
+  getString,
   setObject,
   getObject,
   setExpire,
   delKey,
+  getData,
 };
