@@ -37,6 +37,7 @@ const envVarsSchema = Joi.object().keys({
   REDIS_PASSWORD: Joi.string().default('').description('Redis password'),
   FCM_TEACHER_KEY: Joi.string().required().description('FCM teacher server key'),
   FCM_STUDENT_KEY: Joi.string().required().description('FCM student server key'),
+  ENABLE_CLUSTER: Joi.boolean().default(true),
 }).unknown();
 
 const { value: envVars, error } = envVarsSchema.prefs({ errors: { label: 'key' } }).validate(process.env);
@@ -90,4 +91,5 @@ module.exports = {
     teacherKey: envVars.FCM_TEACHER_KEY,
     studentKey: envVars.FCM_STUDENT_KEY,
   },
+  enableCluster: envVars.ENABLE_CLUSTER,
 };
