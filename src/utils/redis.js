@@ -76,7 +76,7 @@ const delKey = (key) => {
  * @param {boolean} showDetails
  * @return {Promise<object>}
  */
-const getData = async (key, promise, showDetails = true) => {
+const getData = async (key, promise, showDetails = false) => {
   let data;
   let isCached = false;
 
