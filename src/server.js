@@ -31,7 +31,7 @@ const initializeServer = () => {
       setupSequelizeAssociations()
         .then(() => {
           initializeQueue();
-          if (cluster.isPrimary) {
+          if (config.enableCluster && cluster.isPrimary) {
             logger.info(`Primary ${process.pid} is running`);
 
             // Fork workers.
