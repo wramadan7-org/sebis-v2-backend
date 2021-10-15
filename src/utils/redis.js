@@ -72,18 +72,18 @@ const delKey = (key) => {
 /**
  *
  * @param {string} key
- * @param {Promise<*>} promise
+ * @param {function} fn
  * @param {boolean} showDetails
  * @return {Promise<object>}
  */
-const getData = async (key, promise, showDetails = false) => {
+const getData = async (key, fn, showDetails = false) => {
   let data;
   let isCached = false;
 
   const result = await getString(key);
 
   if (!result) {
-    const value = await promise;
+    const value = await fn();
 
     // save data to redis
     await setString(key, JSON.stringify(value));
