@@ -73,10 +73,11 @@ const delKey = (key) => {
  *
  * @param {string} key
  * @param {promise} promise
- * @return {Promise<any>}
+ * @return {Promise<object>}
  */
 const getData = async (key, promise) => {
   let data;
+  let isCached = false;
 
   const result = await getString(key);
 
@@ -84,10 +85,14 @@ const getData = async (key, promise) => {
     data = await promise;
     await setString(key, JSON.stringify(data));
   } else {
+    isCached = true;
     data = JSON.parse(result);
   }
 
-  return data;
+  return {
+    data,
+    isCached,
+  };
 };
 
 module.exports = {
