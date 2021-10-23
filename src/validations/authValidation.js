@@ -7,6 +7,8 @@ const register = {
     firstName: Joi.string().max(12).required(),
     lastName: Joi.string().max(32).required(),
     schoolId: Joi.string().min(8).max(64),
+    phoneNumber: Joi.string().max(14).required(),
+    gender: Joi.string().default('male').required(),
     roleId: Joi.string().min(8).max(64).required(),
   }),
 };

@@ -7,6 +7,8 @@ module.exports = {
       firstName: 'Ilham',
       lastName: 'Student',
       roleId: 'a0a76676-e446-49d2-ab7a-ae622783d7b8',
+      phoneNumber: '082257022981',
+      gender: 'male',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
