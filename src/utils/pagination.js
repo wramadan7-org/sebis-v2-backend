@@ -24,12 +24,14 @@ const getPagination = (page, perPage) => {
 const getPagingData = (data, page, perPage) => {
   const { count: totalItems, rows: items } = data;
   const totalPages = Math.ceil(totalItems / +perPage);
+  const itemsPerPageMax = 50;
+  const itemsPerPage = (perPage && perPage > 0) ? (+perPage <= itemsPerPageMax) ? +perPage : itemsPerPageMax : 10;
   const currentPage = (page && page > 0) ? +page : 1;
   const previousPage = currentPage > 1 ? currentPage - 1 : null;
   const nextPage = (page && currentPage < totalPages) ? currentPage + 1 : null;
 
   return {
-    perPage, currentPage, previousPage, nextPage, totalPages, totalItems, items,
+    itemsPerPage, currentPage, previousPage, nextPage, totalPages, totalItems, items,
   };
 };
 
