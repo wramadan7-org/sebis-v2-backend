@@ -1,6 +1,6 @@
 const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
 
-const Price = sequelize.define('user', {
+const Price = sequelize.define('price', {
   id: {
     type: DataTypes.STRING,
     primaryKey: true,
