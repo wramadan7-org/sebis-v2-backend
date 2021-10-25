@@ -4,6 +4,7 @@ const { UserDetail } = require('./UserDetail');
 const { School } = require('./School');
 const { Role } = require('./Role');
 const { Cart } = require('./Cart');
+const { Price } = require('./Price');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -13,7 +14,10 @@ const setupSequelizeAssociations = async () => {
   });
   User.hasOne(UserDetail);
 
+  UserDetail.hasOne(Price);
   UserDetail.belongsTo(User);
+
+  Price.belongsTo(UserDetail);
 
   School.hasMany(User);
 
