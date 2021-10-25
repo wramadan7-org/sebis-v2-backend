@@ -14,7 +14,12 @@ const generateRandomString = (length) => {
   return result;
 };
 
+/**
+ * Generate referral code
+ * @return {String}
+ */
 const generateReferralCode = () => generateRandomString(8);
+
 module.exports = {
   generateRandomString,
   generateReferralCode,
