@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
+const { generateReferralCode } = require('../utils/random');
 
 const User = sequelize.define('user', {
   id: {
@@ -33,6 +34,10 @@ const User = sequelize.define('user', {
   lastName: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  referralCode: {
+    type: DataTypes.STRING,
+    defaultValue: generateReferralCode(),
   },
 }, {
   paranoid: true,
