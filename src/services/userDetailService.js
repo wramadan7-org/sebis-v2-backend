@@ -32,7 +32,7 @@ const getUserDetailByUserId = async (userId, opts = {}) => {
       ...opts,
     },
   );
-  if (!userDetail) throw new ApiError(httpStatus.NOT_FOUND, 'User detail not found.');
+
   return userDetail;
 };
 
