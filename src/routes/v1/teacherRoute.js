@@ -7,7 +7,10 @@ const teacherController = require('../../controllers/teacherController');
 
 const router = express.Router();
 
-router.post('/detail', auth, teacher, validate(userDetailValidation.createUserDetail), teacherController.createdUserDetail);
-router.get('/detail', auth, teacher, teacherController.getUserDetail);
+router.post('/profile', auth, teacher, validate(userDetailValidation.createUserDetail), teacherController.createdUserDetail);
+router.get('/profile', auth, teacher, teacherController.getUserDetail);
+router.patch('/profile', auth, teacher, validate(userDetailValidation.updateUserDetail), teacherController.updateUserdetail);
+// /profile/teaching-experience [CRUD, no pagination]
+// /profile/education-background [CRUD, no pagination]
 
 module.exports = router;
