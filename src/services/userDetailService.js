@@ -7,7 +7,15 @@ const { UserDetail } = require('../models/UserDetail');
  * @param {object} userDetailBody
  * @returns {Promise<UserDetail>}
  */
-const createUserDetail = async (userDetailBody) => UserDetail.create(userDetailBody);
+const createUserDetail = async (userId, userDetailBody) => {
+  const data = {
+    userId,
+    ...userDetailBody,
+  };
+
+  const createdUserDetail = await UserDetail.create(data);
+  return createdUserDetail;
+};
 
 /**
  * Get user detail by userId
