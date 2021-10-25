@@ -5,6 +5,10 @@ module.exports = {
       primaryKey: true,
       allowNull: false,
     },
+    birthPlace: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
     birthDate: {
       type: Sequelize.DATE,
       allowNull: false,
@@ -44,6 +48,17 @@ module.exports = {
     aboutMe: {
       type: Sequelize.STRING,
       allowNull: false,
+    },
+    createdAt: {
+      type: Sequelize.DATE,
+      allowNull: false,
+    },
+    updatedAt: {
+      type: Sequelize.DATE,
+      allowNull: false,
+    },
+    deletedAt: {
+      type: Sequelize.DATE,
     },
   }),
 
