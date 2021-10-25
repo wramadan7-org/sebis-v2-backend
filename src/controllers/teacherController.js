@@ -30,7 +30,21 @@ const getUserDetail = catchAsync(async (req, res) => {
   res.sendWrapped(teacher, httpStatus.OK);
 });
 
+const updateUserdetail = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const userDetailBody = req.body;
+
+  const checkTeacher = await teacherDetailService.getUserDetailByUserId(teacherId);
+
+  if (!checkTeacher) throw new ApiError(httpStatus.NOT_FOUND, 'User detail no\'t found');
+
+  const updating = await teacherDetailService.updateUserDetailByUserId(teacherId, userDetailBody);
+
+  res.sendWrapped(updating, httpStatus.OK);
+});
+
 module.exports = {
   createdUserDetail,
   getUserDetail,
+  updateUserdetail,
 };
