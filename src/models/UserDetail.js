@@ -1,3 +1,4 @@
+const { teacherStatuses } = require('../config/users');
 const { sequelize, DataTypes } = require('../config/database');
 
 const UserDetail = sequelize.define('userDetail', {
@@ -44,6 +45,10 @@ const UserDetail = sequelize.define('userDetail', {
   aboutMe: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  teacherStatus: {
+    type: DataTypes.ENUM(Object.values(teacherStatuses)),
+    defaultValue: teacherStatuses.PENDING,
   },
 }, {
   paranoid: true,
