@@ -1,3 +1,5 @@
+const { genders } = require('../config/users');
+
 module.exports = {
   up: async (queryInterface, Sequelize) => Promise.all([
     queryInterface.addColumn('users', 'phoneNumber', {
@@ -7,7 +9,7 @@ module.exports = {
       after: 'email',
     }),
     queryInterface.addColumn('users', 'gender', {
-      type: Sequelize.STRING,
+      type: Sequelize.ENUM(Object.values(genders)),
       allowNull: false,
       after: 'password',
     }),

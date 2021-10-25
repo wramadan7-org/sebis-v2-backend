@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
 const { generateReferralCode } = require('../utils/random');
+const { genders } = require('../config/users');
 
 const User = sequelize.define('user', {
   id: {
@@ -24,7 +25,7 @@ const User = sequelize.define('user', {
     allowNull: false,
   },
   gender: {
-    type: DataTypes.STRING,
+    type: DataTypes.ENUM(Object.values(genders)),
     allowNull: false,
   },
   firstName: {
