@@ -23,7 +23,7 @@ module.exports = {
     },
     idCardNumber: {
       type: Sequelize.STRING,
-      unique: true,
+      // unique: true,
       allowNull: false,
     },
     mailingAddress: {

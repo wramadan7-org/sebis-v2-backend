@@ -26,7 +26,7 @@ const UserDetail = sequelize.define('userDetail', {
   },
   idCardNumber: {
     type: DataTypes.STRING,
-    unique: true,
+    // unique: true,
     allowNull: false,
   },
   mailingAddress: {
