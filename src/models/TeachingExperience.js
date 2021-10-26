@@ -35,10 +35,6 @@ const TeachingExperience = sequelize.define('teachingExperience', {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  cv: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
 }, {
   paranoid: true,
 });
