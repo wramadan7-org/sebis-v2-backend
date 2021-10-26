@@ -3,6 +3,66 @@ const catchAsync = require('../utils/catchAsync');
 const userService = require('../services/userService');
 const teacherDetailService = require('../services/userDetailService');
 const ApiError = require('../utils/ApiError');
+const { UserDetail } = require('../models/UserDetail');
+
+const basicInfo = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const teacherBody = req.body;
+
+  // get user body
+  // get userDetail from user.userDetail
+
+  // find teacher
+  // find teacherDetail
+
+  // assign value from user body to teacher
+  // assign value from userDetail body to teacherDetail
+
+  // save teacher & teacherDetail
+
+  const basicTeacher = await userService.getUserById(
+    teacherId,
+    {
+      include: [
+        'userDetail',
+      ],
+    },
+  );
+
+  const basicInfoData = {
+    firstName: teacherBody.firstName || basicTeacher.firstName,
+    lastName: teacherBody.lastName || basicTeacher.lastName,
+    phoneNumber: teacherBody.phoneNumber || basicTeacher.phoneNumber,
+    gender: teacherBody.gender || basicTeacher.gender,
+  };
+
+  let personalData;
+
+  if (basicTeacher.userDetail !== null) {
+    personalData = {
+      religion: teacherBody.religion || basicTeacher.userDetail.religion,
+      birthPlace: teacherBody.birthPlace || basicTeacher.userDetail.birthPlace,
+      birthDate: teacherBody.birthDate || basicTeacher.userDetail.birthDate,
+    };
+    Object.assign(basicTeacher.userDetail, personalData);
+  } else {
+    personalData = {
+      religion: teacherBody.religion,
+      birthPlace: teacherBody.birthPlace,
+      birthDate: teacherBody.birthDate,
+      userId: teacherId,
+    };
+
+    await UserDetail.create(personalData);
+  }
+
+  Object.assign(basicTeacher, basicInfoData);
+
+  await basicTeacher.save();
+  await basicTeacher.userDetail.save();
+
+  res.sendWrapped(basicTeacher, httpStatus.OK);
+});
 
 const createdUserDetail = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
@@ -58,4 +118,5 @@ module.exports = {
   getUserDetail,
   updateUserdetail,
   deleteUserDetail,
+  basicInfo,
 };
