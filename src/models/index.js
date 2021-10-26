@@ -5,6 +5,7 @@ const { School } = require('./School');
 const { Role } = require('./Role');
 const { Cart } = require('./Cart');
 const { Price } = require('./Price');
+const { TeachingExperience } = require('./TeachingExperience');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -25,6 +26,14 @@ const setupSequelizeAssociations = async () => {
 
   Cart.belongsTo(User, {
     foreignKey: 'studentId',
+  });
+
+  User.belongsTo(TeachingExperience, {
+    foreignKey: 'teacherId',
+  });
+
+  TeachingExperience.hasMany(User, {
+    foreignKey: 'teacherId',
   });
 
   // finally sync sequelize
