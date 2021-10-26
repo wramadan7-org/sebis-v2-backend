@@ -10,6 +10,7 @@ const router = express.Router();
 router.post('/profile', auth, teacher, validate(userDetailValidation.createUserDetail), teacherController.createdUserDetail);
 router.get('/profile', auth, teacher, teacherController.getUserDetail);
 router.patch('/profile', auth, teacher, validate(userDetailValidation.updateUserDetail), teacherController.updateUserdetail);
+router.delete('/profile', auth, teacher, teacherController.deleteUserDetail);
 // /profile/teaching-experience [CRUD, no pagination]
 // /profile/education-background [CRUD, no pagination]
 
