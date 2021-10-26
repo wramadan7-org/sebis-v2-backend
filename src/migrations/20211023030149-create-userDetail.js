@@ -7,48 +7,48 @@ module.exports = {
     },
     birthPlace: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     birthDate: {
       type: Sequelize.DATE,
-      allowNull: false,
+      allowNull: true,
     },
     religion: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     idCardType: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     idCardNumber: {
       type: Sequelize.STRING,
       // unique: true,
-      allowNull: false,
+      allowNull: true,
     },
     mailingAddress: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     city: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     region: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     postalCode: {
       type: Sequelize.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     country: {
       type: Sequelize.STRING,
-      defaultValue: 'indonesia',
+      defaultValue: 'INDONESIA',
     },
     aboutMe: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     createdAt: {
       type: Sequelize.DATE,
