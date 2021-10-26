@@ -14,6 +14,7 @@ router.patch('/profile', auth, teacher, validate(userDetailValidation.updateUser
 router.delete('/profile', auth, teacher, teacherController.deleteUserDetail);
 
 router.patch('/profile/basic-info', auth, teacher, validate(userProfileValidation.basicInfo), teacherController.basicInfo);
+router.patch('/profile/personal-data', auth, teacher, validate(userProfileValidation.personalData), teacherController.personalData);
 // /profile/teaching-experience [CRUD, no pagination]
 // /profile/education-background [CRUD, no pagination]
 

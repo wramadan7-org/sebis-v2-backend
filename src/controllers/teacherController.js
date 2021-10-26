@@ -64,6 +64,21 @@ const basicInfo = catchAsync(async (req, res) => {
   res.sendWrapped(basicTeacher, httpStatus.OK);
 });
 
+const personalData = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const personalDataBody = req.body;
+
+  const teacher = await teacherDetailService.getUserDetailByUserId(teacherId);
+  const checkTeacherIdCardNumber = await teacherDetailService.getAnotherUserDetailByCardNumber(personalDataBody.idCardNumber, teacherId);
+
+  if (!teacher) throw new ApiError(httpStatus.NOT_FOUND, 'You don\'t haave user detail');
+
+  Object.assign(teacher, personalDataBody);
+  await teacher.save();
+
+  res.sendWrapped(teacher, httpStatus.OK);
+});
+
 const createdUserDetail = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const teacherBody = req.body;
@@ -119,4 +134,5 @@ module.exports = {
   updateUserdetail,
   deleteUserDetail,
   basicInfo,
+  personalData,
 };
