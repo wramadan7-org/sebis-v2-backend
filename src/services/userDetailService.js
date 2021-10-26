@@ -1,4 +1,5 @@
 const httpStatus = require('http-status');
+const { Op } = require('sequelize');
 const ApiError = require('../utils/ApiError');
 const { UserDetail } = require('../models/UserDetail');
 
@@ -37,6 +38,32 @@ const getUserDetailByUserId = async (userId, opts = {}) => {
 };
 
 /**
+ * Get user detail by userId
+ * @param {string} cardNumber
+ * @param {object} opts
+ * @returns {Promise<UserDetail | ApiError>}
+ */
+const getAnotherUserDetailByCardNumber = async (cardNumber, userId, opts = {}) => {
+  const userDetail = await UserDetail.findOne(
+    {
+      where: {
+        idCardNumber: {
+          [Op.eq]: cardNumber,
+        },
+        userId: {
+          [Op.ne]: userId,
+        },
+      },
+      ...opts,
+    },
+  );
+
+  if (userDetail) throw new ApiError(httpStatus.CONFLICT, 'Card number already exists');
+
+  return userDetail;
+};
+
+/**
  * Update user detail by userId
  * @param {string} userId
  * @param {object} userDetailBody
@@ -58,7 +85,8 @@ const updateUserDetailByUserId = async (userId, userDetailBody) => {
  */
 const deleteUserDetailById = async (userId) => {
   const userDetail = await getUserDetailByUserId(userId);
-
+  console.log(userDetail);
+  if (!userDetail) throw new ApiError(httpStatus.NOT_FOUND, 'User detail not found');
   await userDetail.destroy();
 
   return userDetail;
@@ -67,6 +95,7 @@ const deleteUserDetailById = async (userId) => {
 module.exports = {
   createUserDetail,
   getUserDetailByUserId,
+  getAnotherUserDetailByCardNumber,
   updateUserDetailByUserId,
   deleteUserDetailById,
 };
