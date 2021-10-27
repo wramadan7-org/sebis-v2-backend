@@ -29,19 +29,19 @@ const setupSequelizeAssociations = async () => {
     foreignKey: 'studentId',
   });
 
-  User.belongsTo(TeachingExperience, {
+  User.hasMany(TeachingExperience, {
     foreignKey: 'teacherId',
   });
 
-  TeachingExperience.hasMany(User, {
+  TeachingExperience.belongsTo(User, {
     foreignKey: 'teacherId',
   });
 
-  User.belongsTo(EducationBackground, {
+  User.hasMany(EducationBackground, {
     foreignKey: 'teacherId',
   });
 
-  EducationBackground.hasMany(User, {
+  EducationBackground.belongsTo(User, {
     foreignKey: 'teacherId',
   });
 

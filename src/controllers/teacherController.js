@@ -2,10 +2,39 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const userService = require('../services/userService');
 const teacherDetailService = require('../services/userDetailService');
+const educationBackgroundService = require('../services/educationBackgroundService');
 const ApiError = require('../utils/ApiError');
 const { UserDetail } = require('../models/UserDetail');
 
-const basicInfo = catchAsync(async (req, res) => {
+const getBasicInfo = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+
+  const basicTeacher = await userService.getUserById(
+    teacherId,
+    {
+      include: [
+        {
+          model: UserDetail,
+          attributes: [
+            'religion',
+            'birthPlace',
+            'birthDate',
+          ],
+        },
+      ],
+      attributes: [
+        'firstName',
+        'lastName',
+        'gender',
+        'phoneNumber',
+      ],
+    },
+  );
+
+  res.sendWrapped(basicTeacher, httpStatus.OK);
+});
+
+const createBasicInfo = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const teacherBody = req.body;
 
@@ -64,7 +93,7 @@ const basicInfo = catchAsync(async (req, res) => {
   res.sendWrapped(basicTeacher, httpStatus.OK);
 });
 
-const personalData = catchAsync(async (req, res) => {
+const createPersonalData = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const personalDataBody = req.body;
 
@@ -77,6 +106,14 @@ const personalData = catchAsync(async (req, res) => {
   await teacher.save();
 
   res.sendWrapped(teacher, httpStatus.OK);
+});
+
+const educationBackground = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const educationBody = req.body;
+
+  const educationBackround = await educationBackgroundService.createEducationBackground(teacherId, educationBody);
+  res.sendWrapped(educationBackground, httpStatus.CREATED);
 });
 
 const createdUserDetail = catchAsync(async (req, res) => {
@@ -133,6 +170,8 @@ module.exports = {
   getUserDetail,
   updateUserdetail,
   deleteUserDetail,
-  basicInfo,
-  personalData,
+  getBasicInfo,
+  createBasicInfo,
+  createPersonalData,
+  educationBackground,
 };

@@ -13,8 +13,10 @@ router.get('/profile', auth, teacher, teacherController.getUserDetail);
 router.patch('/profile', auth, teacher, validate(userDetailValidation.updateUserDetail), teacherController.updateUserdetail);
 router.delete('/profile', auth, teacher, teacherController.deleteUserDetail);
 
-router.patch('/profile/basic-info', auth, teacher, validate(userProfileValidation.basicInfo), teacherController.basicInfo);
-router.patch('/profile/personal-data', auth, teacher, validate(userProfileValidation.personalData), teacherController.personalData);
+router.get('/profile/basic-info', auth, teacher, teacherController.getBasicInfo);
+router.patch('/profile/basic-info', auth, teacher, validate(userProfileValidation.basicInfo), teacherController.createBasicInfo);
+router.patch('/profile/personal-data', auth, teacher, validate(userProfileValidation.personalData), teacherController.createPersonalData);
+router.post('/profile/education-background', auth, teacher, validate(userProfileValidation.personalData), teacherController.educationBackground);
 // /profile/teaching-experience [CRUD, no pagination]
 // /profile/education-background [CRUD, no pagination]
 
