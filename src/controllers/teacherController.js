@@ -108,12 +108,19 @@ const createPersonalData = catchAsync(async (req, res) => {
   res.sendWrapped(teacher, httpStatus.OK);
 });
 
-const educationBackground = catchAsync(async (req, res) => {
+const createEducationBackground = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const educationBody = req.body;
 
   const eduBackground = await educationBackgroundService.createEducationBackground(teacherId, educationBody);
   res.sendWrapped(eduBackground, httpStatus.CREATED);
+});
+
+const getEducationBackground = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+
+  const eduBackground = await educationBackgroundService.getEducationBackground(teacherId);
+  res.sendWrapped(eduBackground, httpStatus.OK);
 });
 
 const createdUserDetail = catchAsync(async (req, res) => {
@@ -173,5 +180,6 @@ module.exports = {
   getBasicInfo,
   createBasicInfo,
   createPersonalData,
-  educationBackground,
+  createEducationBackground,
+  getEducationBackground,
 };

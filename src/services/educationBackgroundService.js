@@ -12,6 +12,21 @@ const createEducationBackground = async (teacherId, educationBody) => {
   return created;
 };
 
+const getEducationBackground = async (teacherId) => {
+  const eduBackground = await EducationBackground.findAll(
+    {
+      where: {
+        teacherId,
+      },
+    },
+  );
+
+  if (!eduBackground && eduBackground.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'You don\'t have education background');
+
+  return eduBackground;
+};
+
 module.exports = {
   createEducationBackground,
+  getEducationBackground,
 };
