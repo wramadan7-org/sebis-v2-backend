@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const userService = require('../services/userService');
 const teacherDetailService = require('../services/userDetailService');
+const teachingExperienceService = require('../services/teachingExperienceService');
 const educationBackgroundService = require('../services/educationBackgroundService');
 const ApiError = require('../utils/ApiError');
 const { UserDetail } = require('../models/UserDetail');
@@ -108,6 +109,25 @@ const createPersonalData = catchAsync(async (req, res) => {
   res.sendWrapped(teacher, httpStatus.OK);
 });
 
+const createTeachingExperience = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const teachingBody = req.body;
+
+  const dataTeaching = {
+    institute: teachingBody.institute,
+    city: teachingBody.city,
+    teachingStatus: teachingBody.teachingStatus,
+    from: teachingBody.from,
+    to: teachingBody.to,
+    grade: 'V',
+    subjects: 'matematika',
+  };
+
+  const teachingExperience = await teachingExperienceService.createTeachingExperience(teacherId, dataTeaching);
+
+  res.sendWrapped(teachingExperience, httpStatus.CREATED);
+});
+
 const createEducationBackground = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const educationBody = req.body;
@@ -180,6 +200,7 @@ module.exports = {
   getBasicInfo,
   createBasicInfo,
   createPersonalData,
+  createTeachingExperience,
   createEducationBackground,
   getEducationBackground,
 };
