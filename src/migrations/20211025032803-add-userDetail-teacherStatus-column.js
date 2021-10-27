@@ -7,7 +7,8 @@ module.exports = {
     {
       type: Sequelize.ENUM(Object.values(teacherStatuses)),
       defaultValue: teacherStatuses.PENDING,
-    }),
+    },
+  ),
 
   down: async (queryInterface, Sequelize) => queryInterface.removeColumn('userDetails', 'teacherStatus'),
 };
