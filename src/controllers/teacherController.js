@@ -112,8 +112,8 @@ const educationBackground = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const educationBody = req.body;
 
-  const educationBackround = await educationBackgroundService.createEducationBackground(teacherId, educationBody);
-  res.sendWrapped(educationBackground, httpStatus.CREATED);
+  const eduBackground = await educationBackgroundService.createEducationBackground(teacherId, educationBody);
+  res.sendWrapped(eduBackground, httpStatus.CREATED);
 });
 
 const createdUserDetail = catchAsync(async (req, res) => {
