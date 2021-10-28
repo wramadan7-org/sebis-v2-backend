@@ -6,15 +6,15 @@ module.exports = {
         primaryKey: true,
         allowNull: false,
       },
-      major: {
+      educationMajor: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      level: {
+      educationLevel: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      university: {
+      universityName: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -22,19 +22,19 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      ipk: {
+      educationGpa: {
         type: Sequelize.FLOAT,
         allowNull: false,
       },
-      from: {
+      educationFrom: {
         type: Sequelize.DATEONLY,
         allowNull: false,
       },
-      to: {
+      educationTo: {
         type: Sequelize.DATEONLY,
         allowNull: false,
       },
-      transcripts: {
+      educationTranscript: {
         type: Sequelize.STRING,
         allowNull: true,
       },

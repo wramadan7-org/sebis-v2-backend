@@ -1,30 +1,18 @@
 const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
 
-const TeachingExperience = sequelize.define('teachingExperience', {
+const TeachingExperienceDetail = sequelize.define('teachingExperienceDetail', {
   id: {
     type: DataTypes.STRING,
     primaryKey: true,
     defaultValue: SequelizeInstance.UUIDV4,
     allowNull: false,
   },
-  universityName: {
+  gradeCode: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  universityCity: {
+  subject: {
     type: DataTypes.STRING,
-    allowNull: false,
-  },
-  teachingStatus: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  teachingFrom: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-  },
-  teachingTo: {
-    type: DataTypes.DATEONLY,
     allowNull: false,
   },
 }, {
@@ -32,5 +20,5 @@ const TeachingExperience = sequelize.define('teachingExperience', {
 });
 
 module.exports = {
-  TeachingExperience,
+  TeachingExperienceDetail,
 };

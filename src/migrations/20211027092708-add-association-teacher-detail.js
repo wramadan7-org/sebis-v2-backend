@@ -1,16 +1,17 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn(
-      'educationBackgrounds',
-      'teacherId',
+      'teachingExperienceDetails',
+      'teachingExperienceId',
       {
         type: Sequelize.STRING,
         references: {
-          model: 'users',
+          model: 'teachingExperiences',
           key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
+        allowNull: false,
         after: 'id',
       },
     );
@@ -18,8 +19,8 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     await queryInterface.removeColumn(
-      'educationBackgrounds',
-      'teacherId',
+      'teachingExperienceDetails',
+      'teachingExperienceId',
     );
   },
 };
