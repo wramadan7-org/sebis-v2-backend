@@ -3,15 +3,7 @@ const ApiError = require('../utils/ApiError');
 const { TeachingExperience } = require('../models/TeachingExperience');
 const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
 
-const createTeachingExperienceDetail = async (teachingExperienceId, teachingBody) => {
-  const dataTeachingDetail = {
-    teachingExperienceId,
-    ...teachingBody,
-  };
-
-  const createdTeachingExperienceDetail = await TeachingExperienceDetail.create(dataTeachingDetail);
-  return createdTeachingExperienceDetail;
-};
+const createTeachingExperienceDetails = async (teachingExperienceDetails) => TeachingExperienceDetail.bulkCreate(teachingExperienceDetails);
 
 const createTeachingExperience = async (teacherId, teachingBody, teachingDetailBody) => {
   const dataTeaching = {
@@ -20,11 +12,16 @@ const createTeachingExperience = async (teacherId, teachingBody, teachingDetailB
   };
 
   const teachingExperience = await TeachingExperience.create(dataTeaching);
-  const teachingExperienceDetail = await createTeachingExperienceDetail(teachingExperience.id, teachingDetailBody);
-  return { teachingExperience, teachingExperienceDetail };
+
+  teachingDetailBody.map((teachingExperienceDetail) => {
+    teachingExperienceDetail.teachingExperienceId = teachingExperience.id;
+    return teachingExperienceDetail;
+  });
+  const teachingExperienceDetails = await createTeachingExperienceDetails(teachingDetailBody);
+  return { teachingExperience, teachingExperienceDetails };
 };
 
 module.exports = {
   createTeachingExperience,
-  createTeachingExperienceDetail,
+  createTeachingExperienceDetails,
 };

@@ -114,7 +114,9 @@ const createTeachingExperience = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const teachingBody = req.body;
 
-  const dataTeaching = {
+  const { teachingExperienceDetails } = teachingBody;
+
+  const teachingExperienceData = {
     universityName: teachingBody.universityName,
     universityCity: teachingBody.universityCity,
     teachingStatus: teachingBody.teachingStatus,
@@ -122,12 +124,7 @@ const createTeachingExperience = catchAsync(async (req, res) => {
     teachingTo: teachingBody.teachingTo,
   };
 
-  const dataTeachingDetail = {
-    gradeCode: teachingBody.gradeCode,
-    subject: teachingBody.subject,
-  };
-
-  const teachingExperience = await teachingExperienceService.createTeachingExperience(teacherId, dataTeaching, dataTeachingDetail);
+  const teachingExperience = await teachingExperienceService.createTeachingExperience(teacherId, teachingExperienceData, teachingExperienceDetails);
 
   res.sendWrapped(teachingExperience, httpStatus.CREATED);
 });
