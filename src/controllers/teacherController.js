@@ -123,16 +123,13 @@ const createTeachingExperience = catchAsync(async (req, res) => {
   };
 
   const dataTeachingDetail = {
-    grade: teachingBody.grade,
-    subjects: teachingBody.subjects,
+    gradeCode: teachingBody.gradeCode,
+    subject: teachingBody.subject,
   };
 
-  const teachingExperience = await teachingExperienceService.createTeachingExperience(teacherId, dataTeaching);
-  const teachingExperienceDetail = await teachingExperienceService.createTeachingExperienceDetail(teacherId, teachingExperience.id, dataTeachingDetail);
+  const teachingExperience = await teachingExperienceService.createTeachingExperience(teacherId, dataTeaching, dataTeachingDetail);
 
-  const assign = Object.assign(dataTeaching, dataTeachingDetail);
-
-  res.sendWrapped(assign, httpStatus.CREATED);
+  res.sendWrapped(teachingExperience, httpStatus.CREATED);
 });
 
 const createEducationBackground = catchAsync(async (req, res) => {
