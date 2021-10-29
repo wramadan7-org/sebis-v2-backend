@@ -3,6 +3,19 @@ const ApiError = require('../utils/ApiError');
 const { TeachingExperience } = require('../models/TeachingExperience');
 const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
 
+const getTeachingExperienceById = async (teacherId, teachingExperienceId) => {
+  const teachingExperience = await TeachingExperience.findOne(
+    {
+      where: {
+        id: teachingExperienceId,
+        teacherId,
+      },
+    },
+  );
+
+  return teachingExperience;
+};
+
 const createTeachingExperienceDetails = async (teachingExperienceDetails) => TeachingExperienceDetail.bulkCreate(teachingExperienceDetails);
 
 const createTeachingExperience = async (teacherId, teachingBody, teachingDetailBody) => {
@@ -21,7 +34,18 @@ const createTeachingExperience = async (teacherId, teachingBody, teachingDetailB
   return { teachingExperience, teachingExperienceDetails };
 };
 
+const deletedTeachingExperience = async (teacherId, teachingExperienceId) => {
+  const checkTeachingExperience = await getTeachingExperienceById(teacherId, teachingExperienceId);
+
+  if (!checkTeachingExperience) throw new ApiError(httpStatus.NOT_FOUND, 'Teaching experience not found.');
+
+  const teachingExperience = await checkTeachingExperience.destroy();
+  return teachingExperience;
+};
+
 module.exports = {
   createTeachingExperience,
   createTeachingExperienceDetails,
+  getTeachingExperienceById,
+  deletedTeachingExperience,
 };

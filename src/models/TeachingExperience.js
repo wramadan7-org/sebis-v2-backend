@@ -29,6 +29,23 @@ const TeachingExperience = sequelize.define('teachingExperience', {
   },
 }, {
   paranoid: true,
+  hooks: {
+    afterDestroy: async (instance) => {
+      // referensi hook delete
+      // instance = model dia sendiri
+      // instance.getTeachingExperienceDetails().then((teachingExperienceDetails) => {
+      //   teachingExperienceDetails.forEach((data) => {
+      //     data.destroy();
+      //   });
+      // // });
+
+      sequelize.models.teachingExperienceDetail.destroy({
+        where: {
+          teachingExperienceId: instance.id,
+        },
+      });
+    },
+  },
 });
 
 module.exports = {
