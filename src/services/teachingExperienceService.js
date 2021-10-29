@@ -26,10 +26,17 @@ const createTeachingExperience = async (teacherId, teachingBody, teachingDetailB
 
   const teachingExperience = await TeachingExperience.create(dataTeaching);
 
-  teachingDetailBody.map((teachingExperienceDetail) => {
+  teachingDetailBody.forEach((teachingExperienceDetail) => {
     teachingExperienceDetail.teachingExperienceId = teachingExperience.id;
-    return teachingExperienceDetail;
   });
+  teachingDetailBody = teachingDetailBody.filter((teachingExperienceDetail) => teachingExperienceDetail.gradeCode > 0 && teachingExperienceDetail.gradeCode <= 12);
+
+  // rollback / undo create data
+  if (teachingDetailBody.length <= 0) {
+    await teachingExperience.destroy();
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid input gradeCode');
+  }
+
   const teachingExperienceDetails = await createTeachingExperienceDetails(teachingDetailBody);
   return { teachingExperience, teachingExperienceDetails };
 };
