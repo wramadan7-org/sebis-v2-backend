@@ -6,6 +6,7 @@ const teachingExperienceService = require('../services/teachingExperienceService
 const educationBackgroundService = require('../services/educationBackgroundService');
 const ApiError = require('../utils/ApiError');
 const { UserDetail } = require('../models/UserDetail');
+const uploadEducationBackground = require('../utils/multer');
 
 const getBasicInfo = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
@@ -136,10 +137,22 @@ const createTeachingExperience = catchAsync(async (req, res) => {
 
 const createEducationBackground = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
-  const educationBody = req.body;
 
-  const eduBackground = await educationBackgroundService.createEducationBackground(teacherId, educationBody);
-  res.sendWrapped(eduBackground, httpStatus.CREATED);
+  uploadEducationBackground.options('./src/documents/images', teacherId).single('educationFile')(req, res, async (err) => {
+    if (err) {
+      res.sendWrapped(err);
+    } else {
+      const educationBody = await req.body;
+
+      const data = {
+        ...educationBody,
+        educationFile: req.file.filename,
+      };
+
+      const eduBackground = await educationBackgroundService.createEducationBackground(teacherId, data);
+      res.sendWrapped(eduBackground, httpStatus.CREATED);
+    }
+  });
 });
 
 const getEducationBackground = catchAsync(async (req, res) => {

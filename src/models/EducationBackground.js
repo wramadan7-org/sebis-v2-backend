@@ -7,15 +7,15 @@ const EducationBackground = sequelize.define('educationBackground', {
     defaultValue: SequelizeInstance.UUIDV4,
     allowNull: false,
   },
-  major: {
+  educationMajor: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  level: {
+  educationLevel: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  university: {
+  universityName: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -23,19 +23,23 @@ const EducationBackground = sequelize.define('educationBackground', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  ipk: {
+  educationGpa: {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
-  from: {
+  educationFrom: {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  to: {
+  educationTo: {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  transcripts: {
+  educationTranscript: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  educationFile: {
     type: DataTypes.STRING,
     allowNull: true,
   },

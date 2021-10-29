@@ -7,7 +7,7 @@ const { tokenTypes } = require('../config/tokens');
 
 const register = catchAsync(async (req, res) => {
   const userBody = req.body;
-  console.log(userBody);
+
   const user = await userService.createUser(userBody);
   res.sendWrapped(user, httpStatus.CREATED);
 });
