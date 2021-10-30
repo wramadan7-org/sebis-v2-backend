@@ -16,6 +16,19 @@ const getTeachingExperienceById = async (teacherId, teachingExperienceId) => {
   return teachingExperience;
 };
 
+const getTeachingExperienceDetailById = async (teachingExperienceId, teachingExperienceDetailId) => {
+  const teachingExperienceDetail = await TeachingExperienceDetail.findOne(
+    {
+      where: {
+        id: teachingExperienceDetailId,
+        teachingExperienceId,
+      },
+    },
+  );
+
+  return teachingExperienceDetail;
+};
+
 const createTeachingExperienceDetails = async (teachingExperienceDetails) => TeachingExperienceDetail.bulkCreate(teachingExperienceDetails);
 
 const createTeachingExperience = async (teacherId, teachingBody, teachingDetailBody) => {
@@ -50,9 +63,31 @@ const deletedTeachingExperience = async (teacherId, teachingExperienceId) => {
   return teachingExperience;
 };
 
+const deletedTeachingExperienceDetail = async (teacherId, teachingExperienceId, teachingExperienceDetailId) => {
+  const teachingExperience = await getTeachingExperienceById(
+    teacherId,
+    teachingExperienceId,
+  );
+
+  if (!teachingExperience) throw new ApiError(httpStatus.NOT_FOUND, 'Teaching experience not found.');
+
+  const teachingExperienceDetail = await getTeachingExperienceDetailById(
+    teachingExperience.id,
+    teachingExperienceDetailId,
+  );
+
+  if (!teachingExperienceDetail) throw new ApiError(httpStatus.NOT_FOUND, 'Detail teaching experience not found.');
+
+  teachingExperienceDetail.destroy();
+
+  return { teachingExperience, teachingExperienceDetail };
+};
+
 module.exports = {
   createTeachingExperience,
   createTeachingExperienceDetails,
   getTeachingExperienceById,
+  getTeachingExperienceDetailById,
   deletedTeachingExperience,
+  deletedTeachingExperienceDetail,
 };

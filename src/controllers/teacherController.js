@@ -6,9 +6,12 @@ const teachingExperienceService = require('../services/teachingExperienceService
 const educationBackgroundService = require('../services/educationBackgroundService');
 const ApiError = require('../utils/ApiError');
 const { UserDetail } = require('../models/UserDetail');
+const { TeachingExperience } = require('../models/TeachingExperience');
+const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
+const { EducationBackground } = require('../models/EducationBackground');
 const uploadEducationBackground = require('../utils/multer');
 
-const getBasicInfo = catchAsync(async (req, res) => {
+const profileInfo = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
 
   const basicTeacher = await userService.getUserById(
@@ -22,6 +25,17 @@ const getBasicInfo = catchAsync(async (req, res) => {
             'birthPlace',
             'birthDate',
           ],
+        },
+        {
+          model: TeachingExperience,
+          include: [
+            {
+              model: TeachingExperienceDetail,
+            },
+          ],
+        },
+        {
+          model: EducationBackground,
         },
       ],
       attributes: [
@@ -137,6 +151,19 @@ const deleteTeachingExperience = catchAsync(async (req, res) => {
   res.sendWrapped(teachingExperience, httpStatus.OK);
 });
 
+const deleteTeachingExperienceDetail = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const { teachingExperienceId, teachingExperienceDetailId } = req.params;
+
+  const teachingExperienceDetail = await teachingExperienceService.deletedTeachingExperienceDetail(
+    teacherId,
+    teachingExperienceId,
+    teachingExperienceDetailId,
+  );
+
+  res.sendWrapped(teachingExperienceDetail, httpStatus.OK);
+});
+
 const createEducationBackground = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
 
@@ -218,11 +245,12 @@ module.exports = {
   getUserDetail,
   updateUserdetail,
   deleteUserDetail,
-  getBasicInfo,
+  profileInfo,
   createBasicInfo,
   createPersonalData,
   createTeachingExperience,
   deleteTeachingExperience,
+  deleteTeachingExperienceDetail,
   createEducationBackground,
   getEducationBackground,
 };
