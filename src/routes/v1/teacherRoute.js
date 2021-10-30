@@ -20,6 +20,7 @@ router.post('/profile/teaching-experience', auth, teacher, teacherController.cre
 router.delete('/profile/teaching-experience/:teachingExperienceId', auth, teacher, teacherController.deleteTeachingExperience);
 router.delete('/profile/teaching-experience/:teachingExperienceId/:teachingExperienceDetailId', auth, teacher, teacherController.deleteTeachingExperienceDetail);
 router.post('/profile/education-background', auth, teacher, teacherController.createEducationBackground);
+router.delete('/profile/education-background/:educationBackgroundId', auth, teacher, teacherController.deleteEducationBackground);
 // /profile/teaching-experience [CRUD, no pagination]
 // /profile/education-background [CRUD, no pagination]
 

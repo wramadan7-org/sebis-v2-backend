@@ -12,6 +12,18 @@ const createEducationBackground = async (teacherId, educationBody) => {
   return created;
 };
 
+const getEducationBackgroundById = async (teacherId, educationBackgroundId) => {
+  const educationBackground = await EducationBackground.findOne(
+    {
+      where: {
+        id: educationBackgroundId,
+        teacherId,
+      },
+    },
+  );
+  return educationBackground;
+};
+
 const getEducationBackground = async (teacherId) => {
   const eduBackground = await EducationBackground.findAll(
     {
@@ -26,7 +38,18 @@ const getEducationBackground = async (teacherId) => {
   return eduBackground;
 };
 
+const deletedEducationBackground = async (teacherId, educationBackgroundId) => {
+  const educationBackground = await getEducationBackgroundById(teacherId, educationBackgroundId);
+
+  if (!educationBackground) throw new ApiError(httpStatus.NOT_FOUND, 'Education background not found.');
+
+  educationBackground.destroy();
+  return educationBackground;
+};
+
 module.exports = {
   createEducationBackground,
+  getEducationBackgroundById,
   getEducationBackground,
+  deletedEducationBackground,
 };

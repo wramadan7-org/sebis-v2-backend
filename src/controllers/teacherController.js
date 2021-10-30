@@ -191,6 +191,14 @@ const getEducationBackground = catchAsync(async (req, res) => {
   res.sendWrapped(eduBackground, httpStatus.OK);
 });
 
+const deleteEducationBackground = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const { educationBackgroundId } = req.params;
+
+  const educationBackground = await educationBackgroundService.deletedEducationBackground(teacherId, educationBackgroundId);
+  res.sendWrapped(educationBackground, httpStatus.OK);
+});
+
 const createdUserDetail = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const teacherBody = req.body;
@@ -253,4 +261,5 @@ module.exports = {
   deleteTeachingExperienceDetail,
   createEducationBackground,
   getEducationBackground,
+  deleteEducationBackground,
 };
