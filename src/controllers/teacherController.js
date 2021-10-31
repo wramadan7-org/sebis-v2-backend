@@ -228,11 +228,6 @@ const createdUserDetail = catchAsync(async (req, res) => {
   res.sendWrapped(teacher, httpStatus.OK);
 });
 
-const created = catchAsync(async (req, res) => {
-  const teacherId = req.user.id;
-  await teacherDetailService.getUserDetailByUserId(teacherId);
-});
-
 const getUserDetail = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const teacher = await userService.getUserById(
