@@ -40,6 +40,10 @@ const User = sequelize.define('user', {
     type: DataTypes.STRING,
     defaultValue: generateReferralCode(),
   },
+  profile: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   paranoid: true,
   hooks: {

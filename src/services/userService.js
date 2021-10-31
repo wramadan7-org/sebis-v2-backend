@@ -66,6 +66,18 @@ const updateUserById = async (userId, userBody) => {
   return user;
 };
 
+const updateProfile = async (userId, file) => {
+  const user = await getUserById(userId);
+
+  const data = {
+    profile: file,
+  };
+
+  Object.assign(user, data);
+  await user.save();
+  return user;
+};
+
 /**
  * Delete user by id
  * @param {string} userId
@@ -84,5 +96,6 @@ module.exports = {
   getUserByEmail,
   getUserById,
   updateUserById,
+  updateProfile,
   deleteUserById,
 };

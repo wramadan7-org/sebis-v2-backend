@@ -199,18 +199,17 @@ const deleteEducationBackground = catchAsync(async (req, res) => {
   res.sendWrapped(educationBackground, httpStatus.OK);
 });
 
-const createdFiles = catchAsync(async (req, res) => {
+const createdFilesProfile = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
-  let ktp;
-  let profile;
-  let npwp;
 
-  multering.options('./src/documents/images/ktp', teacherId).single('fileKTP')(req, res, async (err) => {
+  multering.options('./src/documents/images/profiles', teacherId).single('fileProfile')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
+    } else {
+      const updateProfile = await userService.updateProfile(teacherId, req.file.filename);
+
+      res.sendWrapped(updateProfile, httpStatus.OK);
     }
-    ktp = req.file;
-    res.sendWrapped(ktp, httpStatus.OK);
   });
 });
 
@@ -277,5 +276,5 @@ module.exports = {
   createEducationBackground,
   getEducationBackground,
   deleteEducationBackground,
-  createdFiles,
+  createdFilesProfile,
 };
