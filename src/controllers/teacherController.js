@@ -9,7 +9,7 @@ const { UserDetail } = require('../models/UserDetail');
 const { TeachingExperience } = require('../models/TeachingExperience');
 const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
 const { EducationBackground } = require('../models/EducationBackground');
-const uploadEducationBackground = require('../utils/multer');
+const multering = require('../utils/multer');
 
 const profileInfo = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
@@ -167,7 +167,7 @@ const deleteTeachingExperienceDetail = catchAsync(async (req, res) => {
 const createEducationBackground = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
 
-  uploadEducationBackground.options('./src/documents/images', teacherId).single('educationFile')(req, res, async (err) => {
+  multering.options('./src/documents/images/educations', teacherId).single('educationFile')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
     } else {
@@ -199,6 +199,21 @@ const deleteEducationBackground = catchAsync(async (req, res) => {
   res.sendWrapped(educationBackground, httpStatus.OK);
 });
 
+const createdFiles = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  let ktp;
+  let profile;
+  let npwp;
+
+  multering.options('./src/documents/images/ktp', teacherId).single('fileKTP')(req, res, async (err) => {
+    if (err) {
+      res.sendWrapped(err);
+    }
+    ktp = req.file;
+    res.sendWrapped(ktp, httpStatus.OK);
+  });
+});
+
 const createdUserDetail = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const teacherBody = req.body;
@@ -211,6 +226,11 @@ const createdUserDetail = catchAsync(async (req, res) => {
   const teacher = await teacherDetailService.createUserDetail(teacherId, teacherBody);
 
   res.sendWrapped(teacher, httpStatus.OK);
+});
+
+const created = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  await teacherDetailService.getUserDetailByUserId(teacherId);
 });
 
 const getUserDetail = catchAsync(async (req, res) => {
@@ -262,4 +282,5 @@ module.exports = {
   createEducationBackground,
   getEducationBackground,
   deleteEducationBackground,
+  createdFiles,
 };
