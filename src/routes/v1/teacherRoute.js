@@ -24,7 +24,9 @@ router.delete('/profile/teaching-experience/:teachingExperienceId/:teachingExper
 router.post('/profile/education-background', auth, teacher, teacherController.createEducationBackground);
 router.delete('/profile/education-background/:educationBackgroundId', auth, teacher, teacherController.deleteEducationBackground);
 
-router.patch('/profile/files-profile', auth, teacher, teacherController.createdFilesProfile);
+router.patch('/profile/file-profile', auth, teacher, teacherController.createdFilesProfile);
+router.patch('/profile/file-ktp', auth, teacher, teacherController.createFileKTP);
+router.patch('/profile/file-npwp', auth, teacher, teacherController.createFileNPWP);
 // /profile/teaching-experience [CRUD, no pagination]
 // /profile/education-background [CRUD, no pagination]
 

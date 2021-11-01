@@ -4,6 +4,7 @@ const userService = require('../services/userService');
 const teacherDetailService = require('../services/userDetailService');
 const teachingExperienceService = require('../services/teachingExperienceService');
 const educationBackgroundService = require('../services/educationBackgroundService');
+const fileService = require('../services/fileService');
 const ApiError = require('../utils/ApiError');
 const { UserDetail } = require('../models/UserDetail');
 const { TeachingExperience } = require('../models/TeachingExperience');
@@ -213,6 +214,44 @@ const createdFilesProfile = catchAsync(async (req, res) => {
   });
 });
 
+const createFileKTP = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+
+  multering.options('./src/documents/images/ktp', teacherId).single('fileKTP')(req, res, async (err) => {
+    if (err) {
+      res.sendWrapped(err);
+    } else {
+      const fileBody = {
+        ...req.body,
+        fileName: req.file.filename,
+      };
+
+      const insertKtp = await fileService.addFile(teacherId, fileBody);
+
+      res.sendWrapped(insertKtp, httpStatus.OK);
+    }
+  });
+});
+
+const createFileNPWP = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+
+  multering.options('./src/documents/images/npwp', teacherId).single('fileNPWP')(req, res, async (err) => {
+    if (err) {
+      res.sendWrapped(err);
+    } else {
+      const fileBody = {
+        ...req.body,
+        fileName: req.file.filename,
+      };
+
+      const insertNPWP = await fileService.addFile(teacherId, fileBody);
+
+      res.sendWrapped(insertNPWP, httpStatus.OK);
+    }
+  });
+});
+
 const createdUserDetail = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const teacherBody = req.body;
@@ -277,4 +316,6 @@ module.exports = {
   getEducationBackground,
   deleteEducationBackground,
   createdFilesProfile,
+  createFileKTP,
+  createFileNPWP,
 };
