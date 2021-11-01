@@ -10,6 +10,7 @@ const { UserDetail } = require('../models/UserDetail');
 const { TeachingExperience } = require('../models/TeachingExperience');
 const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
 const { EducationBackground } = require('../models/EducationBackground');
+const { File } = require('../models/Files');
 const multering = require('../utils/multer');
 
 const profileInfo = catchAsync(async (req, res) => {
@@ -38,12 +39,16 @@ const profileInfo = catchAsync(async (req, res) => {
         {
           model: EducationBackground,
         },
+        {
+          model: File,
+        },
       ],
       attributes: [
         'firstName',
         'lastName',
         'gender',
         'phoneNumber',
+        'profile',
       ],
     },
   );
