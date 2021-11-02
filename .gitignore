@@ -7,8 +7,4 @@ package-lock.json
 
 # configuration files
 .env
-src/documents/images/profiles/
-src/documents/images/educations/
-src/documents/images/ktp/
-src/documents/images/npwp/
-src/documents/images/teachings/
+public/
