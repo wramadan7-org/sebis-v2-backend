@@ -53,7 +53,35 @@ const profileInfo = catchAsync(async (req, res) => {
     },
   );
 
-  res.sendWrapped(basicTeacher, httpStatus.OK);
+  const basicTeacherData = basicTeacher.toJSON();
+  const fullUrl = `${req.protocol}://${req.get('host')}/`;
+
+  const convertedFiles = basicTeacher.files.reduce((prevObj, currObj) => {
+    const jsonData = currObj.toJSON();
+    return {
+      ...prevObj,
+      [jsonData.fileType]: {
+        ...jsonData,
+        fileUrl: `${fullUrl}${jsonData.fileType}/${jsonData.fileName}`,
+      },
+    };
+  }, {});
+  basicTeacherData.files = convertedFiles;
+
+  // Alternative logic
+  // const objFiles = {};
+  // basicTeacherData.files.forEach((file) => {
+  //   const obj = {
+  //     ...file.toJSON(),
+  //     fileUrl: `${fullUrl}${file.fileType}/${file.fileName}`,
+  //   };
+  //   objFiles[file.fileType] = obj;
+  // });
+
+  // basicTeacher.files = objFiles;
+  // basicTeacherData.files = objFiles;
+
+  res.sendWrapped(basicTeacherData, httpStatus.OK);
 });
 
 const createBasicInfo = catchAsync(async (req, res) => {
