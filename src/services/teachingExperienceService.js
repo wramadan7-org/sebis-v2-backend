@@ -3,13 +3,14 @@ const ApiError = require('../utils/ApiError');
 const { TeachingExperience } = require('../models/TeachingExperience');
 const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
 
-const getTeachingExperienceById = async (teacherId, teachingExperienceId) => {
+const getTeachingExperienceById = async (teacherId, teachingExperienceId, opts = {}) => {
   const teachingExperience = await TeachingExperience.findOne(
     {
       where: {
         id: teachingExperienceId,
         teacherId,
       },
+      ...opts,
     },
   );
 
@@ -17,7 +18,7 @@ const getTeachingExperienceById = async (teacherId, teachingExperienceId) => {
 };
 
 const getTeachingExperienceDetailById = async (teachingExperienceId, teachingExperienceDetailId) => {
-  const teachingExperienceDetail = await TeachingExperienceDetail.findOne(
+  const teachingExperienceDetail = await TeachingExperienceDetail.findAll(
     {
       where: {
         id: teachingExperienceDetailId,
@@ -54,6 +55,27 @@ const createTeachingExperience = async (teacherId, teachingBody, teachingDetailB
   return { teachingExperience, teachingExperienceDetails };
 };
 
+const updatedTeachingExperience = async (teacherId, teachingExperienceId, teachingExperienceBody, teachingExperienceDetailBody) => {
+  const teachingExperience = await getTeachingExperienceById(
+    teacherId,
+    teachingExperienceId,
+    {
+      include: [
+        {
+          model: TeachingExperienceDetail,
+        },
+      ],
+    },
+  );
+
+  const mapingTeachingExperienceDetail = teachingExperience.teachingExperienceDetails.map((o) => o.id);
+
+  Object.assign(teachingExperience, teachingExperienceBody);
+  teachingExperience.save();
+
+  return teachingExperience;
+};
+
 const deletedTeachingExperience = async (teacherId, teachingExperienceId) => {
   const checkTeachingExperience = await getTeachingExperienceById(teacherId, teachingExperienceId);
 
@@ -87,6 +109,7 @@ module.exports = {
   createTeachingExperience,
   createTeachingExperienceDetails,
   getTeachingExperienceById,
+  updatedTeachingExperience,
   getTeachingExperienceDetailById,
   deletedTeachingExperience,
   deletedTeachingExperienceDetail,

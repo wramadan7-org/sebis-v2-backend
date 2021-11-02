@@ -149,6 +149,21 @@ const createTeachingExperience = catchAsync(async (req, res) => {
   res.sendWrapped(teachingExperience, httpStatus.CREATED);
 });
 
+const updateTeachingExperience = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const { teachingExperienceId } = req.params;
+  const teachingBody = req.body;
+  const { teachingExperienceDetails } = teachingBody;
+
+  const teachingExperience = await teachingExperienceService.updatedTeachingExperience(
+    teacherId,
+    teachingExperienceId,
+    teachingBody,
+    teachingExperienceDetails,
+  );
+  res.sendWrapped(teachingExperience, httpStatus.OK);
+});
+
 const deleteTeachingExperience = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const { teachingExperienceId } = req.params;
@@ -315,6 +330,7 @@ module.exports = {
   createBasicInfo,
   createPersonalData,
   createTeachingExperience,
+  updateTeachingExperience,
   deleteTeachingExperience,
   deleteTeachingExperienceDetail,
   createEducationBackground,
