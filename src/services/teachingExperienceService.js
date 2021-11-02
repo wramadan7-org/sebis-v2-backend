@@ -68,8 +68,6 @@ const updatedTeachingExperience = async (teacherId, teachingExperienceId, teachi
     },
   );
 
-  const mapingTeachingExperienceDetail = teachingExperience.teachingExperienceDetails.map((o) => o.id);
-
   Object.assign(teachingExperience, teachingExperienceBody);
   teachingExperience.save();
 
