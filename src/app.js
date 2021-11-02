@@ -59,8 +59,8 @@ if (config.env === 'production') {
 // v1 api routes
 app.use('/v1', routesV1);
 
-app.use('/v1/ktp', express.static('./src/documents/images/ktp'));
-app.use('/v1/npwp', express.static('./src/documents/images/npwp'));
+// serve static files
+app.use('/static', express.static('./public'));
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
