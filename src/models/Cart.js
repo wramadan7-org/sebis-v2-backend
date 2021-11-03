@@ -1,13 +1,15 @@
-const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
+const { DataTypes, Sequelize } = require('sequelize');
+const { sequelize } = require('../config/database');
 
 const Cart = sequelize.define('cart', {
   id: {
-    type: DataTypes.STRING,
+    type: DataTypes.UUIDV4,
     primaryKey: true,
-    defaultValue: SequelizeInstance.UUIDV4,
+    defaultValue: Sequelize.UUIDV4,
     allowNull: false,
   },
-}, {
+},
+{
   paranoid: true,
 });
 

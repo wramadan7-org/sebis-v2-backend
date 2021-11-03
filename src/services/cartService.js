@@ -3,6 +3,18 @@ const { Cart } = require('../models/Cart');
 const ApiError = require('../utils/ApiError');
 const userService = require('./userService');
 
+const getCartAll = async (query, opts = {}) => {
+  const carts = await Cart.findAll(
+    {
+      where: {
+        query,
+      },
+    },
+  );
+
+  return carts;
+};
+
 /**
  * Get cart by user ID
  * @param {String} studentId
@@ -38,6 +50,7 @@ const findOrCreateCart = async (studentId, opts = {}) => {
 };
 
 module.exports = {
+  getCartAll,
   getCartByStudentId,
   findOrCreateCart,
 };

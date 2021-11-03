@@ -5,12 +5,14 @@ const teacherDetailService = require('../services/userDetailService');
 const teachingExperienceService = require('../services/teachingExperienceService');
 const educationBackgroundService = require('../services/educationBackgroundService');
 const fileService = require('../services/fileService');
+const cartService = require('../services/cartService');
 const ApiError = require('../utils/ApiError');
 const { UserDetail } = require('../models/UserDetail');
 const { TeachingExperience } = require('../models/TeachingExperience');
 const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
 const { EducationBackground } = require('../models/EducationBackground');
 const { File } = require('../models/Files');
+const { Cart } = require('../models/Cart');
 const multering = require('../utils/multer');
 
 const profileInfo = catchAsync(async (req, res) => {
@@ -351,6 +353,19 @@ const deleteUserDetail = catchAsync(async (req, res) => {
   const teacher = await teacherDetailService.deleteUserDetailById(teacherId);
 
   res.sendWrapped(teacher, httpStatus.OK);
+});
+
+// home
+
+const orderPending = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const { status } = req.query;
+
+  const query = {
+    teacherId,
+  };
+
+  const carts = await cartService.getCartAll(query);
 });
 
 module.exports = {
