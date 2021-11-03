@@ -355,19 +355,6 @@ const deleteUserDetail = catchAsync(async (req, res) => {
   res.sendWrapped(teacher, httpStatus.OK);
 });
 
-// home
-
-const orderPending = catchAsync(async (req, res) => {
-  const teacherId = req.user.id;
-  const { status } = req.query;
-
-  const query = {
-    teacherId,
-  };
-
-  const carts = await cartService.getCartAll(query);
-});
-
 module.exports = {
   createdUserDetail,
   getUserDetail,
