@@ -12,7 +12,6 @@ const { TeachingExperience } = require('../models/TeachingExperience');
 const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
 const { EducationBackground } = require('../models/EducationBackground');
 const { File } = require('../models/Files');
-const { Cart } = require('../models/Cart');
 const multering = require('../utils/multer');
 
 const profileInfo = catchAsync(async (req, res) => {

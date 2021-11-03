@@ -13,13 +13,16 @@ const { File } = require('./Files');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
+
   User.belongsTo(School);
-  User.hasOne(Cart, {
-    foreignKey: 'studentId',
-  });
+
+  // User.hasOne(Cart, {
+  //   foreignKey: 'studentId',
+  // });
   User.hasOne(UserDetail);
 
   UserDetail.hasOne(Price);
+
   UserDetail.belongsTo(User);
 
   Price.belongsTo(UserDetail);
@@ -85,7 +88,7 @@ const setupSequelizeAssociations = async () => {
   });
 
   // finally sync sequelize
-  await sequelize.sync();
+  // await sequelize.sync();
 };
 
 module.exports = setupSequelizeAssociations;

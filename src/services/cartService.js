@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const { Cart } = require('../models/Cart');
+const { CartItem } = require('../models/CartItem');
 const ApiError = require('../utils/ApiError');
 const userService = require('./userService');
 
@@ -33,6 +34,23 @@ const getCartByStudentId = async (studentId, opts = {}) => {
 };
 
 /**
+ * Create Cart Item
+ * @param {teacherId} teacherId
+ * @param {teacherId} body
+ * @returns {Promise<CartItem | ApiError>}
+ */
+const createCartItem = async (teacherId, body) => {
+  const cartItemData = {
+    teacherId,
+    ...body,
+  };
+
+  const cartItem = await CartItem.create(cartItemData);
+
+  return cartItem;
+};
+
+/**
  * Find or create cart
  * @param {String} studentId
  * @param {Object} opts
@@ -53,4 +71,5 @@ module.exports = {
   getCartAll,
   getCartByStudentId,
   findOrCreateCart,
+  createCartItem,
 };

@@ -5,6 +5,7 @@ const userDetailValidation = require('../../validations/userDetailValidation');
 const userProfileValidation = require('../../validations/userProfileValidation');
 const { teacher } = require('../../middlewares/roleValidation');
 const teacherController = require('../../controllers/teacherController');
+const cartController = require('../../controllers/cartController');
 
 const router = express.Router();
 
@@ -30,5 +31,7 @@ router.patch('/profile/file-ktp', auth, teacher, teacherController.createFileKTP
 router.patch('/profile/file-npwp', auth, teacher, teacherController.createFileNPWP);
 // /profile/teaching-experience [CRUD, no pagination]
 // /profile/education-background [CRUD, no pagination]
+
+router.get('/order-list', auth, teacher, cartController.getOrderList);
 
 module.exports = router;
