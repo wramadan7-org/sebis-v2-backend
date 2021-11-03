@@ -62,7 +62,7 @@ const profileInfo = catchAsync(async (req, res) => {
       ...prevObj,
       [jsonData.fileType]: {
         ...jsonData,
-        fileUrl: `${fullUrl}${jsonData.fileType}/${jsonData.fileName}`,
+        fileUrl: `${fullUrl}/${jsonData.fileName}`,
       },
     };
   }, {});
@@ -215,8 +215,9 @@ const deleteTeachingExperienceDetail = catchAsync(async (req, res) => {
 
 const createEducationBackground = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
+  const destination = 'files/education-background';
 
-  multering.options('./src/documents/images/educations', teacherId).single('educationFile')(req, res, async (err) => {
+  multering.options(`./public/${destination}`, teacherId).single('educationFile')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
     } else {
@@ -224,7 +225,7 @@ const createEducationBackground = catchAsync(async (req, res) => {
 
       const data = {
         ...educationBody,
-        educationFile: req.file.filename,
+        educationFile: `static/${destination}/${req.file.filename}`,
       };
 
       const eduBackground = await educationBackgroundService.createEducationBackground(teacherId, data);
@@ -250,12 +251,13 @@ const deleteEducationBackground = catchAsync(async (req, res) => {
 
 const createdFilesProfile = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
+  const destination = 'images/profile';
 
-  multering.options('./src/documents/images/profiles', teacherId).single('fileProfile')(req, res, async (err) => {
+  multering.options(`./public/${destination}`, teacherId).single('fileProfile')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
     } else {
-      const updateProfile = await userService.updateProfile(teacherId, req.file.filename);
+      const updateProfile = await userService.updateProfile(teacherId, `static/${destination}/${req.file.filename}`);
 
       res.sendWrapped(updateProfile, httpStatus.OK);
     }
@@ -264,14 +266,15 @@ const createdFilesProfile = catchAsync(async (req, res) => {
 
 const createFileKTP = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
+  const destination = 'images/ktp';
 
-  multering.options('./src/documents/images/ktp', teacherId).single('fileKTP')(req, res, async (err) => {
+  multering.options(`./public/${destination}`, teacherId).single('fileKTP')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
     } else {
       const fileBody = {
         ...req.body,
-        fileName: req.file.filename,
+        fileName: `static/${destination}/${req.file.filename}`,
       };
 
       const insertKtp = await fileService.addFile(teacherId, fileBody);
@@ -283,14 +286,15 @@ const createFileKTP = catchAsync(async (req, res) => {
 
 const createFileNPWP = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
+  const destination = 'images/npwp';
 
-  multering.options('./src/documents/images/npwp', teacherId).single('fileNPWP')(req, res, async (err) => {
+  multering.options(`./public/${destination}`, teacherId).single('fileNPWP')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
     } else {
       const fileBody = {
         ...req.body,
-        fileName: req.file.filename,
+        fileName: `static/${destination}/${req.file.filename}`,
       };
 
       const insertNPWP = await fileService.addFile(teacherId, fileBody);
