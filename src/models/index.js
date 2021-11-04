@@ -10,6 +10,11 @@ const { TeachingExperience } = require('./TeachingExperience');
 const { TeachingExperienceDetail } = require('./TeachingExperienceDetail');
 const { EducationBackground } = require('./EducationBackground');
 const { File } = require('./Files');
+const { Curriculum } = require('./Curriculum');
+const { Grade } = require('./Grade');
+const { GradeGroup } = require('./GradeGroup');
+const { Subject } = require('./Subject');
+const { TeacherSubject } = require('./TeacherSubject');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -89,6 +94,47 @@ const setupSequelizeAssociations = async () => {
 
   File.belongsTo(User, {
     foreignKey: 'userId',
+  });
+
+  Curriculum.hasMany(GradeGroup, {
+    foreignKey: 'curriculumId',
+  });
+
+  GradeGroup.belongsTo(Curriculum, {
+    foreignKey: 'curriculumId',
+  });
+
+  GradeGroup.hasMany(Grade, {
+    foreignKey: 'gradeGroupId',
+  });
+
+  Grade.belongsTo(GradeGroup, {
+    foreignKey: 'gradeGroupId',
+  });
+
+  Subject.hasMany(TeacherSubject, {
+    foreignKey: 'subjectId',
+  });
+
+  TeacherSubject.belongsTo(Subject, {
+    foreignKey: 'subjectId',
+  });
+
+  Grade.hasMany(TeacherSubject, {
+    foreignKey: 'gradeId',
+  });
+
+  TeacherSubject.belongsTo(Grade, {
+    foreignKey: 'gradeId',
+  });
+
+  User.hasMany(TeacherSubject, {
+    foreignKey: 'teacherId',
+  });
+
+  TeacherSubject.belongsTo(User, {
+    foreignKey: 'teacherId',
+    as: 'teacher',
   });
 
   // finally sync sequelize
