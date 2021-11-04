@@ -67,9 +67,33 @@ const findOrCreateCart = async (studentId, opts = {}) => {
   });
 };
 
+// teacher
+
+/**
+ * @param {String} teacherId
+ * @param {String} cartItemStatus
+ * @param {Object} opts
+ * @return {Promise<[OrderList] | ApiError>}
+ */
+
+const orderList = async (teacherId, cartItemStatus, opts = {}) => {
+  const orders = await CartItem.findAll(
+    {
+      where: {
+        teacherId,
+        cartItemStatus,
+      },
+      ...opts,
+    },
+  );
+
+  return orders;
+};
+
 module.exports = {
   getCartAll,
   getCartByStudentId,
   findOrCreateCart,
   createCartItem,
+  orderList,
 };

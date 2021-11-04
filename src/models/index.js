@@ -33,10 +33,12 @@ const setupSequelizeAssociations = async () => {
 
   Cart.belongsTo(User, {
     foreignKey: 'studentId',
+    as: 'student',
   });
 
   User.hasOne(Cart, {
     foreignKey: 'studentId',
+    as: 'student',
   });
 
   CartItem.belongsTo(Cart, {
@@ -49,10 +51,12 @@ const setupSequelizeAssociations = async () => {
 
   CartItem.belongsTo(User, {
     foreignKey: 'teacherId',
+    as: 'teacher',
   });
 
   User.hasMany(CartItem, {
     foreignKey: 'teacherId',
+    as: 'teacher',
   });
 
   User.hasMany(TeachingExperience, {

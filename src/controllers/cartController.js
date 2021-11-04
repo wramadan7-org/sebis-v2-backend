@@ -2,16 +2,39 @@ const httpStatus = require('http-status');
 const moment = require('moment');
 const catchAsync = require('../utils/catchAsync');
 const { Cart } = require('../models/Cart');
+const { CartItem } = require('../models/CartItem');
+const { User } = require('../models/User');
 const cartService = require('../services/cartService');
 const ApiError = require('../utils/ApiError');
 
 // teacher
 const getOrderList = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
-  const { status } = req.query;
+  const { cartItemStatus } = req.query;
 
-  const carts = await Cart.findAll({}, { include: 'cartItems' });
-  res.sendWrapped(carts, httpStatus.OK);
+  const cartItems = await cartService.orderList(
+    teacherId,
+    cartItemStatus,
+    {
+      include: [
+        {
+          model: Cart,
+          include: [
+            {
+              model: User,
+              as: 'student',
+            },
+          ],
+        },
+        {
+          model: User,
+          as: 'teacher',
+        },
+      ],
+    },
+  );
+
+  res.sendWrapped(cartItems, httpStatus.OK);
 });
 
 // student
