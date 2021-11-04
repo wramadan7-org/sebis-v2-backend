@@ -34,5 +34,6 @@ router.patch('/profile/file-npwp', auth, teacher, teacherController.createFileNP
 // /profile/education-background [CRUD, no pagination]
 
 router.get('/order-list', auth, teacher, validate(cartValidation.getCart), cartController.getOrderList);
+router.patch('/order-list/:cartItemId', auth, teacher, validate(cartValidation.statusCart), cartController.approvingOrder);
 
 module.exports = router;

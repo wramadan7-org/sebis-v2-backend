@@ -34,7 +34,23 @@ const getOrderList = catchAsync(async (req, res) => {
     },
   );
 
+  if (!cartItems || cartItems.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'You don\'t have order list.');
+
   res.sendWrapped(cartItems, httpStatus.OK);
+});
+
+const approvingOrder = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const { cartItemId } = req.params;
+  const { cartItemStatus } = req.body;
+
+  const cartItem = await cartService.approvingCartRequest(
+    cartItemId,
+    teacherId,
+    cartItemStatus,
+  );
+
+  res.sendWrapped(cartItem, httpStatus.OK);
 });
 
 // student
@@ -72,4 +88,5 @@ const addCart = catchAsync(async (req, res) => {
 module.exports = {
   getOrderList,
   addCart,
+  approvingOrder,
 };

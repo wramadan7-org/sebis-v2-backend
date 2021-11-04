@@ -34,6 +34,25 @@ const getCartByStudentId = async (studentId, opts = {}) => {
 };
 
 /**
+ * Get cart item by ID
+ * @param {String} id
+ * @param {String} teacherId
+ * @param {Object} opts
+ * @return {Promise<CartItem | ApiError>}
+ */
+const getCartItemById = async (id, teacherId, opts = {}) => {
+  const cartItem = await CartItem.findOne({
+    where: {
+      id,
+      teacherId,
+    },
+    ...opts,
+  });
+  if (!cartItem) throw new ApiError(httpStatus.NOT_FOUND, 'Cart items not found.');
+  return cartItem;
+};
+
+/**
  * Create Cart Item
  * @param {teacherId} teacherId
  * @param {teacherId} body
@@ -90,10 +109,20 @@ const orderList = async (teacherId, cartItemStatus, opts = {}) => {
   return orders;
 };
 
+const approvingCartRequest = async (id, teacherId, cartItemStatusBody, opts = {}) => {
+  const cartItem = await getCartItemById(id, teacherId);
+
+  cartItem.cartItemStatus = cartItemStatusBody;
+  cartItem.save();
+
+  return cartItem;
+};
+
 module.exports = {
   getCartAll,
   getCartByStudentId,
   findOrCreateCart,
   createCartItem,
   orderList,
+  approvingCartRequest,
 };
