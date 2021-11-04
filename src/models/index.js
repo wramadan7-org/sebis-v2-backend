@@ -15,6 +15,7 @@ const { Grade } = require('./Grade');
 const { GradeGroup } = require('./GradeGroup');
 const { Subject } = require('./Subject');
 const { TeacherSubject } = require('./TeacherSubject');
+const { AvailabilityHours } = require('./AvailabilityHours');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -43,7 +44,6 @@ const setupSequelizeAssociations = async () => {
 
   User.hasOne(Cart, {
     foreignKey: 'studentId',
-    as: 'student',
   });
 
   CartItem.belongsTo(Cart, {
@@ -61,7 +61,6 @@ const setupSequelizeAssociations = async () => {
 
   User.hasMany(CartItem, {
     foreignKey: 'teacherId',
-    as: 'teacher',
   });
 
   User.hasMany(TeachingExperience, {
@@ -133,6 +132,15 @@ const setupSequelizeAssociations = async () => {
   });
 
   TeacherSubject.belongsTo(User, {
+    foreignKey: 'teacherId',
+    as: 'teacher',
+  });
+
+  User.hasMany(AvailabilityHours, {
+    foreignKey: 'teacherId',
+  });
+
+  AvailabilityHours.belongsTo(User, {
     foreignKey: 'teacherId',
     as: 'teacher',
   });
