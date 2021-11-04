@@ -7,6 +7,10 @@ const Curriculum = sequelize.define('curriculum', {
     defaultValue: SequelizeInstance.UUIDV4,
     allowNull: false,
   },
+  curriculumCode: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   curriculumName: {
     type: DataTypes.STRING,
     allowNull: false,
