@@ -1,7 +1,7 @@
 const { DataTypes, Sequelize } = require('sequelize');
 const { sequelize } = require('../config/database');
 
-const AvaibilityHours = sequelize.define('avaibilityHours', {
+const AvaibilityHours = sequelize.define('availabilityHours', {
   id: {
     type: DataTypes.UUIDV4,
     primaryKey: true,
