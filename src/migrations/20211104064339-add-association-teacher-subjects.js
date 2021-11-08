@@ -1,38 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn(
-      'gradeGroups',
-      'curriculumId',
-      {
-        type: Sequelize.STRING,
-        references: {
-          model: 'curriculums',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-        allowNull: true,
-        after: 'id',
-      },
-    );
-
-    await queryInterface.addColumn(
-      'grades',
-      'gradeGroupId',
-      {
-        type: Sequelize.STRING,
-        references: {
-          model: 'gradeGroups',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-        allowNull: true,
-        after: 'id',
-      },
-    );
-
-    await queryInterface.addColumn(
       'teacherSubjects',
       'gradeId',
       {
@@ -83,27 +51,17 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     await queryInterface.removeColumn(
-      'gradeGroups',
-      'curriculumId',
-    );
-
-    await queryInterface.removeColumn(
-      'grades',
-      'gradeGroupId',
-    );
-
-    await queryInterface.removeColumn(
-      'teacherSubject',
+      'teacherSubjects',
       'gradeId',
     );
 
     await queryInterface.removeColumn(
-      'teacherSubject',
+      'teacherSubjects',
       'subjectId',
     );
 
     await queryInterface.removeColumn(
-      'teacherSubject',
+      'teacherSubjects',
       'teacherId',
     );
   },
