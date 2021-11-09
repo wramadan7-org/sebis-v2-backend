@@ -44,6 +44,10 @@ const User = sequelize.define('user', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  referredBy: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   paranoid: true,
   hooks: {
