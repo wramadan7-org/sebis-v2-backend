@@ -41,7 +41,6 @@ const createReferralBy = async (userId, referralCode) => {
   myAccount.referredBy = user.id;
   myAccount.save();
 
-  console.log('referal service', user.id);
   const createReferralHistory = await referralHistoryService.createReferralHistory(myAccount.id, myAccount.referredBy, referralCode);
   return myAccount;
 };
