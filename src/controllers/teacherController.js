@@ -12,6 +12,7 @@ const { TeachingExperience } = require('../models/TeachingExperience');
 const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
 const { EducationBackground } = require('../models/EducationBackground');
 const { File } = require('../models/Files');
+const { User } = require('../models/User');
 const multering = require('../utils/multer');
 
 const profileInfo = catchAsync(async (req, res) => {
@@ -42,6 +43,14 @@ const profileInfo = catchAsync(async (req, res) => {
         },
         {
           model: File,
+        },
+        {
+          model: User,
+          as: 'referrerUser',
+        },
+        {
+          model: User,
+          as: 'referredUsers',
         },
       ],
       attributes: [
