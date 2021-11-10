@@ -60,9 +60,22 @@ const updateTutorScheduleTime = catchAsync(async (req, res) => {
   res.sendWrapped(updating, httpStatus.OK);
 });
 
+const deleteTutorScheduleTime = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { availabilityHoursId } = req.params;
+
+  const availabilityHours = await availabilityHoursService.deletingTutorScheduleTime(
+    userId,
+    availabilityHoursId,
+  );
+
+  res.sendWrapped(availabilityHours, httpStatus.OK);
+});
+
 module.exports = {
   createTutorScheduleTime,
   getTutorScheduleTimeAll,
   getTutorScheduleTimeById,
   updateTutorScheduleTime,
+  deleteTutorScheduleTime,
 };
