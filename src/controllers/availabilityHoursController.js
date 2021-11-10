@@ -46,8 +46,23 @@ const getTutorScheduleTimeAll = catchAsync(async (req, res) => {
   res.sendWrapped(availabilityHours, httpStatus.OK);
 });
 
+const updateTutorScheduleTime = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { availabilityHoursId } = req.params;
+  const availabilityHoursBody = req.body;
+
+  const updating = await availabilityHoursService.updatingTutorScheduleTime(
+    userId,
+    availabilityHoursId,
+    availabilityHoursBody,
+  );
+
+  res.sendWrapped(updating, httpStatus.OK);
+});
+
 module.exports = {
   createTutorScheduleTime,
   getTutorScheduleTimeAll,
   getTutorScheduleTimeById,
+  updateTutorScheduleTime,
 };
