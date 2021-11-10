@@ -1,32 +1,42 @@
 const multer = require('multer');
-const path = require('path');
 
-const storage = (location, identity) => multer.diskStorage({
+/**
+ * Multer disk storage
+ * @param {String} path
+ * @return {DiskStorage}
+ */
+const storage = (path) => multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, location);
+    cb(null, path);
   },
   filename: (req, file, cb) => {
-    const splitIdentity = identity.split('-');
-    const lastIdentity = splitIdentity[splitIdentity.length - 1];
-    const filename = `${file.fieldname}-${Date.now()}${lastIdentity}${path.extname(file.originalname)}`;
-    cb(null, filename);
+    const fileName = file.originalname.toLowerCase().split(' ').join('-');
+    const uniqueSuffix = Date.now();
+    cb(null, `${fileName}-${uniqueSuffix}`);
   },
 });
 
-const options = (location, identity) => multer({
-  storage: storage(location, identity),
-  limits: {
-    fileSize: (1024 * 1024) * 5,
-  },
-  fileFilter: (req, file, callback) => {
-    // const ext = path.extname(file.originalname)
-    if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG)$/)) {
-      return callback('Format gambar tidak sesuai!', false);
+/**
+ * Multer upload image
+ * @param {String} path
+ * @param {Number} maxFileSize
+ * @return {*|Multer}
+ */
+const uploadImage = (path, maxFileSize) => multer({
+  storage: storage(path),
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+      cb(null, true);
+    } else {
+      cb(null, false);
     }
-    callback(null, true);
+  },
+  limits: {
+    fileSize: maxFileSize * (1024 * 1024), // size in MB
   },
 });
 
 module.exports = {
-  options,
+  multer,
+  uploadImage,
 };

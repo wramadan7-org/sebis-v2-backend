@@ -1,6 +1,6 @@
 const redis = require('redis');
 const { redis: redisConfiguration } = require('./config');
-const {student} = require("../middlewares/roleValidation");
+const { student } = require('../middlewares/roleValidation');
 
 const {
   protocol, host, port, user, password,
@@ -21,7 +21,7 @@ const redisStudentKey = {
     expired: (studentId) => `student:${studentId}:order:expired`,
     pending: (studentId) => `student:${studentId}:order:pending`,
   },
-}
+};
 
 module.exports = {
   redisClient,
