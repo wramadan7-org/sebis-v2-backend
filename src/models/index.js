@@ -16,6 +16,7 @@ const { GradeGroup } = require('./GradeGroup');
 const { Subject } = require('./Subject');
 const { TeacherSubject } = require('./TeacherSubject');
 const { AvailabilityHours } = require('./AvailabilityHours');
+const { ReferralHistory } = require('./ReferralHistory');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -143,6 +144,32 @@ const setupSequelizeAssociations = async () => {
   AvailabilityHours.belongsTo(User, {
     foreignKey: 'teacherId',
     as: 'teacher',
+  });
+
+  User.belongsTo(User, {
+    foreignKey: 'referredBy',
+    as: 'referrerUser',
+  });
+
+  User.hasMany(User, {
+    foreignKey: 'referredBy',
+    as: 'referredUsers',
+  });
+
+  User.hasOne(ReferralHistory, {
+    foreignKey: 'userId',
+  });
+
+  ReferralHistory.belongsTo(User, {
+    foreignKey: 'userId',
+  });
+
+  User.hasOne(ReferralHistory, {
+    foreignKey: 'referredBy',
+  });
+
+  ReferralHistory.belongsTo(User, {
+    foreignKey: 'referredBy',
   });
 
   // finally sync sequelize
