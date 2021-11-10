@@ -168,10 +168,26 @@ const updatingTutorScheduleTime = async (userId, availabilityHoursId, body) => {
   return availabilityHours;
 };
 
+/**
+ * Deleting availability hours;
+ * @param {string} userId;
+ * @param {string} availabilityHoursId;
+ * @returns {object};
+ */
+const deletingTutorScheduleTime = async (userId, availabilityHoursId) => {
+  const availabilityHours = await getTutorScheduleTimeById(availabilityHoursId, userId);
+
+  if (!availabilityHours) throw new ApiError(httpStatus.NOT_FOUND, 'Availability hours not found.');
+
+  await availabilityHours.destroy();
+  return availabilityHours;
+};
+
 module.exports = {
   getTutorScheduleTime,
   getTutorScheduleTimeById,
   getTutorScheduleTimes,
   createTutorScheduleTime,
   updatingTutorScheduleTime,
+  deletingTutorScheduleTime,
 };
