@@ -5,6 +5,7 @@ const schoolRoute = require('./schoolRoute');
 const studentRoute = require('./studentRoute');
 const teacherRoute = require('./teacherRoute');
 const referralRoute = require('./referralRoute');
+const availabilityHours = require('./availabilityHoursRoute');
 
 const router = express.Router();
 
@@ -32,6 +33,10 @@ const defaultRoutes = [
   {
     path: '/referral',
     route: referralRoute,
+  },
+  {
+    path: '/availability-hours',
+    route: availabilityHours,
   },
 ];
 
