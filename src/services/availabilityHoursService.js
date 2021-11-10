@@ -127,9 +127,34 @@ const createTutorScheduleTime = async (data) => {
   return valid;
 };
 
+const updatingTutorScheduleTime = async (userId, availabilityHoursId, body) => {
+  const defaultDate = '1990-01-01';
+  const availabilityHours = await getTutorScheduleTimeById(availabilityHoursId, userId);
+
+  if (!availabilityHours) throw new ApiError(httpStatus.NOT_FOUND, 'Availability hours not found.');
+
+  Object.assign(availabilityHours, body);
+
+  availabilityHours.timeEnd = moment(`${defaultDate} ${availabilityHours.timeStart}`).add(1, 'hours').format('HH:mm');
+
+  const valid = await isHoursAvailable(
+    userId,
+    availabilityHours.dayCode,
+    availabilityHours.timeStart,
+    availabilityHours.timeEnd,
+  );
+
+  if (!valid) throw new ApiError(httpStatus.CONFLICT, 'Schedule is already');
+
+  availabilityHours.save();
+
+  return availabilityHours;
+};
+
 module.exports = {
   getTutorScheduleTime,
   getTutorScheduleTimeById,
   getTutorScheduleTimes,
   createTutorScheduleTime,
+  updatingTutorScheduleTime,
 };
