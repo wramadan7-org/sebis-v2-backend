@@ -4,6 +4,13 @@ const { Op } = require('sequelize');
 const ApiError = require('../utils/ApiError');
 const { AvailabilityHours } = require('../models/AvailabilityHours');
 
+/**
+ *
+ * @param {string} teacherId;
+ * @param {number} dayCode;
+ * @param {string} timeStart;
+ * @returns {object};
+ */
 const getTutorScheduleTime = async (teacherId, dayCode, timeStart) => {
   const availabilityHours = await AvailabilityHours.findOne(
     {
@@ -20,11 +27,10 @@ const getTutorScheduleTime = async (teacherId, dayCode, timeStart) => {
 
 /**
  *
- * @param {string} teacherId
- * @param {number} dayCode
- * @returns {array: availabilityHours}
+ * @param {string} teacherId;
+ * @param {number} dayCode;
+ * @returns {array};
  */
-
 const getTutorScheduleTimeByDay = async (teacherId, dayCode) => {
   const availabilityHours = await AvailabilityHours.findAll(
     {
@@ -41,7 +47,7 @@ const getTutorScheduleTimeByDay = async (teacherId, dayCode) => {
 /**
  * Get All Availability
  * @param {string} teacherId
- * @returns {array:[availabilityHours]}
+ * @returns {array}
  */
 const getTutorScheduleTimes = async (teacherId) => {
   const availabilityHours = await AvailabilityHours.findAll(
@@ -56,12 +62,11 @@ const getTutorScheduleTimes = async (teacherId) => {
 };
 
 /**
- *
- * @param {string} availabilityHoursId
- * @param {string} teacherId
- * @returns {object<availabilityHours>}
+ * Get availability hours by id
+ * @param {string} availabilityHoursId;
+ * @param {string} teacherId;
+ * @returns {object};
  */
-
 const getTutorScheduleTimeById = async (availabilityHoursId, teacherId) => {
   const availabilityHours = await AvailabilityHours.findOne(
     {
@@ -77,12 +82,12 @@ const getTutorScheduleTimeById = async (availabilityHoursId, teacherId) => {
 
 /**
  * Check for conflicted hours
- * @param {string} teacherId
- * @param {number} dayCode
- * @param {string} timeStart
- * @param {string} timeEnd
- * @param {object<{offsetStart: number, offsetEnd: number}>} options
- * @returns {boolean}
+ * @param {string} teacherId;
+ * @param {number} dayCode;
+ * @param {string} timeStart;
+ * @param {string} timeEnd;
+ * @param {object<{offsetStart: number, offsetEnd: number}>} options;
+ * @returns {boolean};
  */
 const isHoursAvailable = async (teacherId, dayCode, timeStart, timeEnd, options = { offsetStart: -15, offsetEnd: 15 }) => {
   let availablityHours = await getTutorScheduleTimeByDay(teacherId, dayCode);
@@ -107,6 +112,11 @@ const isHoursAvailable = async (teacherId, dayCode, timeStart, timeEnd, options 
   return originalLength === availablityHours.length;
 };
 
+/**
+ * Creating availability hours
+ * @param {object={dayCode: number, timeStart: string}} data;
+ * @returns {object};
+ */
 const createTutorScheduleTime = async (data) => {
   const {
     teacherId,
@@ -127,6 +137,13 @@ const createTutorScheduleTime = async (data) => {
   return valid;
 };
 
+/**
+ * Updating availability hours
+ * @param {string} userId;
+ * @param {string} availabilityHoursId;
+ * @param {object} body;
+ * @returns {object};
+ */
 const updatingTutorScheduleTime = async (userId, availabilityHoursId, body) => {
   const defaultDate = '1990-01-01';
   const availabilityHours = await getTutorScheduleTimeById(availabilityHoursId, userId);
