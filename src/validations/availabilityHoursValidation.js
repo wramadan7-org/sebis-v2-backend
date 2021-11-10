@@ -14,7 +14,18 @@ const getScheduleTimeById = {
   }),
 };
 
+const updateScheduleTime = {
+  params: Joi.object().keys({
+    availabilityHoursId: Joi.string().required(),
+  }),
+  body: Joi.object().keys({
+    dayCode: Joi.number().integer().min(0).max(6),
+    timeStart: Joi.string(),
+  }),
+};
+
 module.exports = {
   createScheduleTime,
   getScheduleTimeById,
+  updateScheduleTime,
 };
