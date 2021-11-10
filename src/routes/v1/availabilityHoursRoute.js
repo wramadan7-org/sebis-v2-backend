@@ -10,5 +10,6 @@ const router = Router();
 router.post('/', auth, validate(availabilityHoursValidation.createScheduleTime), availabilityHoursController.createTutorScheduleTime);
 router.get('/', auth, availabilityHoursController.getTutorScheduleTimeAll);
 router.get('/:availabilityHoursId', auth, validate(availabilityHoursValidation.getScheduleTimeById), availabilityHoursController.getTutorScheduleTimeById);
+router.patch('/:availabilityHoursId', auth, validate(availabilityHoursValidation.updateScheduleTime), availabilityHoursController.updateTutorScheduleTime);
 
 module.exports = router;
