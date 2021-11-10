@@ -11,5 +11,6 @@ router.post('/', auth, validate(availabilityHoursValidation.createScheduleTime),
 router.get('/', auth, availabilityHoursController.getTutorScheduleTimeAll);
 router.get('/:availabilityHoursId', auth, validate(availabilityHoursValidation.getScheduleTimeById), availabilityHoursController.getTutorScheduleTimeById);
 router.patch('/:availabilityHoursId', auth, validate(availabilityHoursValidation.updateScheduleTime), availabilityHoursController.updateTutorScheduleTime);
+router.delete('/:availabilityHoursId', auth, validate(availabilityHoursValidation.getScheduleTimeById), availabilityHoursController.deleteTutorScheduleTime);
 
 module.exports = router;
