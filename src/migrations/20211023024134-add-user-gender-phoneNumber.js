@@ -4,7 +4,6 @@ module.exports = {
   up: async (queryInterface, Sequelize) => Promise.all([
     queryInterface.addColumn('users', 'phoneNumber', {
       type: Sequelize.STRING,
-      unique: true,
       allowNull: false,
       after: 'email',
     }),
