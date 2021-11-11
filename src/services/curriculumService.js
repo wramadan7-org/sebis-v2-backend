@@ -21,6 +21,18 @@ const getCurriculumById = async (curriculumId) => {
 };
 
 /**
+ * Get all curriculum
+ * @returns {Promise<Curriculum>}
+ */
+const getCurriculumAll = async () => {
+  const curriculum = await Curriculum.findAll();
+
+  if (!curriculum && curriculum.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Don\'t have a curriculum yet.');
+
+  return curriculum;
+};
+
+/**
  * Update curriculum by ID
  * @param {string} curriculumId
  * @param {Object} curriculumBody
@@ -51,6 +63,7 @@ const deleteCurriculumById = async (curriculumId) => {
 module.exports = {
   createCurriculum,
   getCurriculumById,
+  getCurriculumAll,
   updateCurriculumById,
   deleteCurriculumById,
 };
