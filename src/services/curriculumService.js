@@ -1,4 +1,5 @@
 const httpStatus = require('http-status');
+const { Op } = require('sequelize');
 const { Curriculum } = require('../models/Curriculum');
 const ApiError = require('../utils/ApiError');
 
@@ -35,6 +36,29 @@ const getCurriculumByName = async (curriculumName) => {
     {
       where: {
         curriculumName,
+      },
+    },
+  );
+
+  return curriculum;
+};
+
+/**
+ *
+ * @param {string} curriculumCode
+ * @param {string} curriculumName
+ * @returns {Promise<object>} Curriculum
+ */
+const getCurriculumAnotherByName = async (curriculumCode, curriculumName) => {
+  const curriculum = await Curriculum.findOne(
+    {
+      where: {
+        curriculumName: {
+          [Op.ne]: curriculumName,
+        },
+        curriculumCode: {
+          [Op.ne]: curriculumCode,
+        },
       },
     },
   );
@@ -89,6 +113,7 @@ module.exports = {
   createCurriculum,
   getCurriculumById,
   getCurriculumAll,
+  getCurriculumAnotherByName,
   updateCurriculumById,
   deleteCurriculumById,
 };
