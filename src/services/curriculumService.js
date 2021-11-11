@@ -3,13 +3,6 @@ const { Curriculum } = require('../models/Curriculum');
 const ApiError = require('../utils/ApiError');
 
 /**
- * Create new curriculum
- * @param {Object} curriculumBody
- * @return {Promise<void | Curriculum>}
- */
-const createCurriculum = async (curriculumBody) => Curriculum.create(curriculumBody);
-
-/**
  * Get curriculum by ID
  * @param {string} curriculumId
  * @return {Promise<ApiError | Curriculum>}
@@ -30,6 +23,38 @@ const getCurriculumAll = async () => {
   if (!curriculum && curriculum.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Don\'t have a curriculum yet.');
 
   return curriculum;
+};
+
+/**
+ * Get curriculum by name
+ * @param {string} curriculumName
+ * @returns {Promise<Curriculum>}
+ */
+const getCurriculumByName = async (curriculumName) => {
+  const curriculum = await Curriculum.findOne(
+    {
+      where: {
+        curriculumName,
+      },
+    },
+  );
+
+  return curriculum;
+};
+
+/**
+ * Create new curriculum
+ * @param {Object} curriculumBody
+ * @return {Promise<void | Curriculum>}
+ */
+const createCurriculum = async (curriculumBody) => {
+  const curriculum = await getCurriculumByName(curriculumBody.curriculumName);
+
+  if (curriculum) throw new ApiError(httpStatus.CONFLICT, 'Curriculum already exists');
+
+  const creating = await Curriculum.create(curriculumBody);
+
+  return creating;
 };
 
 /**
