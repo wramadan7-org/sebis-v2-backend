@@ -57,38 +57,6 @@ const initializeServer = () => {
     .catch(() => exitHandler());
 };
 
-// const sonarqube = (
-//   serverUrl,
-//   token,
-//   projectName,
-//   projectDescription,
-//   sources,
-//   tests,
-// ) => {
-// scanner(
-//   {
-//     serverUrl: 'https://sonarqube.mycompany.com',
-//     token: '019d1e2e04eefdcd0caee1468f39a45e69d33d3f',
-//     options: {
-//       'sonar.projectName': 'les-backend-express',
-//       'sonar.projectDescription': 'Bring together students and teachers so they can learn online',
-//       'sonar.sources': 'dist',
-//       'sonar.tests': 'specs',
-//     },
-//   },
-//   () => process.exit(),
-// );
-// };
-
-// Better define in env
-// sonarqube(
-//   'https://sonarqube.mycompany.com',,
-//   '019d1e2e04eefdcd0caee1468f39a45e69d33d3f',
-//   'les-backend-express',
-//   'Bring together students and teachers so they can learn online',
-//   'src',
-//   tests,
-// );
 initializeServer();
 
 process.on('uncaughtException', unexpectedErrorHandler);
