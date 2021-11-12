@@ -8,3 +8,4 @@ package-lock.json
 # configuration files
 .env
 public/
+sonar-project.properties
