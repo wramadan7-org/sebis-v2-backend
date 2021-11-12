@@ -9,4 +9,4 @@ package-lock.json
 .env
 public/
 sonar-project.properties
-.sannerwork
+.sannerwork/
