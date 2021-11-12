@@ -5,12 +5,12 @@ module.exports = {
     queryInterface.addColumn('users', 'phoneNumber', {
       type: Sequelize.STRING,
       unique: true,
-      allowNull: false,
+      allowNull: true,
       after: 'email',
     }),
     queryInterface.addColumn('users', 'gender', {
       type: Sequelize.ENUM(Object.values(genders)),
-      allowNull: false,
+      allowNull: true,
       after: 'password',
     }),
   ]),
