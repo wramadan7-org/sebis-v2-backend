@@ -5,13 +5,15 @@ const validate = require('../../middlewares/validate');
 const authValidation = require('../../validations/authValidation');
 const auth = require('../../middlewares/auth');
 require('../../utils/googlePassport');
+const { passportSetup } = require('../../utils/googlePassport');
 
 const router = express.Router();
 
-router.get('/google', authController.loginByGoogle);
+router.get('/google', passportSetup(), authController.loginByGoogle);
 
 router.get(
   '/google/callback',
+  passportSetup(),
   passport.authenticate('google'),
   authController.googleToken,
 );

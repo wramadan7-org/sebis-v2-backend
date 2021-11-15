@@ -23,12 +23,6 @@ const googleToken = catchAsync(async (req, res) => {
   res.sendWrapped(token);
 });
 
-// passport.authenticate('google'),
-// async (req, res) => {
-//   const token = await tokenService.generateAuthTokens(req.user);
-//   res.sendWrapped(token);
-// }
-
 const login = catchAsync(async (req, res) => {
   const { identity, password } = req.body;
   const user = await authService.loginWithIdentityAndPassword(
