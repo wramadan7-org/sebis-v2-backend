@@ -5,21 +5,18 @@ const userService = require('../services/userService');
 const authService = require('../services/authService');
 const tokenService = require('../services/tokenService');
 const { tokenTypes } = require('../config/tokens');
-require('../utils/googlePassport');
+const { googleAuth } = require('../utils/googleOauth');
 
 const register = catchAsync(async (req, res) => {
   const userBody = req.body;
   const user = await userService.createUser(userBody);
   res.sendWrapped(user, httpStatus.CREATED);
 });
-
-const loginByGoogle = passport.authenticate('google', {
-  scope: ['email', 'profile'],
-});
-
-const googleToken = catchAsync(async (req, res) => {
-  const token = await tokenService.generateAuthTokens(req.user);
-  res.sendWrapped(token);
+const loginByGoogle = catchAsync(async (req, res) => {
+  const { idToken } = req.body;
+  const googleUser = await googleAuth(idToken);
+  const token = await tokenService.generateAuthTokens(googleUser);
+  res.sendWrapped(token, httpStatus.OK);
 });
 
 const login = catchAsync(async (req, res) => {
@@ -67,5 +64,4 @@ module.exports = {
   testProtected,
   resetPassword,
   loginByGoogle,
-  googleToken,
 };
