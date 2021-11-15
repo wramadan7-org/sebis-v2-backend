@@ -1,5 +1,7 @@
 # SEBIS Les Backend v2
 
+[![Build Status](https://jenkins-les.sebisedu.co.id/buildStatus/icon?job=api-les-dev&build=1)](https://jenkins-les.sebisedu.co.id/job/api-les-dev/1/)
+
 SEBIS Les backend microservice using Sequelize & Express.
 
 ## Quick Start
