@@ -24,6 +24,7 @@ const googleAuth = async (idToken) => {
       firstName: given_name,
       lastName: family_name,
       roleId: '437e0221-eb3d-477f-a3b3-799256fbcab6',
+      password: '$2b$10$WXit0D6QlUKJZkwwCT7.qu1u3g.u6ivDMp7Fs0qZ3tqYJh/dZXfZO', // 12345678
     });
     const createdUser = await getUserByEmail(user.email, {
       include: 'role',
