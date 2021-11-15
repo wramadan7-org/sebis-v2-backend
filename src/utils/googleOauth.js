@@ -15,8 +15,6 @@ const googleAuth = async (idToken) => {
   const checkUser = await getUserByEmail(email, {
     include: 'role',
   });
-  console.log('ini payload', payload);
-  console.log(checkUser);
 
   if (!checkUser) {
     const user = await createUser({
