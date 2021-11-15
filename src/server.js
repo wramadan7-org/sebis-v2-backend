@@ -1,4 +1,5 @@
 const cluster = require('cluster');
+const scanner = require('sonarqube-scanner');
 const numCpus = require('os').cpus().length;
 const app = require('./app');
 const config = require('./config/config');
