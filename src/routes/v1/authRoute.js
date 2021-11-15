@@ -10,16 +10,12 @@ const { passportSetup } = require('../../utils/googlePassport');
 const router = express.Router();
 
 router.get('/google', passportSetup(), authController.loginByGoogle);
-
 router.get(
   '/google/callback',
   passportSetup(),
   passport.authenticate('google'),
   authController.googleToken,
 );
-router.get('/success', auth, (req, res) => {
-  res.send('testo');
-});
 router.post(
   '/register',
   validate(authValidation.register),

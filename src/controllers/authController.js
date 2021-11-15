@@ -19,7 +19,6 @@ const loginByGoogle = passport.authenticate('google', {
 
 const googleToken = catchAsync(async (req, res) => {
   const token = await tokenService.generateAuthTokens(req.user);
-  res.setHeader('Authorization', `Bearer ${token}`);
   res.sendWrapped(token);
 });
 
