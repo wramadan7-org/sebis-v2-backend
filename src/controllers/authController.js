@@ -1,20 +1,40 @@
 const httpStatus = require('http-status');
+const passport = require('passport');
 const catchAsync = require('../utils/catchAsync');
 const userService = require('../services/userService');
 const authService = require('../services/authService');
 const tokenService = require('../services/tokenService');
 const { tokenTypes } = require('../config/tokens');
+require('../utils/googlePassport');
 
 const register = catchAsync(async (req, res) => {
   const userBody = req.body;
-
   const user = await userService.createUser(userBody);
   res.sendWrapped(user, httpStatus.CREATED);
 });
 
+const loginByGoogle = passport.authenticate('google', {
+  scope: ['email', 'profile'],
+});
+
+const googleToken = catchAsync(async (req, res) => {
+  const token = await tokenService.generateAuthTokens(req.user);
+  res.setHeader('Authorization', `Bearer ${token}`);
+  res.sendWrapped(token);
+});
+
+// passport.authenticate('google'),
+// async (req, res) => {
+//   const token = await tokenService.generateAuthTokens(req.user);
+//   res.sendWrapped(token);
+// }
+
 const login = catchAsync(async (req, res) => {
   const { identity, password } = req.body;
-  const user = await authService.loginWithIdentityAndPassword(identity, password);
+  const user = await authService.loginWithIdentityAndPassword(
+    identity,
+    password,
+  );
   const token = await tokenService.generateAuthTokens(user);
   res.sendWrapped(token, httpStatus.OK);
 });
@@ -53,4 +73,6 @@ module.exports = {
   logout,
   testProtected,
   resetPassword,
+  loginByGoogle,
+  googleToken,
 };
