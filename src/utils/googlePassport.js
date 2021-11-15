@@ -1,6 +1,7 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const { getUserByEmail, createUser } = require('../services/userService');
+const { Role } = require('../models/Role');
 
 const { GOOGLE_CLIENT_SECRET, GOOGLE_CLIENT_ID } = process.env;
 
@@ -34,7 +35,10 @@ passport.use(
             lastName: profile.family_name,
             roleId: '437e0221-eb3d-477f-a3b3-799256fbcab6',
           });
-          return userGoogle;
+          const userCreated = await getUserByEmail(userGoogle.email, {
+            include: 'role',
+          });
+          return done(null, userCreated);
         }
         return done(null, user);
       } catch (error) {
