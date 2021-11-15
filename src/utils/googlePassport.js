@@ -19,7 +19,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/v1/auth/google/callback',
+      callbackURL: 'https://api.sebisles.com/v1/auth/google/callback',
       passReqToCallback: true,
     },
     async (request, accessToken, refreshToken, profile, done) => {
@@ -34,7 +34,6 @@ passport.use(
             lastName: profile.family_name,
             roleId: '437e0221-eb3d-477f-a3b3-799256fbcab6',
           });
-
           return userGoogle;
         }
         return done(null, user);
