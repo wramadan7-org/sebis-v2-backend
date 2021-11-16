@@ -58,7 +58,7 @@ const updateReferralHistory = async (id, userId, data) => {
 const deleteReferralHistory = async (id, userId) => {
   const referralHistory = await getReferralHistoryById(id, userId);
 
-  if (referralHistory) throw new ApiError(httpStatus.NOT_FOUND, 'Referral not found.');
+  if (!referralHistory) throw new ApiError(httpStatus.NOT_FOUND, 'Referral not found.');
 
   referralHistory.destroy();
 
