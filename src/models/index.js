@@ -162,6 +162,7 @@ const setupSequelizeAssociations = async () => {
 
   ReferralHistory.belongsTo(User, {
     foreignKey: 'userId',
+    as: 'referencedTo',
   });
 
   User.hasOne(ReferralHistory, {
@@ -170,6 +171,7 @@ const setupSequelizeAssociations = async () => {
 
   ReferralHistory.belongsTo(User, {
     foreignKey: 'referredBy',
+    as: 'referencedBy',
   });
 
   // finally sync sequelize
