@@ -29,13 +29,14 @@ const getReferralHistoryAll = async (userId, opts = {}) => {
   return referralHistory;
 };
 
-const getReferralHistoryById = async (id, userId) => {
+const getReferralHistoryById = async (id, userId, opts = {}) => {
   const referralHistory = await ReferralHistory.findOne(
     {
       where: {
         id,
         userId,
       },
+      ...opts,
     },
   );
 
