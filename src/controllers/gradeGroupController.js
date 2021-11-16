@@ -15,6 +15,7 @@ const createNewGradeGroup = catchAsync(async (req, res) => {
   const { curriculumId } = req.body;
   await getCurriculumById(curriculumId);
   const gradeGroup = await createGradeGroup(gradeGroupBody);
+
   res.sendWrapped(gradeGroup, httpStatus.CREATED);
 });
 
