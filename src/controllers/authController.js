@@ -14,15 +14,19 @@ const register = catchAsync(async (req, res) => {
 });
 const loginByGoogle = catchAsync(async (req, res) => {
   const { idToken } = req.body;
+
   const googleUser = await googleAuth(idToken);
   const { access, refresh } = await tokenService.generateAuthTokens(googleUser);
+
   const message = 'Login Sucessfully';
+
   const user = {
     message,
     googleUser,
     access,
     refresh,
   };
+
   res.sendWrapped(user, httpStatus.OK);
 });
 
