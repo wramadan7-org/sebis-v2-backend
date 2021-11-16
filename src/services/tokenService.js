@@ -3,7 +3,11 @@ const moment = require('moment');
 const config = require('../config/config');
 const { tokenTypes } = require('../config/tokens');
 const redis = require('../utils/redis');
-const { redisTokenKey, redisRefreshTokenKey, redisUserLoginKey } = require('../config/redis');
+const {
+  redisTokenKey,
+  redisRefreshTokenKey,
+  redisUserLoginKey,
+} = require('../config/redis');
 
 /**
  * Sign token to redis
@@ -15,11 +19,13 @@ const { redisTokenKey, redisRefreshTokenKey, redisUserLoginKey } = require('../c
  */
 const signToken = (userId, type, token, ttl = -1) => {
   const redisKey = `${redisTokenKey(userId, type)}:${token}`;
-  redis.setObject(redisKey, {
-    blacklist: false,
-  }).then(() => {
-    if (ttl > 0) redis.setExpire(redisKey, ttl);
-  });
+  redis
+    .setObject(redisKey, {
+      blacklist: false,
+    })
+    .then(() => {
+      if (ttl > 0) redis.setExpire(redisKey, ttl);
+    });
 };
 
 /**
@@ -31,12 +37,14 @@ const signToken = (userId, type, token, ttl = -1) => {
  */
 const signRefreshToken = (userId, refreshToken, ttl = -1) => {
   const redisKey = `${redisRefreshTokenKey}:${refreshToken}`;
-  redis.setObject(redisKey, {
-    userId,
-    blacklist: false,
-  }).then(() => {
-    if (ttl > 0) redis.setExpire(redisKey, ttl);
-  });
+  redis
+    .setObject(redisKey, {
+      userId,
+      blacklist: false,
+    })
+    .then(() => {
+      if (ttl > 0) redis.setExpire(redisKey, ttl);
+    });
 };
 
 /**
@@ -74,9 +82,12 @@ const revokeRefreshToken = async (refreshToken) => {
  */
 const isTokenActive = (userId, type, token) => new Promise((resolve, reject) => {
   const redisKey = `${redisTokenKey(userId, type)}:${token}`;
-  redis.getObject(redisKey).then((data) => {
-    resolve(data && data.blacklist === 'false');
-  }).catch((error) => (reject(error)));
+  redis
+    .getObject(redisKey)
+    .then((data) => {
+      resolve(data && data.blacklist === 'false');
+    })
+    .catch((error) => reject(error));
 });
 
 /**
@@ -86,9 +97,12 @@ const isTokenActive = (userId, type, token) => new Promise((resolve, reject) => 
  */
 const isRefreshTokenActive = (refreshToken) => new Promise((resolve, reject) => {
   const redisKey = `${redisRefreshTokenKey}:${refreshToken}`;
-  redis.getObject(redisKey).then((data) => {
-    resolve(data.blacklist === 'false');
-  }).catch((error) => (reject(error)));
+  redis
+    .getObject(redisKey)
+    .then((data) => {
+      resolve(data.blacklist === 'false');
+    })
+    .catch((error) => reject(error));
 });
 
 /**
@@ -140,15 +154,38 @@ const revokeUser = (userId) => {
  * @return {Promise<{access: {expires: Date, token: string}, refresh: {expires: Date, token: string}}>}
  */
 const generateAuthTokens = async (user) => {
-  const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
-  const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS);
+  const accessTokenExpires = moment().add(
+    config.jwt.accessExpirationMinutes,
+    'minutes',
+  );
+  const accessToken = generateToken(
+    user.id,
+    accessTokenExpires,
+    tokenTypes.ACCESS,
+  );
 
-  const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  const refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH);
+  const refreshTokenExpires = moment().add(
+    config.jwt.refreshExpirationDays,
+    'days',
+  );
+  const refreshToken = generateToken(
+    user.id,
+    refreshTokenExpires,
+    tokenTypes.REFRESH,
+  );
 
   // save token to redis
-  signToken(user.id, tokenTypes.ACCESS, accessToken, accessTokenExpires.diff(moment(), 'seconds'));
-  signRefreshToken(user.id, refreshToken, refreshTokenExpires.diff(moment(), 'seconds'));
+  signToken(
+    user.id,
+    tokenTypes.ACCESS,
+    accessToken,
+    accessTokenExpires.diff(moment(), 'seconds'),
+  );
+  signRefreshToken(
+    user.id,
+    refreshToken,
+    refreshTokenExpires.diff(moment(), 'seconds'),
+  );
 
   // save user data to redis
   signUser(user.toJSON());

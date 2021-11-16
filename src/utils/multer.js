@@ -8,7 +8,9 @@ const storage = (location, identity) => multer.diskStorage({
   filename: (req, file, cb) => {
     const splitIdentity = identity.split('-');
     const lastIdentity = splitIdentity[splitIdentity.length - 1];
-    const filename = `${file.fieldname}-${Date.now()}${lastIdentity}${path.extname(file.originalname)}`;
+    const filename = `${
+      file.fieldname
+    }-${Date.now()}${lastIdentity}${path.extname(file.originalname)}`;
     cb(null, filename);
   },
 });
@@ -16,7 +18,7 @@ const storage = (location, identity) => multer.diskStorage({
 const options = (location, identity) => multer({
   storage: storage(location, identity),
   limits: {
-    fileSize: (1024 * 1024) * 5,
+    fileSize: 1024 * 1024 * 5,
   },
   fileFilter: (req, file, callback) => {
     // const ext = path.extname(file.originalname)
