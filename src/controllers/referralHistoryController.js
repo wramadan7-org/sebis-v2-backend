@@ -19,6 +19,15 @@ const addReferralHistory = catchAsync(async (req, res) => {
   return referralHistory;
 });
 
+const getReferralHistories = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+
+  const referralHistories = await referralHistoryService.getReferralHistoryAll(userId);
+
+  return referralHistories;
+});
+
 module.exports = {
   addReferralHistory,
+  getReferralHistories,
 };
