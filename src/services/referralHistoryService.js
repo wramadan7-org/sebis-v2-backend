@@ -14,12 +14,13 @@ const createReferralHistory = async (userId, referredBy, referralCode) => {
   return insertReferralHistory;
 };
 
-const getReferralHistoryAll = async (userId) => {
+const getReferralHistoryAll = async (userId, opts = {}) => {
   const referralHistory = await ReferralHistory.findAll(
     {
       where: {
         userId,
       },
+      ...opts,
     },
   );
 
