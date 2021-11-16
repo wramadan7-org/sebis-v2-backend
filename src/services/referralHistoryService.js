@@ -41,8 +41,21 @@ const getReferralHistoryById = async (id, userId) => {
   return referralHistory;
 };
 
+const updateReferralHistory = async (id, userId, data) => {
+  const referralHistory = await getReferralHistoryById(id, userId);
+
+  if (!referralHistory) throw new ApiError(httpStatus.NOT_FOUND, 'Referral not found.');
+
+  Object.assign(referralHistory, data);
+
+  referralHistory.save();
+
+  return referralHistory;
+};
+
 module.exports = {
   createReferralHistory,
   getReferralHistoryAll,
   getReferralHistoryById,
+  updateReferralHistory,
 };
