@@ -29,7 +29,9 @@ const getAllGradeGroup = async (query, opts = {}) => {
     where: {
       query,
     },
+    ...opts,
   });
+  if (!gradeGroup) throw new ApiError(httpStatus.NOT_FOUND, 'Grade Group Not found');
   return gradeGroup;
 };
 
