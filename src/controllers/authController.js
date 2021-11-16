@@ -19,7 +19,6 @@ const loginByGoogle = catchAsync(async (req, res) => {
   const { access, refresh } = await tokenService.generateAuthTokens(googleUser);
 
   const message = 'Login Sucessfully';
-
   const user = {
     message,
     googleUser,
