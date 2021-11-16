@@ -98,9 +98,22 @@ const updateReferralHistory = catchAsync(async (req, res) => {
   res.sendWrapped(referralHistory, httpStatus.OK);
 });
 
+const deleteReferralHistory = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { referralHistoryId } = req.params;
+
+  const referralHistory = await referralHistoryService.deleteReferralHistory(
+    referralHistoryId,
+    userId,
+  );
+
+  res.sendWrapped(referralHistory, httpStatus.OK);
+});
+
 module.exports = {
   addReferralHistory,
   getReferralHistories,
   getReferralHistoryById,
   updateReferralHistory,
+  deleteReferralHistory,
 };
