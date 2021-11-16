@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
+const referralService = require('../services/referralService');
 const referralHistoryService = require('../services/referralHistoryService');
 const ApiError = require('../utils/ApiError');
 const { User } = require('../models/User');
@@ -72,8 +73,34 @@ const getReferralHistoryById = catchAsync(async (req, res) => {
   res.sendWrapped(referralHistory, httpStatus.OK);
 });
 
+const updateReferralHistory = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { referralHistoryId } = req.params;
+  const referralBody = req.body;
+
+  const user = await referralService.getReferralCode(userId, referralBody.referralCode);
+
+  if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'Referral not found.');
+
+  if (user.referralCode !== referralBody.referralCode) throw new ApiError(httpStatus.NOT_FOUND, 'Referral not found.');
+
+  const dataReferralHistory = {
+    referralCode: user.referralCode,
+    referredBy: user.id,
+  };
+
+  const referralHistory = await referralHistoryService.updateReferralHistory(
+    referralHistoryId,
+    userId,
+    dataReferralHistory,
+  );
+
+  res.sendWrapped(referralHistory, httpStatus.OK);
+});
+
 module.exports = {
   addReferralHistory,
   getReferralHistories,
   getReferralHistoryById,
+  updateReferralHistory,
 };
