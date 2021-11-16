@@ -2,6 +2,7 @@ const Joi = require('joi');
 
 const createGradeGroup = {
   body: Joi.object().keys({
+    curriculumId: Joi.string().required(),
     gradeGroupCode: Joi.string().required(),
     gradeGroupName: Joi.string().required(),
   }),

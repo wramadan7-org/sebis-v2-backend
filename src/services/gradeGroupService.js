@@ -24,12 +24,9 @@ const getGradeGroupById = async (gradeGroupId, opts = {}) => {
  * @param {Object} opts
  * @returns {Promise<Get All Group>}
  */
-const getAllGradeGroup = async (query, opts = {}) => {
+const getAllGradeGroup = async (query) => {
   const gradeGroup = await GradeGroup.findAll({
-    where: {
-      query,
-    },
-    ...opts,
+    where: query,
   });
   if (!gradeGroup) throw new ApiError(httpStatus.NOT_FOUND, 'Grade Group Not found');
   return gradeGroup;
@@ -41,13 +38,8 @@ const getAllGradeGroup = async (query, opts = {}) => {
  * @param {String} gradeGroupBody
  * @returns {Promise<GradeGroup | void >}
  */
-const createGradeGroup = async (curriculumId, gradeGroupBody) => {
-  const gradeGroupData = {
-    curriculumId,
-    ...gradeGroupBody,
-  };
-
-  const gradeGroup = await GradeGroup.create(gradeGroupData);
+const createGradeGroup = async (gradeGroupBody) => {
+  const gradeGroup = await GradeGroup.create(gradeGroupBody);
   return gradeGroup;
 };
 

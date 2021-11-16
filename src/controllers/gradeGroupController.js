@@ -1,4 +1,5 @@
 const httpStatus = require('http-status');
+const { getCurriculumById } = require('../services/curriculumService');
 const {
   createGradeGroup,
   getAllGradeGroup,
@@ -11,6 +12,8 @@ const catchAsync = require('../utils/catchAsync');
 
 const createNewGradeGroup = catchAsync(async (req, res) => {
   const gradeGroupBody = req.body;
+  const { curriculumId } = req.body;
+  await getCurriculumById(curriculumId);
   const gradeGroup = await createGradeGroup(gradeGroupBody);
   res.sendWrapped(gradeGroup, httpStatus.CREATED);
 });
