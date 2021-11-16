@@ -10,3 +10,5 @@ package-lock.json
 public/
 sonar-project.properties
 .sannerwork/
+.scannerwork/.sonar_lock
+.scannerwork/report-task.txt
