@@ -14,10 +14,29 @@ const createReferralHistory = async (userId, referredBy, referralCode) => {
   return insertReferralHistory;
 };
 
-const getReferralHistoryAll = async () => {
-  const referralHistory = await ReferralHistory.findAll();
+const getReferralHistoryAll = async (userId) => {
+  const referralHistory = await ReferralHistory.findAll(
+    {
+      where: {
+        userId,
+      },
+    },
+  );
 
   if (referralHistory.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'You don\'t have referral history');
+
+  return referralHistory;
+};
+
+const getReferralHistoryById = async (id, userId) => {
+  const referralHistory = await ReferralHistory.findOne(
+    {
+      where: {
+        id,
+        userId,
+      },
+    },
+  );
 
   return referralHistory;
 };
@@ -25,4 +44,5 @@ const getReferralHistoryAll = async () => {
 module.exports = {
   createReferralHistory,
   getReferralHistoryAll,
+  getReferralHistoryById,
 };
