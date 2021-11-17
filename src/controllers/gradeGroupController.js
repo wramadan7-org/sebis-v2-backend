@@ -7,7 +7,6 @@ const {
   deleteGradeGroupByid,
   getGradeGroupById,
 } = require('../services/gradeGroupService');
-const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 
 const createNewGradeGroup = catchAsync(async (req, res) => {
