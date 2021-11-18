@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const { GradeGroup } = require('../models/GradeGroup');
+const { Curriculum } = require('../models/Curriculum');
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -18,18 +19,36 @@ const getGradeGroupById = async (gradeGroupId, opts = {}) => {
   if (!gradeGroup) throw new ApiError(httpStatus.NOT_FOUND, 'Grade group not found');
   return gradeGroup;
 };
+
+/**
+ *
+ * @param {String} gradeGroupCode
+ * @param {object} opts
+ * @returns {Promise<Grade Group | ApiError>}
+ */
+const getGradeGroupByCode = async (gradeGroupCode, opts = {}) => {
+  const gradeGroup = await GradeGroup.findOne({
+    where: {
+      gradeGroupCode,
+    },
+    ...opts,
+  });
+  if (!gradeGroup) throw new ApiError(httpStatus.CONFLICT, 'Grade Group Not Found');
+  return GradeGroup;
+};
+
 /**
  * get all grade group
  * @param {String} query
  * @param {Object} opts
  * @returns {Promise<Get All Group>}
  */
-const getAllGradeGroup = async (query, opts = {}) => {
+const getAllGradeGroup = async (query) => {
   const gradeGroup = await GradeGroup.findAll({
-    where: {
-      query,
-    },
+    where: query,
+    include: [{ model: Curriculum }],
   });
+  if (!gradeGroup) throw new ApiError(httpStatus.NOT_FOUND, 'Grade Group Not found');
   return gradeGroup;
 };
 
@@ -39,13 +58,19 @@ const getAllGradeGroup = async (query, opts = {}) => {
  * @param {String} gradeGroupBody
  * @returns {Promise<GradeGroup | void >}
  */
-const createGradeGroup = async (curriculumId, gradeGroupBody) => {
-  const gradeGroupData = {
-    curriculumId,
-    ...gradeGroupBody,
-  };
-
-  const gradeGroup = await GradeGroup.create(gradeGroupData);
+const createGradeGroup = async (gradeGroupBody) => {
+  const checkGradeGroup = await GradeGroup.findOne({
+    where: {
+      gradeGroupCode: gradeGroupBody.gradeGroupCode,
+    },
+  });
+  if (checkGradeGroup) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      `Grade Group with code ${gradeGroupBody.gradeGroupCode} already created`,
+    );
+  }
+  const gradeGroup = await GradeGroup.create(gradeGroupBody);
   return gradeGroup;
 };
 
@@ -82,4 +107,5 @@ module.exports = {
   createGradeGroup,
   updateGradeGroupById,
   deleteGradeGroupByid,
+  getGradeGroupByCode,
 };

@@ -8,6 +8,8 @@ const referralRoute = require('./referralRoute');
 const availabilityHoursRoute = require('./availabilityHoursRoute');
 const curriculumRoute = require('./curriculumRoute');
 const referralHistoryRoute = require('./referralHistoryRoute');
+const gradeGroupRoute = require('./gradeGroupRoute');
+const gradeRoute = require('./gradeRoute');
 
 const router = express.Router();
 
@@ -47,6 +49,14 @@ const defaultRoutes = [
   {
     path: '/referral/history',
     route: referralHistoryRoute,
+  },
+  {
+    path: '/grade-group',
+    route: gradeGroupRoute,
+  },
+  {
+    path: '/grade',
+    route: gradeRoute,
   },
 ];
 
