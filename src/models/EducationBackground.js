@@ -39,7 +39,7 @@ const EducationBackground = sequelize.define('educationBackground', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  educationFile: {
+  educationCertificate: {
     type: DataTypes.STRING,
     allowNull: true,
   },
