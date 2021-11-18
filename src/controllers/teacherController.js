@@ -14,7 +14,6 @@ const { EducationBackground } = require('../models/EducationBackground');
 const { File } = require('../models/Files');
 const { User } = require('../models/User');
 const multering = require('../utils/multer');
-const { upload } = require('../utils/fileMulter');
 
 const profileInfo = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
