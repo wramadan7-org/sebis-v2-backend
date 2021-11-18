@@ -14,6 +14,7 @@ const { EducationBackground } = require('../models/EducationBackground');
 const { File } = require('../models/Files');
 const { User } = require('../models/User');
 const multering = require('../utils/multer');
+const { upload } = require('../utils/fileMulter');
 
 const profileInfo = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
@@ -227,19 +228,45 @@ const createEducationBackground = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const destination = 'files/education-background';
 
-  multering.options(`./public/${destination}`, teacherId).single('educationFile')(req, res, async (err) => {
+  multering.options(`./public/${destination}`, teacherId).fields(
+    [
+      {
+        name: 'educationTranscript',
+        maxCount: 1,
+      },
+      {
+        name: 'educationCertificate',
+        maxCount: 1,
+      },
+    ],
+  )(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
     } else {
       const educationBody = await req.body;
+      const { educationCertificate, educationTranscript } = req.files;
 
       const data = {
         ...educationBody,
-        educationFile: `static/${destination}/${req.file.filename}`,
+        educationCertificate: `static/${destination}/${educationCertificate[0].filename}`,
+        educationTranscript: `static/${destination}/${educationTranscript[0].filename}`,
       };
 
       const eduBackground = await educationBackgroundService.createEducationBackground(teacherId, data);
       res.sendWrapped(eduBackground, httpStatus.CREATED);
+    }
+  });
+});
+
+const createEducationBackgroundCertificate = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const destination = 'files/education-background';
+
+  multering.options(`./public/${destination}`, teacherId).single('educationCertificate')(req, res, async (err) => {
+    if (err) {
+      res.sendWrapped(err);
+    } else {
+      const educationCertificate = `static/${destination}/${req.file.filename}`;
     }
   });
 });
@@ -376,6 +403,7 @@ module.exports = {
   deleteTeachingExperience,
   deleteTeachingExperienceDetail,
   createEducationBackground,
+  createEducationBackgroundCertificate,
   getEducationBackground,
   deleteEducationBackground,
   createdFilesProfile,
