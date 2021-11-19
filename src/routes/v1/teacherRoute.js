@@ -25,6 +25,7 @@ router.delete('/profile/teaching-experience/:teachingExperienceId', auth, teache
 router.delete('/profile/teaching-experience/:teachingExperienceId/:teachingExperienceDetailId', auth, teacher, teacherController.deleteTeachingExperienceDetail);
 
 router.post('/profile/education-background', auth, teacher, teacherController.createEducationBackground);
+router.patch('/profile/education-background/:educationBackgroundId', auth, teacher, teacherController.updateEducationBackground);
 router.delete('/profile/education-background/:educationBackgroundId', auth, teacher, teacherController.deleteEducationBackground);
 
 router.patch('/profile/file-profile', auth, teacher, teacherController.createdFilesProfile);
