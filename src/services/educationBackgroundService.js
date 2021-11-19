@@ -38,6 +38,20 @@ const getEducationBackground = async (teacherId) => {
   return eduBackground;
 };
 
+const updateEducationBackground = async (teacherId, educationBackgroundId, data) => {
+  const educationBackground = await getEducationBackgroundById(
+    teacherId,
+    educationBackgroundId,
+  );
+
+  if (!educationBackgroundId) throw new ApiError(httpStatus.NOT_FOUND, 'Education background not found.');
+
+  Object.assign(educationBackground, data);
+  educationBackground.save();
+
+  return educationBackground;
+};
+
 const deletedEducationBackground = async (teacherId, educationBackgroundId) => {
   const educationBackground = await getEducationBackgroundById(teacherId, educationBackgroundId);
 
@@ -51,5 +65,6 @@ module.exports = {
   createEducationBackground,
   getEducationBackgroundById,
   getEducationBackground,
+  updateEducationBackground,
   deletedEducationBackground,
 };
