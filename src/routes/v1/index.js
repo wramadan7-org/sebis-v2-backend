@@ -60,7 +60,7 @@ const defaultRoutes = [
     route: gradeRoute,
   },
   {
-    path: '/subject',
+    path: '/subjectes',
     route: subjectRoute,
   },
 ];

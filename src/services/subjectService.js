@@ -34,7 +34,7 @@ const getSubjectAll = async (query) => {
 const createSubject = async (subjectBody) => {
   const checkSubject = await Subject.findOne({
     where: {
-      gradeCode: subjectBody.subjectCode,
+      subjectCode: subjectBody.subjectCode,
     },
   });
   if (checkSubject) {
@@ -56,6 +56,7 @@ const updateSubjectById = async (subjectId, subjectBody) => {
 
 const deleteSubjectById = async (subjectId) => {
   const subject = await getSubjectById(subjectId);
+  if (!subject) throw new ApiError(httpStatus.NOT_FOUND, 'subject not found');
   subject.destroy();
   return subject;
 };

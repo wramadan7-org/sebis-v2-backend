@@ -9,8 +9,8 @@ const catchAsync = require('../utils/catchAsync');
 
 const createNewSubject = catchAsync(async (req, res) => {
   const subjectBody = req.body;
-  const grade = await createSubject(subjectBody);
-  res.sendWrapped(grade, httpStatus.CREATED);
+  const subject = await createSubject(subjectBody);
+  res.sendWrapped(subject, httpStatus.CREATED);
 });
 
 const getSubject = catchAsync(async (req, res) => {

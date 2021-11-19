@@ -13,12 +13,12 @@ router.post(
   subjectController.createNewSubject,
 );
 
-router.get('/', auth, subjectController.deleteSubject);
+router.get('/', auth, subjectController.getSubject);
 router.patch(
   '/:subjectId',
   auth,
   validate(subjectValidate.updateSubject),
-  subjectController.deleteSubject,
+  subjectController.updateSubject,
 );
 router.delete(
   '/:subjectId',
