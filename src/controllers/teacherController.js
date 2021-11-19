@@ -287,10 +287,17 @@ const updateEducationBackground = catchAsync(async (req, res) => {
       const educationBody = req.body;
       const { educationCertificate, educationTranscript } = req.files;
 
+      const checkEducationBackground = await educationBackgroundService.getEducationBackgroundById(
+        teacherId,
+        educationBackgroundId,
+      );
+
+      if (!checkEducationBackground) throw new ApiError(httpStatus.NOT_FOUND, 'Education background not found.');
+
       const data = {
         ...educationBody,
-        educationCertificate: `static/${destination}/${educationCertificate[0].filename}`,
-        educationTranscript: `static/${destination}/${educationTranscript[0].filename}`,
+        educationCertificate: educationCertificate ? `static/${destination}/${educationCertificate[0].filename}` : checkEducationBackground.educationCertificate,
+        educationTranscript: educationTranscript ? `static/${destination}/${educationTranscript[0].filename}` : checkEducationBackground.educationTranscript,
       };
 
       const educationBackground = await educationBackgroundService.updateEducationBackground(
