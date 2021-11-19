@@ -366,6 +366,26 @@ const createFileNPWP = catchAsync(async (req, res) => {
   });
 });
 
+const createFileCV = catchAsync(async (req, res) => {
+  const teacherId = req.user.id;
+  const destination = 'images/cv';
+
+  multering.options(`./public/${destination}`, teacherId).single('fileCV')(req, res, async (err) => {
+    if (err) {
+      res.sendWrapped(err);
+    } else {
+      const fileBody = {
+        ...req.body,
+        fileName: `static/${destination}/${req.file.filename}`,
+      };
+
+      const insertCV = await fileService.addFile(teacherId, fileBody);
+
+      res.sendWrapped(insertCV, httpStatus.OK);
+    }
+  });
+});
+
 const createdUserDetail = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const teacherBody = req.body;
@@ -434,4 +454,5 @@ module.exports = {
   createdFilesProfile,
   createFileKTP,
   createFileNPWP,
+  createFileCV,
 };
