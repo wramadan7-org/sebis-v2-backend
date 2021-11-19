@@ -7,7 +7,7 @@ package-lock.json
 
 # configuration files
 .env
-public/
+# public/
 sonar-project.properties
 .sannerwork/
 .scannerwork/.sonar_lock
