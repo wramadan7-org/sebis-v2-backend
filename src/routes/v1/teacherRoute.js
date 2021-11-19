@@ -31,6 +31,7 @@ router.delete('/profile/education-background/:educationBackgroundId', auth, teac
 router.patch('/profile/file-profile', auth, teacher, teacherController.createdFilesProfile);
 router.patch('/profile/file-ktp', auth, teacher, teacherController.createFileKTP);
 router.patch('/profile/file-npwp', auth, teacher, teacherController.createFileNPWP);
+router.patch('/profile/file-cv', auth, teacher, teacherController.createFileCV);
 // /profile/teaching-experience [CRUD, no pagination]
 // /profile/education-background [CRUD, no pagination]
 
