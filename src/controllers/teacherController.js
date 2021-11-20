@@ -326,6 +326,10 @@ const createdFilesProfile = catchAsync(async (req, res) => {
     if (err) {
       res.sendWrapped(err);
     } else {
+      if (req.file.filename) {
+        return res.sendWrapped('Please insert file/photo!', httpStatus.BAD_REQUEST);
+      }
+
       const updateProfile = await userService.updateProfile(teacherId, `static/${destination}/${req.file.filename}`);
 
       res.sendWrapped(updateProfile, httpStatus.OK);
@@ -341,6 +345,10 @@ const createFileKTP = catchAsync(async (req, res) => {
     if (err) {
       res.sendWrapped(err);
     } else {
+      if (req.file.filename) {
+        return res.sendWrapped('Please insert file/photo!', httpStatus.BAD_REQUEST);
+      }
+
       const fileBody = {
         fileType: 'ktp',
         fileName: `static/${destination}/${req.file.filename}`,
@@ -361,6 +369,10 @@ const createFileNPWP = catchAsync(async (req, res) => {
     if (err) {
       res.sendWrapped(err);
     } else {
+      if (req.file.filename) {
+        return res.sendWrapped('Please insert file/photo!', httpStatus.BAD_REQUEST);
+      }
+
       const fileBody = {
         fileType: 'npwp',
         fileName: `static/${destination}/${req.file.filename}`,
@@ -381,6 +393,10 @@ const createFileCV = catchAsync(async (req, res) => {
     if (err) {
       res.sendWrapped(err);
     } else {
+      if (req.file.filename) {
+        return res.sendWrapped('Please insert file/photo!', httpStatus.BAD_REQUEST);
+      }
+
       const fileBody = {
         fileType: 'cv',
         fileName: `static/${destination}/${req.file.filename}`,
