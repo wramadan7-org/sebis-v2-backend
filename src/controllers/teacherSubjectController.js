@@ -14,6 +14,10 @@ const createTeacherSubject = catchAsync(async (req, res) => {
   res.sendWrapped(teacherSubject, httpStatus.CREATED);
 });
 
+const getTeacherSubject = catchAsync(async (req, res) => {
+  console.log('get');
+});
+
 module.exports = {
   createTeacherSubject,
 };
