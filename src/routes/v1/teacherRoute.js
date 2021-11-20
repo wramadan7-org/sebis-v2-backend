@@ -7,6 +7,7 @@ const { teacher } = require('../../middlewares/roleValidation');
 const teacherController = require('../../controllers/teacherController');
 const cartController = require('../../controllers/cartController');
 const cartValidation = require('../../validations/cartValidation');
+const fileValidation = require('../../validations/fileValidation');
 
 const router = express.Router();
 
@@ -28,10 +29,10 @@ router.post('/profile/education-background', auth, teacher, teacherController.cr
 router.patch('/profile/education-background/:educationBackgroundId', auth, teacher, teacherController.updateEducationBackground);
 router.delete('/profile/education-background/:educationBackgroundId', auth, teacher, teacherController.deleteEducationBackground);
 
-router.patch('/profile/file-profile', auth, teacher, teacherController.createdFilesProfile);
-router.patch('/profile/file-ktp', auth, teacher, teacherController.createFileKTP);
-router.patch('/profile/file-npwp', auth, teacher, teacherController.createFileNPWP);
-router.patch('/profile/file-cv', auth, teacher, teacherController.createFileCV);
+router.patch('/profile/file-profile', auth, teacher, validate(fileValidation.createFileProfile), teacherController.createdFilesProfile);
+router.patch('/profile/file-ktp', auth, teacher, validate(fileValidation.createFileKTP), teacherController.createFileKTP);
+router.patch('/profile/file-npwp', auth, teacher, validate(fileValidation.createFileNPWP), teacherController.createFileNPWP);
+router.patch('/profile/file-cv', auth, teacher, validate(fileValidation.createFileCV), teacherController.createFileCV);
 // /profile/teaching-experience [CRUD, no pagination]
 // /profile/education-background [CRUD, no pagination]
 
