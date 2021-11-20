@@ -387,7 +387,7 @@ const createFileNPWP = catchAsync(async (req, res) => {
 
 const createFileCV = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
-  const destination = 'images/cv';
+  const destination = 'files/cv';
 
   multering.options(`./public/${destination}`, teacherId).single('fileCV')(req, res, async (err) => {
     if (err) {
