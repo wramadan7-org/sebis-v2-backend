@@ -86,12 +86,24 @@ const getTutorScheduleTimeById = async (availabilityHoursId, teacherId) => {
  * @param {number} dayCode;
  * @param {string} timeStart;
  * @param {string} timeEnd;
+ * @param {string | optional} availabilityHoursId
  * @param {object<{offsetStart: number, offsetEnd: number}>} options;
  * @returns {boolean};
  */
-const isHoursAvailable = async (teacherId, dayCode, timeStart, timeEnd, options = { offsetStart: -15, offsetEnd: 15 }) => {
+const isHoursAvailable = async (teacherId, dayCode, timeStart, timeEnd, availabilityHoursId, options = { offsetStart: -15, offsetEnd: 15 }) => {
   let availablityHours = await getTutorScheduleTimeByDay(teacherId, dayCode);
-  console.log(availablityHours, 'length');
+
+  if (availabilityHoursId) {
+    availablityHours = await AvailabilityHours.findAll(
+      {
+        teacherId,
+        dayCode,
+        id: {
+          [Op.ne]: availabilityHoursId,
+        },
+      },
+    );
+  }
 
   if (availablityHours.length <= 0) {
     return true;
@@ -159,6 +171,7 @@ const updatingTutorScheduleTime = async (userId, availabilityHoursId, body) => {
     availabilityHours.dayCode,
     availabilityHours.timeStart,
     availabilityHours.timeEnd,
+    availabilityHoursId,
   );
 
   if (!valid) throw new ApiError(httpStatus.CONFLICT, 'Schedule is already');
