@@ -7,6 +7,7 @@ const { connectDb } = require('./config/database');
 const logger = require('./config/logger');
 const setupSequelizeAssociations = require('./models');
 const { initializeQueue } = require('./queues');
+const { writeError } = require('./utils/common');
 
 let server;
 
@@ -23,7 +24,8 @@ const exitHandler = () => {
 
 const unexpectedErrorHandler = (error) => {
   logger.error(error);
-  exitHandler();
+  writeError('./public/crash.log', error);
+  // exitHandler();
 };
 
 const initializeServer = () => {
