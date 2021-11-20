@@ -3,9 +3,9 @@ const moment = require('moment');
 const logger = require('../config/logger');
 
 const writeError = (filePath, data) => {
-  fs.appendFile(filePath, data, (error) => {
+  const currentDate = moment().format('YYYY-MM-DD HH:mm');
+  fs.appendFile(filePath, `\n========== ${currentDate} ==========\n${data}`, (error) => {
     if (error) throw error;
-    const currentDate = moment().format('YYYY-MM-DD HH:mm');
     logger.error(`Crash reported on ${currentDate}`);
   });
 };
@@ -13,3 +13,4 @@ const writeError = (filePath, data) => {
 module.exports = {
   writeError,
 };
+
