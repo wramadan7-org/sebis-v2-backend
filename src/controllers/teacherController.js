@@ -342,7 +342,7 @@ const createFileKTP = catchAsync(async (req, res) => {
       res.sendWrapped(err);
     } else {
       const fileBody = {
-        ...req.body,
+        fileType: 'ktp',
         fileName: `static/${destination}/${req.file.filename}`,
       };
 
@@ -362,7 +362,7 @@ const createFileNPWP = catchAsync(async (req, res) => {
       res.sendWrapped(err);
     } else {
       const fileBody = {
-        ...req.body,
+        fileType: 'npwp',
         fileName: `static/${destination}/${req.file.filename}`,
       };
 
@@ -382,7 +382,7 @@ const createFileCV = catchAsync(async (req, res) => {
       res.sendWrapped(err);
     } else {
       const fileBody = {
-        ...req.body,
+        fileType: 'cv',
         fileName: `static/${destination}/${req.file.filename}`,
       };
 
