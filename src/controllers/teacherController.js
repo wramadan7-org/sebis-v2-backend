@@ -326,7 +326,7 @@ const createdFilesProfile = catchAsync(async (req, res) => {
     if (err) {
       res.sendWrapped(err);
     } else {
-      if (req.file.filename) {
+      if (!req.file.filename) {
         return res.sendWrapped('Please insert file/photo!', httpStatus.BAD_REQUEST);
       }
 
@@ -345,7 +345,7 @@ const createFileKTP = catchAsync(async (req, res) => {
     if (err) {
       res.sendWrapped(err);
     } else {
-      if (req.file.filename) {
+      if (!req.file.filename) {
         return res.sendWrapped('Please insert file/photo!', httpStatus.BAD_REQUEST);
       }
 
@@ -369,7 +369,7 @@ const createFileNPWP = catchAsync(async (req, res) => {
     if (err) {
       res.sendWrapped(err);
     } else {
-      if (req.file.filename) {
+      if (!req.file.filename) {
         return res.sendWrapped('Please insert file/photo!', httpStatus.BAD_REQUEST);
       }
 
@@ -393,7 +393,7 @@ const createFileCV = catchAsync(async (req, res) => {
     if (err) {
       res.sendWrapped(err);
     } else {
-      if (req.file.filename) {
+      if (!req.file.filename) {
         return res.sendWrapped('Please insert file/photo!', httpStatus.BAD_REQUEST);
       }
 
