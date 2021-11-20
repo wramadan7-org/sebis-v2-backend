@@ -17,7 +17,7 @@ const getFile = async (userId, fileType) => {
 
 const addFile = async (userId, fileBody) => {
   const file = await getFile(userId, fileBody.fileType);
-  console.log('service', fileBody);
+
   if (!file) {
     const data = {
       userId,
