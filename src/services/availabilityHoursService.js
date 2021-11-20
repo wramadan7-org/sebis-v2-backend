@@ -91,10 +91,11 @@ const getTutorScheduleTimeById = async (availabilityHoursId, teacherId) => {
  * @returns {boolean};
  */
 const isHoursAvailable = async (teacherId, dayCode, timeStart, timeEnd, availabilityHoursId, options = { offsetStart: -15, offsetEnd: 15 }) => {
-  let availablityHours = await getTutorScheduleTimeByDay(teacherId, dayCode);
+  let availablityHours;
+  availablityHours = await getTutorScheduleTimeByDay(teacherId, dayCode);
 
   if (availabilityHoursId) {
-    availablityHours = await AvailabilityHours.findAll(
+    const availablityHoursAnother = await AvailabilityHours.findAll(
       {
         teacherId,
         dayCode,
@@ -103,6 +104,8 @@ const isHoursAvailable = async (teacherId, dayCode, timeStart, timeEnd, availabi
         },
       },
     );
+
+    availablityHours = availablityHoursAnother;
   }
 
   if (availablityHours.length <= 0) {
