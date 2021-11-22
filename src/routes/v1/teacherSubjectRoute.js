@@ -7,5 +7,6 @@ const teacherSubjectController = require('../../controllers/teacherSubjectContro
 const router = Router();
 
 router.post('/', auth, teacher, teacherSubjectController.createTeacherSubject);
+router.get('/', auth, teacher, teacherSubjectController.getTeacherSubjectAll);
 
 module.exports = router;
