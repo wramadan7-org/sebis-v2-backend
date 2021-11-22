@@ -8,5 +8,7 @@ const router = Router();
 
 router.post('/', auth, teacher, teacherSubjectController.createTeacherSubject);
 router.get('/', auth, teacher, teacherSubjectController.getTeacherSubjectAll);
+router.get('/:teacherSubjectId', auth, teacher, teacherSubjectController.getTeacherSubjectById);
+router.patch('/:teacherSubjectId', auth, teacher, teacherSubjectController.updateTeacherSubject);
 
 module.exports = router;
