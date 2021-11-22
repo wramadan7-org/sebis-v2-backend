@@ -3,20 +3,26 @@ const { Role } = require('../models/Role');
 const ApiError = require('../utils/ApiError');
 const { TeacherSubject } = require('../models/TeacherSubject');
 
-const getTeacherSubjects = async () => {
-  const teacherSubject = await TeacherSubject.findAll();
+const getTeacherSubjects = async (opts = {}) => {
+  const teacherSubject = await TeacherSubject.findAll(
+    {
+      ...opts,
+    },
+  );
 
   if (teacherSubject.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Teacher not have subject.');
 
   return teacherSubject;
 };
 
-const checkerTeacherSubject = async (teacherId, gradeId, subjectId) => {
+const getTeacherSubjectDetail = async (teacherId, gradeId, subjectId) => {
   const teacherSubject = await TeacherSubject.findOne(
     {
-      teacherId,
-      gradeId,
-      subjectId,
+      where: {
+        teacherId,
+        gradeId,
+        subjectId,
+      },
     },
   );
 
@@ -24,7 +30,7 @@ const checkerTeacherSubject = async (teacherId, gradeId, subjectId) => {
 };
 
 const createTeacherSubject = async (teacherId, data) => {
-  const teacherSubject = await checkerTeacherSubject(
+  const teacherSubject = await getTeacherSubjectDetail(
     teacherId,
     data.gradeId,
     data.subjectId,
@@ -44,6 +50,6 @@ const createTeacherSubject = async (teacherId, data) => {
 
 module.exports = {
   getTeacherSubjects,
-  checkerTeacherSubject,
+  getTeacherSubjectDetail,
   createTeacherSubject,
 };
