@@ -12,6 +12,7 @@ const gradeGroupRoute = require('./gradeGroupRoute');
 const gradeRoute = require('./gradeRoute');
 const subjectRoute = require('./subjectRoute');
 const teacherSubjectRoute = require('./teacherSubjectRoute');
+const migrationRoute = require('./migrateRoute');
 
 const router = express.Router();
 
@@ -67,6 +68,10 @@ const defaultRoutes = [
   {
     path: '/teacher-subject',
     route: teacherSubjectRoute,
+  },
+  {
+    path: '/migrate',
+    route: migrationRoute,
   },
 ];
 
