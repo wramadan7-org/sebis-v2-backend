@@ -54,6 +54,16 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    temporaryPeopleId: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: true,
+    },
+    temporaryIdentityId: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: true,
+    }
   },
   {
     paranoid: true,
