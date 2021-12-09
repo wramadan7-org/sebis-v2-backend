@@ -4,6 +4,7 @@ const axios = require('axios');
 const fs = require('fs');
 const userService = require('./userService');
 const { User } = require('../models/User');
+const moment = require('moment');
 
 const listUser = async () => {
     const user = await axios.get('http://localhost:3000/migrate/user')
@@ -11,21 +12,32 @@ const listUser = async () => {
     const userMaping = await Promise.all(user.data.data.map(async o => {
         let userType;
         let gender;
+        let province;
+        let teacherStatus;
+        let images;
+        let teachExp;
+        let eduBackground;
 
+        if (o.userIdentity &&  o.userIdentity.userType == 'admin') {
+            userType = 'd33f5a01-7128-4fe0-9af5-af2359a204a2';
+        };
+        if (o.userIdentity && o.userIdentity.userType == 'administrator') {
+            userType = '07487e28-d781-42e7-9e50-a990565e2560';
+        };
         if (o.userIdentity &&  o.userIdentity.userType == 'pteacher') {
-            userType = '4992fe1d-ba37-4b86-a132-a479aa62891d';
+            userType = '584c4a79-9dc5-4fae-9aa0-f49dc6b790f5';
+            teacherStatus = 'pending';
         };
         if (o.userIdentity &&  o.userIdentity.userType == 'teacher') {
             userType = '437e0221-eb3d-477f-a3b3-799256fbcab6';
+            teacherStatus = 'accepted';
         };
         if (o.userIdentity &&  o.userIdentity.userType == 'rteacher') {
-            userType = '0799588b-6b94-4a80-90ad-2a80e908c389';
+            userType = 'd39b1062-dcf0-4cb1-b8df-2790af008c46';
+            teacherStatus = 'rejected'
         };
         if (o.userIdentity &&  o.userIdentity.userType == 'student') {
             userType = 'a0a76676-e446-49d2-ab7a-ae622783d7b8';
-        };
-        if (o.userIdentity &&  o.userIdentity.userType == 'public') {
-            userType = '1034f7bb-5ec6-447a-80b5-44a0bad040a1';
         };
         if (o.userIdentity &&  o.userIdentity.userType == 'verifikator') {
             userType = '07348839-b192-450c-b9a2-8416389eacaa';
@@ -33,36 +45,129 @@ const listUser = async () => {
         if (o.userIdentity &&  o.userIdentity.userType == 'finance') {
             userType = 'c5168f64-b5fa-4ebb-94b5-337d7540fedc';
         };
-        if (o.userIdentity &&  o.userIdentity.userType == 'admin') {
-            userType = 'd33f5a01-7128-4fe0-9af5-af2359a204a2';
+        if (o.userIdentity &&  o.userIdentity.userType == 'public') {
+            userType = '1034f7bb-5ec6-447a-80b5-44a0bad040a1';
         };
 
         if (o.userDetail && o.userDetail.gender) {
             gender = o.userDetail.gender;
-        }
+        };
+
+        if (o.userDetail && o.userDetail.province) {
+            province = o.userDetail.province;
+        };
+
+        if (o.userImages && o.userImages.length > 0) {
+            images = o.userImages.map(img => {
+
+                const dataImages = {
+                    temporaryImageId: (img && img._id) ? img._id : null,
+                    temporaryIdentityId: (img && img.identitiesId) ? img.identitiesId : null,
+                    userId: 'User id',
+                    fileName: (img && img.image) ? img.image : null,
+                    fileType: (img && img.type) ? img.type : null,
+                };
+
+                return dataImages;
+            });
+        };
+
+        if (o.userTeachingExperiences && o.userTeachingExperiences.length > 0) {
+            teachExp = o.userTeachingExperiences.map(teach => {
+                const dataTeachingExperienceDetail = {
+                    temporaryTeachingExperienceId: (teach && teach._id) ? teach._id : null,
+                    gradeCode: (teach && teach.grade) ? teach.grade : null,
+                    subject: (teach && teach.course) ? teach.course : null,
+                };
+
+                const dataTeachingExperience = {
+                    temporaryTeachingExperienceId: (teach && teach._id) ? teach._id : null,
+                    temporaryIdentityId: (teach && teach.identitiesId) ? teach.identitiesId : null,
+                    teacherId: (teach && teach.identitiesId) ? teach.identitiesId : null,
+                    universityName: (teach && teach.school) ? teach.school : null,
+                    univeristyCity: (teach && teach.city) ? teach.city : null,
+                    teachingStatus: (teach && teach.status) ? teach.status : null,
+                    teachingFrom: (teach && teach.fromDate) ? teach.fromDate : null,
+                    teachingTo: (teach && teach.toDate) ? teach.toDate : null,
+                    teachingExperienceDetails: dataTeachingExperienceDetail
+                };
+
+                return dataTeachingExperience;
+            });
+        };
+
+        if (o.userEducationBackgrounds && o.userEducationBackgrounds.length > 0) {
+            eduBackground = o.userEducationBackgrounds.map(edu => {
+                const dataEducationBackground = {
+                    temporaryEducationBackground: (edu && edu._id) ? edu._id : null,
+                    temporaryIdentityId: (edu && edu.identitiesId) ? edu.identitiesId : null,
+                    educationMajor: (edu && edu.major) ? edu.major : null,
+                    faculty: '',
+                    city: '',
+                    educationLevel: (edu && edu.strata) ? edu.strata : null,
+                    universityName: (edu && edu.institution) ? edu.institution : null,
+                    thesisTitle: (edu && edu.thesis) ? edu.thesis : null,
+                    educationGpa: (edu && edu.score) ? edu.score : null,
+                    educationFrom: (edu && edu.fromDate) ? edu.fromDate : null,
+                    educationTo: (edu && edu.toDate) ? edu.toDate : null,
+                    educationCertificate: '',
+                    educationTranscript: '',
+                };
+
+                return dataEducationBackground;
+            });
+        };
 
         const dataUser = {
-            temporaryPeopleId: (o.user && o.user._id) ? o.user._id : '',
-            temporaryIdentityId: (o.userIdentity && o.userIdentity._id) ? o.userIdentity._id : '',
-            email: o.user.email,
-            firstName: o.user.name.split(' ').length > 1 ? o.user.name.split(' ')[0] : o.user.name,
-            lastName: o.user.name.split(' ').length > 1 ? o.user.name.split(' ').shift() : '',
-            phoneNumber: o.user.phone,
-            password: o.user.password,
+            temporaryPeopleId: (o.user && o.user._id) ? o.user._id : null,
+            temporaryIdentityId: (o.userIdentity && o.userIdentity._id) ? o.userIdentity._id : null,
+            email: (o.user && o.user.email) ? o.user.email : null,
+            firstName: (o.user && o.user.name && o.user.name.split(' ').length > 1) ? o.user.name.split(' ')[0] : o.user.name,
+            lastName: (o.user && o.user.name && o.user.name.split(' ').length > 1) ? o.user.name.split(' ').shift() : '',
+            phoneNumber: (o.user && o.user.phone) ? o.user.phone : null,
+            password: (o.user && o.user.password) ? o.user.password : null,
             gender: gender ? gender : 'male',
             roleId: userType ? userType : '1034f7bb-5ec6-447a-80b5-44a0bad040a1'
-        }
+        };
 
-        // const inserting = await User.create(dataUser)
-        // console.log(inserting)
-        // const dataUserDetail = {
+        const dataUserDetail = {
+            userId: 'data user id',
+            temporaryPeopleId: (o.user && o.user._id) ? o.user._id : null,
+            temporaryIdentityId: (o.userIdentity && o.userIdentity._id) ? o.userIdentity._id : null,
+            birthPlace: (o.userDetail && o.userDetail.birthPlace) ? o.userDetail.birthPlace : null,
+            birthDate: (o.userDetail && o.userDetail.birthDate) ? moment(o.userDetail.birthDate).format('YYYY-MM-DD') : null,
+            religion: (o.userDetail && o.userDetail.religion) ? o.userDetail.religion : null,
+            idCardType: (o.userDetail && o.userDetail.cardType) ? o.userDetail.cardType : null,
+            idCardNumber: (o.userDetail && o.userDetail.cardId) ? o.userDetail.cardId : null,
+            mailingAddress: (o.userDetail && o.userDetail.address) ? o.userDetail.address : null,
+            city: (o.userDetail && o.userDetail.city) ? o.userDetail.city : null,
+            region: province ? province : null,
+            postalCode: (o.userDetail && o.userDetail.postalcode) ? parseInt(o.userDetail.postalcode) : null,
+            aboutMe: (o.user && o.user.nameEng) ? o.user.nameEng : null,
+            priceId: 'Harga',
+            teacherStatus: teacherStatus ? teacherStatus : null,
+        };
 
-        // }
+        const dataUserSchool = {
+            temporaryPeopleId: (o.user && o.user._id) ? o.user._id : null,
+            temporaryIdentityId: (o.userIdentity && o.userIdentity._id) ? o.userIdentity._id : null,
+            schoolName: (o.userSchool && o.userSchool.name) ? o.userSchool.name : null,
+            schoolAddress: (o.userSchool && o.userSchool.grade) ? o.userSchool.grade : null
+        };
 
-        return dataUser;
+        const dataResponse = {
+            user: dataUser ? dataUser : null,
+            userDetail: dataUserDetail ? dataUserDetail : null,
+            userSchool: dataUserSchool ? dataUserSchool : null,
+            userImages: images ? images : null,
+            userTeachingExperiences: teachExp ? teachExp : null,
+            userEducationBackground: eduBackground ? eduBackground : null,
+        };
+
+        return dataResponse;
     }));
 
-    console.log('user', listUser.length)
+    
     return userMaping;
 }
 
