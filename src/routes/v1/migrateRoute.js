@@ -4,6 +4,6 @@ const validate = require('../../middlewares/validate');
 // const migrateValidation = require('../../validations/migrateValidation')
 const router = Router();
 
-router.get('/', migrateController.listUser);
+router.post('/', migrateController.listUser);
 
 module.exports = router;
