@@ -25,6 +25,7 @@ if (config.env !== 'test') {
 app.response.sendWrapped = function (data, statusCode = httpStatus.OK) {
   return this.status(statusCode).send({
     status: statusCode,
+    dataLength: data.length,
     data,
   });
 };
