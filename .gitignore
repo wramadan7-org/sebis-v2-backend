@@ -12,3 +12,5 @@ sonar-project.properties
 .sannerwork/
 .scannerwork/.sonar_lock
 .scannerwork/report-task.txt
+.DS_Store
+public/files/userJson.json
