@@ -1,4 +1,4 @@
-'use strict';
+const { genders } = require('../config/users');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
