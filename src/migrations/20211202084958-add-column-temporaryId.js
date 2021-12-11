@@ -7,7 +7,7 @@ module.exports = {
       'temporaryIdentityId',
       {
         type: Sequelize.STRING,
-        unique: true,
+        // unique: true,
         after: 'id',
       }
     );
@@ -17,7 +17,7 @@ module.exports = {
       'temporaryPeopleId',
       {
         type: Sequelize.STRING,
-        unique: true,
+        // unique: true,
         after: 'temporaryIdentityId',
       }
     );
