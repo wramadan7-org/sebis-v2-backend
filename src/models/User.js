@@ -57,12 +57,12 @@ const User = sequelize.define(
     },
     temporaryPeopleId: {
       type: DataTypes.STRING,
-      unique: true,
+      // unique: true,
       allowNull: true,
     },
     temporaryIdentityId: {
       type: DataTypes.STRING,
-      unique: true,
+      // unique: true,
       allowNull: true,
     }
   },
