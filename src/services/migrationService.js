@@ -201,14 +201,63 @@ const addUserDetail = async () => {
     const user = await User.findAll();
     const data = fs.readFileSync('./public/files/userJson.json', 'utf-8');
     const convertJson = JSON.parse(data);
-    const maping = convertJson.map(o => o);
-    // const filetring = user.
+    const maping = convertJson.map(o => o.userDetail);
 
-    return user;
+    // set new map
+    const map = new Map();
+    // IDK
+    user.forEach(item => map.set(item.temporaryIdentityId, item));
+    maping.forEach(item => map.set(item.temporaryIdentityId, {...map.get(item.temporaryIdentityId), ...item}));
+    //IDK
+    const merging = Array.from(map.values());
+
+    let arrayResults = [];
+    let postalCode = '';
+
+    for (const loop of merging) {
+        let birthDate = '01-01-1999';
+
+        if (loop.birthDate) {
+            const date = loop.birthDate.split('/')[1];
+            const month = loop.birthDate.split('/')[0];
+            const year = loop.birthDate.split('/')[2];
+            // birthDate = moment(`${loop.birthDate} 00:00:00`).format('YYYY-MM-DD HH:mm:ss');
+            birthDate = moment(loop.birthDate).isValid() === true ? moment(loop.birthDate).format('YYYY-MM-DD') : moment('1999-01-01').format('YYYY-MM-DD');
+        }
+
+        if (loop.postalCode && loop.postalCode.length > 11) {
+            postalCode = loop.postalCode.slice(0, 10)
+        } else {
+            postalCode = '111111'
+        }
+
+        const dataUserDetail = {
+            userId: loop.dataValues.id,
+            temporaryPeopleId: loop.dataValues.temporaryPeopleId,
+            temporaryIdentityId: loop.dataValues.temporaryIdentityId,
+            birthPlace: loop.birthPlace,
+            birthDate: birthDate,
+            religion: loop.religion,
+            idCardType: loop.idCardType,
+            idCardNumber: loop.idCardNumber,
+            mailingAddress: loop.mailingAddress,
+            city: loop.city,
+            region: loop.region,
+            postalCode: postalCode,
+            aboutMe: loop.aboutMe,
+            priceId: loop.priceId,
+            teacherStatus: loop.teacherStatus,
+        };
+
+        const insertUserDetail = await UserDetail.create(dataUserDetail);
+        arrayResults.push(insertUserDetail);
+    }
+
+    return arrayResults;
 };
 
 module.exports = {
     listUser,
     addUser,
-    addUserDetail
+    addUserDetail,
 };
