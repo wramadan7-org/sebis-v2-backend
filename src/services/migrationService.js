@@ -218,10 +218,6 @@ const addUserDetail = async () => {
         let birthDate = '01-01-1999';
 
         if (loop.birthDate) {
-            const date = loop.birthDate.split('/')[1];
-            const month = loop.birthDate.split('/')[0];
-            const year = loop.birthDate.split('/')[2];
-            // birthDate = moment(`${loop.birthDate} 00:00:00`).format('YYYY-MM-DD HH:mm:ss');
             birthDate = moment(loop.birthDate).isValid() === true ? moment(loop.birthDate).format('YYYY-MM-DD') : moment('1999-01-01').format('YYYY-MM-DD');
         }
 
