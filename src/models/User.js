@@ -64,7 +64,11 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       // unique: true,
       allowNull: true,
-    }
+    },
+    note: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     paranoid: true,
