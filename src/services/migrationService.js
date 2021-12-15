@@ -253,8 +253,6 @@ const addUserDetail = async () => {
         arrayResults.push(insertUserDetail);
     }
 
-    // fs.writeFileSync('./public/files/userDetailFix.json', JSON.stringify(arrayResults));
-
     return arrayResults;
 };
 
