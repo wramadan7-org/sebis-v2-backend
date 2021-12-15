@@ -17,13 +17,15 @@ const listUser = catchAsync(async (req, res) => {
 
 const addUser = catchAsync(async (req, res) => {
     const user = await migrateService.addUser();
-    fs.writeFileSync('./public/files/user.csv', JSON.stringify(user));
+    // fs.writeFileSync('./public/files/userFix.csv', JSON.stringify(user));
 
     res.sendWrapped(user, httpStatus.CREATED)
 });
 
 const addUserDetail = catchAsync(async (req, res) => {
     const userDetail = await migrateService.addUserDetail();
+
+    // fs.writeFileSync('./public/files/userDetailFix.json', JSON.stringify(userDetail));
 
     res.sendWrapped(userDetail, httpStatus.CREATED);
 });
