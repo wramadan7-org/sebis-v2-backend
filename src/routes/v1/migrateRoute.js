@@ -7,5 +7,6 @@ const router = Router();
 router.get('/', migrateController.listUser);
 router.post('/user', migrateController.addUser);
 router.post('/user-detail', migrateController.addUserDetail);
+router.post('/user-teaching-experience', migrateController.addTeachingExperiences);
 
 module.exports = router;
