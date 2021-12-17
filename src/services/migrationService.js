@@ -5,9 +5,12 @@ const fs = require('fs');
 const userService = require('./userService');
 const { User } = require('../models/User');
 const { UserDetail } = require('../models/UserDetail');
+const { TeachingExperience } = require('../models/TeachingExperience');
 const moment = require('moment');
 const dataJson = require('../../public/files/userJson.json');
 const teachingJson = require('../../public/Migration_Dec_16_21_15/teaching_exps.json');
+
+const { convertDate } = require('../utils/convertUpnormalDate');
 
 const listUser = async () => {
     const user = await axios.get('http://localhost:3000/migrate/user')
@@ -271,8 +274,15 @@ const addTeachingExperience = async () => {
     filteringTeaching.forEach(item => map.set(item.identitiesId, {...map.get(item.identitiesId), ...item}));
 
     const merging = Array.from(map.values());
+
     const arrayTeachingExperience = [];
+    const arrayTeachingExperienceDetail = [];
+
     for (const loopTeaching of merging) {
+        // convert valid date (month/year)
+        const converterFromDate = await convertDate(loopTeaching.fromDate);
+        const converterToDate = await convertDate(loopTeaching.toDate);
+
         const dataTeachingExperience = {
             // userId: loopTeaching.dataValues.id,
             // identitiesId: loopTeaching.identitiesId,
@@ -293,19 +303,26 @@ const addTeachingExperience = async () => {
             universityName: (loopTeaching && loopTeaching.school) ? loopTeaching.school : null,
             univeristyCity: (loopTeaching && loopTeaching.city) ? loopTeaching.city : null,
             teachingStatus: (loopTeaching && loopTeaching.status) ? loopTeaching.status : null,
-            teachingFrom: (loopTeaching && loopTeaching.fromDate) ? loopTeaching.fromDate : null,
-            teachingTo: (loopTeaching && loopTeaching.toDate) ? loopTeaching.toDate : null,
+            teachingFrom: converterFromDate,
+            teachingTo: converterToDate,
             // teachingExperienceDetails: dataTeachingExperienceDetail
         };
 
         const dataTeachingExperienceDetail = {
-            teachingExperienceId: '',
+            temporaryTeachingExperienceId: (loopTeaching && loopTeaching._id.$oid) ? loopTeaching._id.$oid : null,
             gradeCode: (loopTeaching && loopTeaching.grade) ? loopTeaching.grade : null,
             subject: (loopTeaching && loopTeaching.course) ? loopTeaching.course : null,
         };
 
-        arrayTeachingExperience.push(data);
+        const insertTeachingExperience = await TeachingExperience.create(dataTeachingExperience);
+
+        arrayTeachingExperience.push(dataTeachingExperience);
+        arrayTeachingExperienceDetail.push(dataTeachingExperienceDetail);
     };
+
+    const resultMap = new Map();
+
+
     return arrayTeachingExperience;
 };
 
