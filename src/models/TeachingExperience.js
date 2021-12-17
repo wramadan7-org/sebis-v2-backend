@@ -13,7 +13,7 @@ const TeachingExperience = sequelize.define('teachingExperience', {
   },
   universityCity: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   teachingStatus: {
     type: DataTypes.STRING,
