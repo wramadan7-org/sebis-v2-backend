@@ -30,8 +30,15 @@ const addUserDetail = catchAsync(async (req, res) => {
     res.sendWrapped(userDetail, httpStatus.CREATED);
 });
 
+const addTeachingExperiences = catchAsync(async (req, res) => {
+    const teachingExperience = await migrateService.addTeachingExperience();
+
+    res.sendWrapped(teachingExperience, httpStatus.CREATED);
+});
+
 module.exports = {
     listUser,
     addUser,
-    addUserDetail
+    addUserDetail,
+    addTeachingExperiences,
 };
