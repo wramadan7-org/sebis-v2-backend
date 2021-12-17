@@ -6,6 +6,7 @@ const userService = require('./userService');
 const { User } = require('../models/User');
 const { UserDetail } = require('../models/UserDetail');
 const { TeachingExperience } = require('../models/TeachingExperience');
+const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
 const moment = require('moment');
 const dataJson = require('../../public/files/userJson.json');
 const teachingJson = require('../../public/Migration_Dec_16_21_15/teaching_exps.json');
@@ -296,8 +297,7 @@ const addTeachingExperience = async () => {
             // course: loopTeaching.course,
             // created_at: loopTeaching.created_at,
             // updated_at: loopTeaching.updated_at,
-
-            temporaryTeachingExperienceId: (loopTeaching && loopTeaching._id.$oid) ? loopTeaching._id.$oida : null,
+            temporaryTeachingExperienceId: (loopTeaching && loopTeaching._id.$oid) ? loopTeaching._id.$oid : null,
             temporaryIdentityId: (loopTeaching && loopTeaching.identitiesId) ? loopTeaching.identitiesId : null,
             teacherId: (loopTeaching && loopTeaching.dataValues.id) ? loopTeaching.dataValues.id : null,
             universityName: (loopTeaching && loopTeaching.school) ? loopTeaching.school : null,
@@ -305,7 +305,6 @@ const addTeachingExperience = async () => {
             teachingStatus: (loopTeaching && loopTeaching.status) ? loopTeaching.status : null,
             teachingFrom: converterFromDate,
             teachingTo: converterToDate,
-            // teachingExperienceDetails: dataTeachingExperienceDetail
         };
 
         const dataTeachingExperienceDetail = {
@@ -316,14 +315,32 @@ const addTeachingExperience = async () => {
 
         const insertTeachingExperience = await TeachingExperience.create(dataTeachingExperience);
 
-        arrayTeachingExperience.push(dataTeachingExperience);
+        arrayTeachingExperience.push(insertTeachingExperience);
         arrayTeachingExperienceDetail.push(dataTeachingExperienceDetail);
     };
 
     const resultMap = new Map();
 
+    arrayTeachingExperience.forEach(item => resultMap.set(item.temporaryTeachingExperienceId, item));
+    arrayTeachingExperienceDetail.forEach(item => resultMap.set(item.temporaryTeachingExperienceId, {...resultMap.get(item.temporaryTeachingExperienceId), ...item}));
 
-    return arrayTeachingExperience;
+    const mergingResults = Array.from(resultMap.values());
+
+    let arrayTeachingExperienceDetailResults = [];
+
+    for (const loopTeachingDetail of mergingResults) {
+        const dataTeachingExperienceDetailResult = {
+            teachingExperienceId: loopTeachingDetail.dataValues.id,
+            temporaryTeachingExperienceId: loopTeachingDetail.temporaryTeachingExperienceId,
+            gradeCode: loopTeachingDetail.gradeCode,
+            subject: loopTeachingDetail.subject,
+        };
+
+        const insertTeachingExperienceDetail = await TeachingExperienceDetail.create(dataTeachingExperienceDetailResult);
+
+        arrayTeachingExperienceDetailResults.push(insertTeachingExperienceDetail);
+    };
+    return { arrayTeachingExperience, arrayTeachingExperienceDetailResults };
 };
 
 module.exports = {
