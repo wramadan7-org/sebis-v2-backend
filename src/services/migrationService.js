@@ -7,6 +7,7 @@ const { User } = require('../models/User');
 const { UserDetail } = require('../models/UserDetail');
 const moment = require('moment');
 const dataJson = require('../../public/files/userJson.json');
+const teachingJson = require('../../public/Migration_Dec_16_21_15/teaching_exps.json');
 
 const listUser = async () => {
     const user = await axios.get('http://localhost:3000/migrate/user')
@@ -252,8 +253,65 @@ const addUserDetail = async () => {
     return arrayResults;
 };
 
+const addTeachingExperience = async () => {
+    const user = await User.findAll();
+    const data = fs.readFileSync('./public/Migration_Dec_16_21_15/teaching_exps.json', 'utf-8');
+    const convertJson = JSON.parse(data);
+    const maping = convertJson.map(o => o);
+
+
+    const userMap = user.map(o => o.temporaryIdentityId)
+    // console.log(userMap)
+    const filteringTeaching = maping.filter((o) => userMap.includes(o.identitiesId));
+    const mapTemporaryIdentityId = filteringTeaching.map(o => o.identitiesId);
+    const filteringUser = user.filter((o) => mapTemporaryIdentityId.includes(o.temporaryIdentityId));
+
+    const map = new Map();
+    filteringUser.forEach(item => map.set(item.temporaryIdentityId, item));
+    filteringTeaching.forEach(item => map.set(item.identitiesId, {...map.get(item.identitiesId), ...item}));
+
+    const merging = Array.from(map.values());
+    const arrayTeachingExperience = [];
+    for (const loopTeaching of merging) {
+        const dataTeachingExperience = {
+            // userId: loopTeaching.dataValues.id,
+            // identitiesId: loopTeaching.identitiesId,
+            // fromDate: loopTeaching.fromDate,
+            // toDate: loopTeaching.toDate,
+            // school: loopTeaching.school,
+            // city: loopTeaching.city,
+            // status: loopTeaching.status,
+            // desc: loopTeaching.desc,
+            // grade: loopTeaching.grade,
+            // course: loopTeaching.course,
+            // created_at: loopTeaching.created_at,
+            // updated_at: loopTeaching.updated_at,
+
+            temporaryTeachingExperienceId: (loopTeaching && loopTeaching._id.$oid) ? loopTeaching._id.$oida : null,
+            temporaryIdentityId: (loopTeaching && loopTeaching.identitiesId) ? loopTeaching.identitiesId : null,
+            teacherId: (loopTeaching && loopTeaching.dataValues.id) ? loopTeaching.dataValues.id : null,
+            universityName: (loopTeaching && loopTeaching.school) ? loopTeaching.school : null,
+            univeristyCity: (loopTeaching && loopTeaching.city) ? loopTeaching.city : null,
+            teachingStatus: (loopTeaching && loopTeaching.status) ? loopTeaching.status : null,
+            teachingFrom: (loopTeaching && loopTeaching.fromDate) ? loopTeaching.fromDate : null,
+            teachingTo: (loopTeaching && loopTeaching.toDate) ? loopTeaching.toDate : null,
+            // teachingExperienceDetails: dataTeachingExperienceDetail
+        };
+
+        const dataTeachingExperienceDetail = {
+            teachingExperienceId: '',
+            gradeCode: (loopTeaching && loopTeaching.grade) ? loopTeaching.grade : null,
+            subject: (loopTeaching && loopTeaching.course) ? loopTeaching.course : null,
+        };
+
+        arrayTeachingExperience.push(data);
+    };
+    return arrayTeachingExperience;
+};
+
 module.exports = {
     listUser,
     addUser,
     addUserDetail,
+    addTeachingExperience,
 };
