@@ -1,0 +1,45 @@
+========== 2021-12-16 13:34:00 ==========
+Error: Error: listen EADDRINUSE: address already in use :::8080
+    at Server.setupListenHandle [as _listen2] (net.js:1331:16)
+    at listenInCluster (net.js:1379:12)
+    at Server.listen (net.js:1465:7)
+    at Function.listen (/Users/sebis/Project/Backend/SebisV2/node_modules/express/lib/application.js:618:24)
+    at /Users/sebis/Project/Backend/SebisV2/src/server.js:53:26
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2021-12-16 13:34:36 ==========
+Error: Error: listen EADDRINUSE: address already in use :::8080
+    at Server.setupListenHandle [as _listen2] (net.js:1331:16)
+    at listenInCluster (net.js:1379:12)
+    at Server.listen (net.js:1465:7)
+    at Function.listen (/Users/sebis/Project/Backend/SebisV2/node_modules/express/lib/application.js:618:24)
+    at /Users/sebis/Project/Backend/SebisV2/src/server.js:53:26
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2021-12-16 13:35:49 ==========
+Error: Error: listen EADDRINUSE: address already in use :::8080
+    at Server.setupListenHandle [as _listen2] (net.js:1331:16)
+    at listenInCluster (net.js:1379:12)
+    at Server.listen (net.js:1465:7)
+    at Function.listen (/Users/sebis/Project/Backend/SebisV2/node_modules/express/lib/application.js:618:24)
+    at /Users/sebis/Project/Backend/SebisV2/src/server.js:53:26
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2021-12-16 13:35:59 ==========
+Error: Error: listen EADDRINUSE: address already in use :::8080
+    at Server.setupListenHandle [as _listen2] (net.js:1331:16)
+    at listenInCluster (net.js:1379:12)
+    at Server.listen (net.js:1465:7)
+    at Function.listen (/Users/sebis/Project/Backend/SebisV2/node_modules/express/lib/application.js:618:24)
+    at /Users/sebis/Project/Backend/SebisV2/src/server.js:53:26
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2021-12-16 13:44:03 ==========
+Error: Error: listen EADDRINUSE: address already in use :::8080
+    at Server.setupListenHandle [as _listen2] (net.js:1331:16)
+    at listenInCluster (net.js:1379:12)
+    at Server.listen (net.js:1465:7)
+    at Function.listen (/Users/sebis/Project/Backend/SebisV2/node_modules/express/lib/application.js:618:24)
+    at /Users/sebis/Project/Backend/SebisV2/src/server.js:53:26
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
