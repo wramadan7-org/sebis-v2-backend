@@ -36,9 +36,16 @@ const addTeachingExperiences = catchAsync(async (req, res) => {
     res.sendWrapped(teachingExperience, httpStatus.CREATED);
 });
 
+const addEducationBackground = catchAsync(async (req, res) => {
+    const educationBakground = await migrateService.addEducationBackground();
+
+    res.sendWrapped(educationBakground, httpStatus.CREATED);
+});
+
 module.exports = {
     listUser,
     addUser,
     addUserDetail,
     addTeachingExperiences,
+    addEducationBackground,
 };
