@@ -360,7 +360,7 @@ const addEducationBackground = async () => {
 
         const dataEdu = {
             temporaryIdentityId: (loopEdu && loopEdu.identitiesId) ? loopEdu.identitiesId : null,
-            teaherId: (loopEdu && loopEdu.dataValues.id) ? loopEdu.dataValues.id : null,
+            teacherId: (loopEdu && loopEdu.dataValues.id) ? loopEdu.dataValues.id : null,
             educationMajor: (loopEdu && loopEdu.major) ? loopEdu.major : null,
             faculty: (loopEdu && loopEdu.faculty) ? loopEdu.faculty : null,
             city: (loopEdu && loopEdu.city) ? loopEdu.city : null,
