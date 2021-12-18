@@ -55,6 +55,10 @@ const EducationBackground = sequelize.define('educationBackground', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  teaherId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 }, {
   paranoid: true,
 });
