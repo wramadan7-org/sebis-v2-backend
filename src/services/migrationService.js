@@ -7,11 +7,13 @@ const { User } = require('../models/User');
 const { UserDetail } = require('../models/UserDetail');
 const { TeachingExperience } = require('../models/TeachingExperience');
 const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
+const { EducationBackground } = require('../models/EducationBackground');
 const moment = require('moment');
 const dataJson = require('../../public/files/userJson.json');
 const teachingJson = require('../../public/Migration_Dec_16_21_15/teaching_exps.json');
 
 const { convertDate } = require('../utils/convertUpnormalDate');
+const { floater } = require('../utils/floating');
 
 const listUser = async () => {
     const user = await axios.get('http://localhost:3000/migrate/user')
@@ -285,18 +287,6 @@ const addTeachingExperience = async () => {
         const converterToDate = await convertDate(loopTeaching.toDate);
 
         const dataTeachingExperience = {
-            // userId: loopTeaching.dataValues.id,
-            // identitiesId: loopTeaching.identitiesId,
-            // fromDate: loopTeaching.fromDate,
-            // toDate: loopTeaching.toDate,
-            // school: loopTeaching.school,
-            // city: loopTeaching.city,
-            // status: loopTeaching.status,
-            // desc: loopTeaching.desc,
-            // grade: loopTeaching.grade,
-            // course: loopTeaching.course,
-            // created_at: loopTeaching.created_at,
-            // updated_at: loopTeaching.updated_at,
             temporaryTeachingExperienceId: (loopTeaching && loopTeaching._id.$oid) ? loopTeaching._id.$oid : null,
             temporaryIdentityId: (loopTeaching && loopTeaching.identitiesId) ? loopTeaching.identitiesId : null,
             teacherId: (loopTeaching && loopTeaching.dataValues.id) ? loopTeaching.dataValues.id : null,
@@ -343,9 +333,58 @@ const addTeachingExperience = async () => {
     return { arrayTeachingExperience, arrayTeachingExperienceDetailResults };
 };
 
+const addEducationBackground = async () => {
+    const user = await User.findAll();
+    const fileEduBackground = fs.readFileSync('./public/Migration_Dec_16_21_15/edu_backgrounds.json', 'utf-8');
+    const dataEduBackground = JSON.parse(fileEduBackground);
+    const mapEducationBackground = dataEduBackground.map(o => o);
+
+    const mapTemporaryIdentitiesId = user.map(o => o.temporaryIdentityId);
+
+    const filteringEducationBackground = mapEducationBackground.filter(o => mapTemporaryIdentitiesId.includes(o.identitiesId));
+    const mapIdentitiesId = filteringEducationBackground.map(o => o.identitiesId);
+    const filteringUser = user.filter(o => mapIdentitiesId.includes(o.temporaryIdentityId));
+
+    const map = new Map();
+
+    filteringUser.forEach(item => map.set(item.temporaryIdentityId, item));
+    filteringEducationBackground.forEach(item => map.set(item.identitiesId, { ...map.get(item.identitiesId), ...item }));
+
+    const merging = Array.from(map.values());
+
+    const arrayEducationBackground = [];
+    for (const loopEdu of merging) {
+        const converterFromDate = await convertDate(loopEdu.fromDate);
+        const converterToDate = await convertDate(loopEdu.toDate);
+        const floatingScore = await floater(loopEdu.score ? loopEdu.score : 0);
+
+        const dataEdu = {
+            temporaryIdentityId: (loopEdu && loopEdu.identitiesId) ? loopEdu.identitiesId : null,
+            teaherId: (loopEdu && loopEdu.dataValues.id) ? loopEdu.dataValues.id : null,
+            educationMajor: (loopEdu && loopEdu.major) ? loopEdu.major : null,
+            faculty: (loopEdu && loopEdu.faculty) ? loopEdu.faculty : null,
+            city: (loopEdu && loopEdu.city) ? loopEdu.city : null,
+            educationLevel: (loopEdu && loopEdu.strata) ? loopEdu.strata : null,
+            universityName: (loopEdu && loopEdu.institution) ? loopEdu.institution : null,
+            thesisTitle: (loopEdu && loopEdu.title) ? loopEdu.title : '-',
+            educationGpa: floatingScore ? parseFloat(floatingScore) : 0,
+            educationFrom: loopEdu.fromDate ? converterFromDate : moment('01-01-2000', 'DD-MM-YYYY').format('DD-MM-YYYY'),
+            educationTo: loopEdu.toDate ? converterToDate : moment('01-01-2000', 'DD-MM-YYYY').format('DD-MM-YYYY'),
+            educationCertificate: null,
+            educationTranscript: null,
+        };
+        
+        const insertEducationBackground = await EducationBackground.create(dataEdu);
+        arrayEducationBackground.push(insertEducationBackground);
+    };
+
+    return arrayEducationBackground;
+};
+
 module.exports = {
     listUser,
     addUser,
     addUserDetail,
     addTeachingExperience,
+    addEducationBackground,
 };
