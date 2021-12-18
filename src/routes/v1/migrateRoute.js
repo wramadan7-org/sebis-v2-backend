@@ -8,5 +8,6 @@ router.get('/', migrateController.listUser);
 router.post('/user', migrateController.addUser);
 router.post('/user-detail', migrateController.addUserDetail);
 router.post('/user-teaching-experience', migrateController.addTeachingExperiences);
+router.post('/user-education-background', migrateController.addEducationBackground);
 
 module.exports = router;
