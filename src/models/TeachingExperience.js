@@ -7,13 +7,17 @@ const TeachingExperience = sequelize.define('teachingExperience', {
     defaultValue: SequelizeInstance.UUIDV4,
     allowNull: false,
   },
+  temporaryTeachingExperienceId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   universityName: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   universityCity: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   teachingStatus: {
     type: DataTypes.STRING,

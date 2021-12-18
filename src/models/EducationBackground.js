@@ -45,9 +45,17 @@ const EducationBackground = sequelize.define('educationBackground', {
   },
   faculty: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   city: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  temporaryIdentityId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  teacherId: {
     type: DataTypes.STRING,
     allowNull: false,
   },
