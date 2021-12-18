@@ -55,7 +55,7 @@ const EducationBackground = sequelize.define('educationBackground', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  teaherId: {
+  teacherId: {
     type: DataTypes.STRING,
     allowNull: false,
   },
