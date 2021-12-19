@@ -18,6 +18,13 @@
     "no-plusplus": "off",
     "prefer-const": "off",
     "consistent-return": "off",
-    "camelcase": "off"
+    "camelcase": "error",
+    "indent": "off",
+    "no-underscore-dangle": "off",
+    "radix": "off",
+    "no-restricted-syntax": "off",
+    "no-unneeded-ternary": "off",
+    "no-await-in-loop": "off",
+    "eqeqeq": "off"
   }
 }
