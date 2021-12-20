@@ -1,7 +1,7 @@
-const catchAsync = require('../utils/catchAsync');
-const migrateService = require('../services/migrationService');
 const httpStatus = require('http-status');
 const fs = require('fs');
+const catchAsync = require('../utils/catchAsync');
+const migrateService = require('../services/migrationService');
 
 const listUser = catchAsync(async (req, res) => {
     const user = await migrateService.listUser();
@@ -19,7 +19,7 @@ const addUser = catchAsync(async (req, res) => {
     const user = await migrateService.addUser();
     // fs.writeFileSync('./public/files/userFix.csv', JSON.stringify(user));
 
-    res.sendWrapped(user, httpStatus.CREATED)
+    res.sendWrapped(user, httpStatus.CREATED);
 });
 
 const addUserDetail = catchAsync(async (req, res) => {
@@ -42,10 +42,17 @@ const addEducationBackground = catchAsync(async (req, res) => {
     res.sendWrapped(educationBakground, httpStatus.CREATED);
 });
 
+const addBank = catchAsync(async (req, res) => {
+    const bank = await migrateService.addBank();
+
+    res.sendWrapped(bank, httpStatus.CREATED);
+});
+
 module.exports = {
     listUser,
     addUser,
     addUserDetail,
     addTeachingExperiences,
     addEducationBackground,
+    addBank,
 };
