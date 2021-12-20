@@ -11,6 +11,7 @@ const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail
 const { EducationBackground } = require('../models/EducationBackground');
 const { Bank } = require('../models/Bank');
 const { Device } = require('../models/Device');
+const { Subject } = require('../models/Subject');
 const dataJson = require('../../public/files/userJson.json');
 const teachingJson = require('../../public/Migration_Dec_16_21_15/teaching_exps.json');
 
@@ -452,6 +453,34 @@ const addDevice = async () => {
     return arrayDevice;
 };
 
+const addSubject = async () => {
+    const fileSubject = fs.readFileSync('./public/Migration_Dec_16_21_15/mapels.json', 'utf-8');
+    const dataSubject = JSON.parse(fileSubject);
+    const mapSubject = dataSubject.map((o) => o);
+
+    const distinctSubject = [
+        ...new Set(
+            mapSubject.map((item) => item.name),
+        ),
+    ];
+
+    const arraySubject = [];
+
+    for (const loopSubject of distinctSubject) {
+        const data = {
+            subjectCode: loopSubject.toLowerCase(),
+            subjectName: loopSubject.toUpperCase(),
+        };
+
+        const insertSubject = await Subject.create(data);
+        arraySubject.push(insertSubject);
+    }
+
+    // const insertSubject = await Subject.bulkCreate(distinctSubject);
+
+    return arraySubject;
+};
+
 module.exports = {
     listUser,
     addUser,
@@ -460,4 +489,5 @@ module.exports = {
     addEducationBackground,
     addBank,
     addDevice,
+    addSubject,
 };
