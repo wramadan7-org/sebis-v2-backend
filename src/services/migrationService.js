@@ -10,6 +10,7 @@ const { TeachingExperience } = require('../models/TeachingExperience');
 const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail');
 const { EducationBackground } = require('../models/EducationBackground');
 const { Bank } = require('../models/Bank');
+const { Device } = require('../models/Device');
 const dataJson = require('../../public/files/userJson.json');
 const teachingJson = require('../../public/Migration_Dec_16_21_15/teaching_exps.json');
 
@@ -417,6 +418,40 @@ const addBank = async () => {
     return arrayBank;
 };
 
+const addDevice = async () => {
+    const user = await User.findAll();
+    const fileDevice = fs.readFileSync('./public/Migration_Dec_16_21_15/devices.json', 'utf-8');
+    const dataDevice = JSON.parse(fileDevice);
+    const mapDevice = dataDevice.map((o) => o);
+
+    const mapTemporaryIdentityId = user.map((o) => o.temporaryIdentityId);
+
+    const filteringDevice = mapDevice.filter((o) => mapTemporaryIdentityId.includes(o.identitiesId));
+    const mapingIdentitiesId = filteringDevice.map((o) => o.identitiesId);
+    const filteringUser = user.filter((o) => mapingIdentitiesId.includes(o.temporaryIdentityId));
+
+    const map = new Map();
+
+    filteringUser.forEach((item) => map.set(item.temporaryIdentityId, item));
+    filteringDevice.forEach((item) => map.set(item.identitiesId, { ...map.get(item.identitiesId), ...item }));
+
+    const merging = Array.from(map.values());
+
+    const arrayDevice = [];
+
+    for (const loopDevice of merging) {
+        const data = {
+            userId: (loopDevice && loopDevice.dataValues.id) ? loopDevice.dataValues.id : null,
+            registeredToken: (loopDevice && loopDevice.registerdToken) ? loopDevice.registerdToken : null,
+        };
+
+        const insertDevice = await Device.create(data);
+        arrayDevice.push(insertDevice);
+    }
+
+    return arrayDevice;
+};
+
 module.exports = {
     listUser,
     addUser,
@@ -424,4 +459,5 @@ module.exports = {
     addTeachingExperience,
     addEducationBackground,
     addBank,
+    addDevice,
 };
