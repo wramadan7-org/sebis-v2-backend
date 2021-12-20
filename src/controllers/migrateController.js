@@ -48,6 +48,12 @@ const addBank = catchAsync(async (req, res) => {
     res.sendWrapped(bank, httpStatus.CREATED);
 });
 
+const addDevice = catchAsync(async (req, res) => {
+    const devices = await migrateService.addDevice();
+
+    res.sendWrapped(devices, httpStatus.CREATED);
+});
+
 module.exports = {
     listUser,
     addUser,
@@ -55,4 +61,5 @@ module.exports = {
     addTeachingExperiences,
     addEducationBackground,
     addBank,
+    addDevice,
 };
