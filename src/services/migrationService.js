@@ -247,7 +247,7 @@ const addUserDetail = async () => {
             city: loop.city,
             region: loop.region,
             postalCode,
-            aboutMe: loop.aboutMe,
+            // aboutMe: loop.aboutMe,
             priceId: loop.priceId,
             teacherStatus: loop.teacherStatus,
         };
