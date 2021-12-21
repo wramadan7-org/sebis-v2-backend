@@ -60,6 +60,12 @@ const addSubject = catchAsync(async (req, res) => {
     res.sendWrapped(subject, httpStatus.CREATED);
 });
 
+const addGradeGroup = catchAsync(async (req, res) => {
+    const grade = await migrateService.addGradeGroup();
+
+    res.sendWrapped(grade, httpStatus.CREATED);
+});
+
 module.exports = {
     listUser,
     addUser,
@@ -69,4 +75,5 @@ module.exports = {
     addBank,
     addDevice,
     addSubject,
+    addGradeGroup,
 };
