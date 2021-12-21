@@ -12,5 +12,6 @@ router.post('/user-education-background', migrateController.addEducationBackgrou
 router.post('/user-bank-account', migrateController.addBank);
 router.post('/user-device', migrateController.addDevice);
 router.post('/user-subject', migrateController.addSubject);
+router.post('/user-grade-group', migrateController.addGradeGroup);
 
 module.exports = router;
