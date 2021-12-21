@@ -12,6 +12,9 @@ const { EducationBackground } = require('../models/EducationBackground');
 const { Bank } = require('../models/Bank');
 const { Device } = require('../models/Device');
 const { Subject } = require('../models/Subject');
+const { Curriculum } = require('../models/Curriculum');
+const { GradeGroup } = require('../models/GradeGroup');
+const { Grade } = require('../models/Grade');
 const dataJson = require('../../public/files/userJson.json');
 const teachingJson = require('../../public/Migration_Dec_16_21_15/teaching_exps.json');
 
@@ -481,6 +484,242 @@ const addSubject = async () => {
     return arraySubject;
 };
 
+const addGradeGroup = async () => {
+    const fileGrade = fs.readFileSync('./public/Migration_Dec_16_21_15/kelas.json', 'utf-8');
+    const dataGrade = JSON.parse(fileGrade);
+    const mapGrade = dataGrade.map((o) => o);
+
+    const distinctGrade = [
+        ...new Map(
+            mapGrade.map((item) => [
+                item.name, item,
+            ]),
+        ).values(),
+    ];
+
+    const arrayGradeGroup = [];
+
+    for (const loopGradeGroup of distinctGrade) {
+        const curriculum = await Curriculum.findOne(
+            {
+                where: {
+                    curriculumCode: loopGradeGroup.curriculum,
+                },
+            },
+        );
+
+        const data = {
+            temporaryGradeId: (loopGradeGroup && loopGradeGroup._id.$oid) ? loopGradeGroup._id.$oid : null,
+            curriculumId: (curriculum && curriculum.id) ? curriculum.id : null,
+            gradeGroupCode: (loopGradeGroup && loopGradeGroup.name) ? loopGradeGroup.name.toLowerCase() : null,
+            gradeGroupName: (loopGradeGroup && loopGradeGroup.name) ? loopGradeGroup.name.toUpperCase() : null,
+        };
+
+        const insertGradeGroup = await GradeGroup.create(data);
+
+        arrayGradeGroup.push(insertGradeGroup);
+    }
+
+    // "60d2a8fd166e761664fa5040"
+    // "60d2d8f49350dc2948d5f8bf"
+
+    let arrayGrade = [];
+
+    for (const loopGrade of arrayGradeGroup) {
+        if (loopGrade.gradeGroupCode == 'sd') {
+            for (let x = 1; x <= 6; x++) {
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: x,
+                    gradeName: `${x} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'smp') {
+            for (let x = 0; x <= 2; x++) {
+                const gradeManipulation = 7 + x;
+
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: gradeManipulation,
+                    gradeName: `${gradeManipulation} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'sma (ipa)') {
+            for (let x = 0; x <= 2; x++) {
+                const gradeManipulation = 10 + x;
+
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: gradeManipulation,
+                    gradeName: `${gradeManipulation} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'sma (ips)') {
+            for (let x = 0; x <= 2; x++) {
+                const gradeManipulation = 10 + x;
+
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: gradeManipulation,
+                    gradeName: `${gradeManipulation} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'primary') {
+            for (let x = 1; x <= 6; x++) {
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: x,
+                    gradeName: `${x} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'low secondary') {
+            for (let x = 0; x <= 1; x++) {
+                const gradeManipulation = 7 + x;
+
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: gradeManipulation,
+                    gradeName: `${gradeManipulation} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'up secondary') {
+            for (let x = 0; x <= 1; x++) {
+                const gradeManipulation = 9 + x;
+
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: gradeManipulation,
+                    gradeName: `${gradeManipulation} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'advanced') {
+            for (let x = 0; x <= 1; x++) {
+                const gradeManipulation = 11 + x;
+
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: gradeManipulation,
+                    gradeName: `${gradeManipulation} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'primary year') {
+            for (let x = 1; x <= 6; x++) {
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: x,
+                    gradeName: `${x} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'middle year') {
+            for (let x = 0; x <= 3; x++) {
+                const gradeManipulation = 7 + x;
+
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: gradeManipulation,
+                    gradeName: `${gradeManipulation} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'diploma') {
+            for (let x = 0; x <= 1; x++) {
+                const gradeManipulation = 11 + x;
+
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: gradeManipulation,
+                    gradeName: `${gradeManipulation} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'pemula') {
+            for (let x = 1; x <= 12; x++) {
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: x,
+                    gradeName: `${x} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'menengah') {
+            for (let x = 1; x <= 12; x++) {
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: x,
+                    gradeName: `${x} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+
+        if (loopGrade.gradeGroupCode == 'lanjut') {
+            for (let x = 1; x <= 12; x++) {
+                const data = {
+                    gradeGroupId: loopGrade.id,
+                    gradeCode: x,
+                    gradeName: `${x} - ${loopGrade.gradeGroupName}`,
+                };
+
+                arrayGrade.push(data);
+            }
+        }
+    }
+
+    const insertGrade = await Grade.bulkCreate(arrayGrade);
+
+    // get temporaryGradeId
+    // kemudian map untuk memasukkan kelasnya berdasarkan tingkatan grade dan to grade
+    // kemudian ambil curriculumnya
+
+    return { arrayGradeGroup, arrayGrade };
+};
+
 module.exports = {
     listUser,
     addUser,
@@ -490,4 +729,5 @@ module.exports = {
     addBank,
     addDevice,
     addSubject,
+    addGradeGroup,
 };
