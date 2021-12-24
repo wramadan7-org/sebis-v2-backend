@@ -16,6 +16,10 @@ const GradeGroup = sequelize.define('gradeGroup', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  temporaryGradeId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 },
 {
   paranoid: true,

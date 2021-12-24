@@ -16,6 +16,7 @@
   "author": "SEBIS Development Team",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "bull": "^3.29.2",
     "compression": "^1.7.4",

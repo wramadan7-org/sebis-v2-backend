@@ -18,12 +18,12 @@ const User = sequelize.define(
     },
     email: {
       type: DataTypes.STRING,
-      unique: true,
+      // unique: true,
       allowNull: false,
     },
     phoneNumber: {
       type: DataTypes.STRING,
-      unique: true,
+      // unique: true,
       allowNull: true,
     },
     password: {
@@ -31,7 +31,8 @@ const User = sequelize.define(
       allowNull: true,
     },
     gender: {
-      type: DataTypes.ENUM(Object.values(genders)),
+      // type: DataTypes.ENUM(Object.values(genders)),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     firstName: {
@@ -51,6 +52,20 @@ const User = sequelize.define(
       allowNull: true,
     },
     referredBy: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    temporaryPeopleId: {
+      type: DataTypes.STRING,
+      // unique: true,
+      allowNull: true,
+    },
+    temporaryIdentityId: {
+      type: DataTypes.STRING,
+      // unique: true,
+      allowNull: true,
+    },
+    note: {
       type: DataTypes.STRING,
       allowNull: true,
     },

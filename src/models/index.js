@@ -17,6 +17,8 @@ const { Subject } = require('./Subject');
 const { TeacherSubject } = require('./TeacherSubject');
 const { AvailabilityHours } = require('./AvailabilityHours');
 const { ReferralHistory } = require('./ReferralHistory');
+const { Device } = require('./Device');
+const { Bank } = require('./Bank');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -172,6 +174,22 @@ const setupSequelizeAssociations = async () => {
   ReferralHistory.belongsTo(User, {
     foreignKey: 'referredBy',
     as: 'referencedBy',
+  });
+
+  User.hasMany(Device, {
+    foreignKey: 'userId',
+  });
+
+  Device.belongsTo(User, {
+    foreignKey: 'userId',
+  });
+
+  User.hasOne(Bank, {
+    foreignKey: 'userId',
+  });
+
+  Bank.belongsTo(User, {
+    foreignKey: 'userId',
   });
 
   // finally sync sequelize
