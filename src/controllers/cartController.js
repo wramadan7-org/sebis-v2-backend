@@ -4,6 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const { Cart } = require('../models/Cart');
 const { CartItem } = require('../models/CartItem');
 const { User } = require('../models/User');
+const { Role } = require('../models/Role');
 const cartService = require('../services/cartService');
 const ApiError = require('../utils/ApiError');
 
@@ -88,7 +89,33 @@ const addCart = catchAsync(async (req, res) => {
 const viewCart = catchAsync(async (req, res) => {
   const studentId = req.user.id;
   const cart = await cartService.findOrCreateCart(studentId, {
-    include: 'cartItems',
+    include: [
+      {
+        model: User,
+        as: 'student',
+        attributes: {
+          exclude: ['password'],
+        },
+        include: {
+          model: Role,
+          attributes: ['roleName'],
+        },
+      },
+      {
+        model: CartItem,
+        include: {
+          model: User,
+          as: 'teacher',
+          attributes: {
+            exclude: ['password'],
+          },
+          include: {
+            model: Role,
+            attributes: ['roleName'],
+          },
+        },
+      },
+    ],
   });
   res.sendWrapped(cart[0], httpStatus.OK);
 });
