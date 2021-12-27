@@ -19,7 +19,7 @@
     "prefer-const": "off",
     "consistent-return": "off",
     "camelcase": "error",
-    "indent": "off",
+    "indent": 2,
     "no-underscore-dangle": "off",
     "radix": "off",
     "no-restricted-syntax": "off",
