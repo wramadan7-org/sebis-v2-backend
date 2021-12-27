@@ -2,7 +2,7 @@ const express = require('express');
 const authRoute = require('./authRoute');
 const profileRoute = require('./profileRoute');
 const schoolRoute = require('./schoolRoute');
-const studentRoute = require('./studentRoute');
+// const studentRoute = require('./studentRoute');
 const teacherRoute = require('./teacherRoute');
 const referralRoute = require('./referralRoute');
 const availabilityHoursRoute = require('./availabilityHoursRoute');
@@ -13,6 +13,7 @@ const gradeRoute = require('./gradeRoute');
 const subjectRoute = require('./subjectRoute');
 const teacherSubjectRoute = require('./teacherSubjectRoute');
 const migrationRoute = require('./migrateRoute');
+const publicRoute = require('./publicRoute');
 
 const router = express.Router();
 
@@ -29,10 +30,10 @@ const defaultRoutes = [
     path: '/school',
     route: schoolRoute,
   },
-  {
-    path: '/student',
-    route: studentRoute,
-  },
+  // {
+  //   path: '/student',
+  //   route: studentRoute,
+  // },
   {
     path: '/teacher',
     route: teacherRoute,
@@ -72,6 +73,10 @@ const defaultRoutes = [
   {
     path: '/migrate',
     route: migrationRoute,
+  },
+  {
+    path: '/public',
+    route: publicRoute,
   },
 ];
 
