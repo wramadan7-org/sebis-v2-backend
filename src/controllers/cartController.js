@@ -85,8 +85,17 @@ const addCart = catchAsync(async (req, res) => {
   res.sendWrapped({ createCart, createCartItem }, httpStatus.OK);
 });
 
+const viewCart = catchAsync(async (req, res) => {
+  const studentId = req.user.id;
+  const cart = await cartService.findOrCreateCart(studentId, {
+    include: 'cartItems',
+  });
+  res.sendWrapped(cart[0], httpStatus.OK);
+});
+
 module.exports = {
   getOrderList,
   addCart,
   approvingOrder,
+  viewCart,
 };
