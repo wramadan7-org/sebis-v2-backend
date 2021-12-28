@@ -14,7 +14,48 @@ const student = async (req, res, next) => {
   next();
 };
 
+const verifikator = async (req, res, next) => {
+  const { role } = req.user;
+  if (role !== roleTypes.VERIFIKATOR) next(new ApiError(httpStatus.FORBIDDEN, 'Access denied'));
+};
+
+const finance = async (req, res, next) => {
+  const { role } = req.user;
+  if (role !== roleTypes.FINANCE) next(new ApiError(httpStatus.FORBIDDEN, 'Access denied'));
+  next();
+};
+
+const admin = async (req, res, next) => {
+  const { role } = req.user;
+  if (role !== roleTypes.ADMIN) next(new ApiError(httpStatus.FORBIDDEN, 'Access denied'));
+  next();
+};
+
+const administrator = async (req, res, next) => {
+  const { role } = req.user;
+  if (role !== roleTypes.ADMINISTRATOR) next(new ApiError(httpStatus.FORBIDDEN, 'Access denied'));
+  next();
+};
+
+const pteacher = async (req, res, next) => {
+  const { role } = req.user;
+  if (role !== roleTypes.PTEACHER) next(new ApiError(httpStatus.FORBIDDEN, 'Access denied'));
+  next();
+};
+
+const rteacher = async (req, res, next) => {
+  const { role } = req.user;
+  if (role !== roleTypes.RTEACHER) next(new ApiError(httpStatus.FORBIDDEN, 'Access denied'));
+  next();
+};
+
 module.exports = {
   teacher,
   student,
+  verifikator,
+  finance,
+  admin,
+  administrator,
+  pteacher,
+  rteacher,
 };
