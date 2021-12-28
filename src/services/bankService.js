@@ -4,7 +4,7 @@ const ApiError = require('../utils/ApiError');
 const { Bank } = require('../models/Bank');
 
 /**
- *
+ * Get all bank account
  * @returns array of object
  */
 const getBankAll = async () => {
@@ -14,7 +14,7 @@ const getBankAll = async () => {
 };
 
 /**
- *
+ * Get bank account by Id
  * @param {uuid4} id
  * @returns object
  */
@@ -33,7 +33,7 @@ const getBankById = async (id) => {
 };
 
 /**
- *
+ * Get own bank account
  * @param {uuid4} id
  * @param {string} userId
  * @returns object
@@ -54,7 +54,7 @@ const getOwnBank = async (id, userId) => {
 };
 
 /**
- *
+ * Create or update own bank account
  * @param {uuid4} userId
  * @param {object} bodyBank
  * @returns object
@@ -85,7 +85,7 @@ const createOrUpdate = async (userId, bodyBank) => {
 };
 
 /**
- *
+ * Delete bank account by Id
  * @param {uuid4} id
  * @returns object
  */
@@ -100,7 +100,7 @@ const deleteBank = async (id) => {
 };
 
 /**
- *
+ * Delete own bank account
  * @param {uuid4} id
  * @param {uuid4} userId
  * @returns object
