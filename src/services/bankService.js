@@ -3,12 +3,21 @@ const ApiError = require('../utils/ApiError');
 
 const { Bank } = require('../models/Bank');
 
+/**
+ *
+ * @returns array of object
+ */
 const getBankAll = async () => {
   const banks = await Bank.findAll();
 
   return banks;
 };
 
+/**
+ *
+ * @param {uuid4} id
+ * @returns object
+ */
 const getBankById = async (id) => {
   const bank = await Bank.findOne(
     {
@@ -23,6 +32,12 @@ const getBankById = async (id) => {
   return bank;
 };
 
+/**
+ *
+ * @param {uuid4} id
+ * @param {string} userId
+ * @returns object
+ */
 const getOwnBank = async (id, userId) => {
   const bank = await Bank.findOne(
     {
@@ -38,6 +53,12 @@ const getOwnBank = async (id, userId) => {
   return bank;
 };
 
+/**
+ *
+ * @param {uuid4} userId
+ * @param {object} bodyBank
+ * @returns object
+ */
 const createOrUpdate = async (userId, bodyBank) => {
   const checkBank = await Bank.findOne(
     {
@@ -63,6 +84,11 @@ const createOrUpdate = async (userId, bodyBank) => {
   return insertBank;
 };
 
+/**
+ *
+ * @param {uuid4} id
+ * @returns object
+ */
 const deleteBank = async (id) => {
   const bank = await getBankById(id);
 
@@ -73,6 +99,12 @@ const deleteBank = async (id) => {
   return bank;
 };
 
+/**
+ *
+ * @param {uuid4} id
+ * @param {uuid4} userId
+ * @returns object
+ */
 const deleteOwnBank = async (id, userId) => {
   const bank = await getOwnBank(id, userId);
 
