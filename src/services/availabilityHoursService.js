@@ -9,9 +9,10 @@ const { AvailabilityHours } = require('../models/AvailabilityHours');
  * @param {string} teacherId;
  * @param {number} dayCode;
  * @param {string} timeStart;
+ * @param {object} opts;
  * @returns {object};
  */
-const getTutorScheduleTime = async (teacherId, dayCode, timeStart) => {
+const getTutorScheduleTime = async (teacherId, dayCode, timeStart, opts = {}) => {
   const availabilityHours = await AvailabilityHours.findOne(
     {
       where: {
@@ -19,6 +20,7 @@ const getTutorScheduleTime = async (teacherId, dayCode, timeStart) => {
         dayCode,
         timeStart,
       },
+      ...opts,
     },
   );
 
@@ -29,15 +31,17 @@ const getTutorScheduleTime = async (teacherId, dayCode, timeStart) => {
  *
  * @param {string} teacherId;
  * @param {number} dayCode;
+ * @param {object} opts;
  * @returns {array};
  */
-const getTutorScheduleTimeByDay = async (teacherId, dayCode) => {
+const getTutorScheduleTimeByDay = async (teacherId, dayCode, opts = {}) => {
   const availabilityHours = await AvailabilityHours.findAll(
     {
       where: {
         teacherId,
         dayCode,
       },
+      ...opts,
     },
   );
 
@@ -47,14 +51,16 @@ const getTutorScheduleTimeByDay = async (teacherId, dayCode) => {
 /**
  * Get All Availability
  * @param {string} teacherId
+ * @param {object} opts
  * @returns {array}
  */
-const getTutorScheduleTimes = async (teacherId) => {
+const getTutorScheduleTimes = async (teacherId, opts = {}) => {
   const availabilityHours = await AvailabilityHours.findAll(
     {
       where: {
         teacherId,
       },
+      ...opts,
     },
   );
 
@@ -65,15 +71,17 @@ const getTutorScheduleTimes = async (teacherId) => {
  * Get availability hours by id
  * @param {string} availabilityHoursId;
  * @param {string} teacherId;
+ * @param {object} opts;
  * @returns {object};
  */
-const getTutorScheduleTimeById = async (availabilityHoursId, teacherId) => {
+const getTutorScheduleTimeById = async (availabilityHoursId, teacherId, opts = {}) => {
   const availabilityHours = await AvailabilityHours.findOne(
     {
       where: {
         id: availabilityHoursId,
         teacherId,
       },
+      ...opts,
     },
   );
 
