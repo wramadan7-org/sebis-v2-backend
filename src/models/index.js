@@ -19,6 +19,7 @@ const { AvailabilityHours } = require('./AvailabilityHours');
 const { ReferralHistory } = require('./ReferralHistory');
 const { Device } = require('./Device');
 const { Bank } = require('./Bank');
+const { Reference } = require('./Reference');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -190,6 +191,14 @@ const setupSequelizeAssociations = async () => {
 
   Bank.belongsTo(User, {
     foreignKey: 'userId',
+  });
+
+  User.hasMany(Reference, {
+    foreignKey: 'userRefer',
+  });
+
+  Reference.belongsTo(User, {
+    foreignKey: 'userRefer',
   });
 
   // finally sync sequelize
