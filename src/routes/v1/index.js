@@ -13,7 +13,6 @@ const gradeRoute = require('./gradeRoute');
 const subjectRoute = require('./subjectRoute');
 const teacherSubjectRoute = require('./teacherSubjectRoute');
 const migrationRoute = require('./migrateRoute');
-const publicRoute = require('./publicRoute');
 const cartRoute = require('./cartRoute');
 const bankRoute = require('./bankRoute');
 const referenceRoute = require('./referenceRoute');
@@ -76,10 +75,6 @@ const defaultRoutes = [
   {
     path: '/migrate',
     route: migrationRoute,
-  },
-  {
-    path: '/public',
-    route: publicRoute,
   },
   {
     path: '/cart',
