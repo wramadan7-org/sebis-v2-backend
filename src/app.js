@@ -6,6 +6,7 @@ const cors = require('cors');
 const passport = require('passport');
 const httpStatus = require('http-status');
 const session = require('express-session');
+const path = require('path');
 const config = require('./config/config');
 const morgan = require('./config/morgan');
 const { jwtStrategy } = require('./config/passport');
@@ -29,6 +30,12 @@ app.response.sendWrapped = function (data, statusCode = httpStatus.OK) {
     data,
   });
 };
+
+// testing to socket io
+// app.get('/home', (req, res) => {
+//   // res.render('home');
+//   res.sendFile(path.join(`${__dirname}/home.html`));
+// });
 
 // set security HTTP headers
 app.use(helmet());
