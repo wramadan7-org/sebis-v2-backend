@@ -15,6 +15,7 @@ const { Subject } = require('../models/Subject');
 const { Curriculum } = require('../models/Curriculum');
 const { GradeGroup } = require('../models/GradeGroup');
 const { Grade } = require('../models/Grade');
+const { TeacherSubject } = require('../models/TeacherSubject');
 const dataJson = require('../../public/files/userJson.json');
 const teachingJson = require('../../public/Migration_Dec_16_21_15/teaching_exps.json');
 
@@ -759,6 +760,80 @@ const addAvailabilityHours = async () => {
   return insertAvailabilityHours;
 };
 
+const addTeacherSubjects = async () => {
+  const user = await User.findAll();
+
+  const fileGrade = fs.readFileSync('./public/Migration_Dec_16_21_15/kelas.json', 'utf-8');
+  const fileMapel = fs.readFileSync('./public/Migration_Dec_16_21_15/mapels.json', 'utf-8');
+  const fileStudy = fs.readFileSync('./public/Migration_Dec_16_21_15/studies.json', 'utf-8');
+
+  const dataGrade = JSON.parse(fileGrade);
+  const dataMapel = JSON.parse(fileMapel);
+  const dataStudy = JSON.parse(fileStudy);
+
+  const mapTemporaryIdentityId = user.map((o) => o.temporaryIdentityId);
+
+  const filteringStudy = dataStudy.filter((o) => mapTemporaryIdentityId.includes(o.identitiesId));
+
+  const array = [];
+
+  for (const loopStudy of filteringStudy) {
+    const findMapel = dataMapel.find((element) => element._id.$oid == loopStudy.typeId);
+    const findGrade = dataGrade.find((element) => element._id.$oid == loopStudy.gradeId);
+    const findUser = user.find((element) => element.temporaryIdentityId == loopStudy.identitiesId);
+
+    const subjectes = await Subject.findOne(
+      {
+        where: {
+          subjectName: findMapel.name,
+        },
+      },
+    );
+    const arrayGrade = [];
+    for (let i = parseInt(findGrade.grade); i <= parseInt(findGrade.tograde); i++) {
+      const numbering = 0;
+      let type = '';
+      let status = false;
+
+      if (loopStudy.status == '0') {
+        type = 'private';
+      } else {
+        type = 'group';
+      }
+
+      if (loopStudy.disable == 'enable') {
+        status = true;
+      } else {
+        status = false;
+      }
+
+      const grade = await Grade.findOne(
+        {
+          where: {
+            gradeName: `${numbering + i} - ${findGrade.name}`,
+          },
+        },
+      );
+
+      const data = {
+        gradeId: grade.id,
+        subjectId: subjectes.id,
+        teacherId: findUser.id,
+        type,
+        status,
+      };
+
+      arrayGrade.push(data);
+    }
+
+    array.push(...arrayGrade);
+  }
+
+  const insertTeacherSubject = await TeacherSubject.bulkCreate(array, { ignoreDuplicates: true });
+
+  return insertTeacherSubject;
+};
+
 module.exports = {
   listUser,
   addUser,
@@ -770,4 +845,5 @@ module.exports = {
   addSubject,
   addGradeGroup,
   addAvailabilityHours,
+  addTeacherSubjects,
 };
