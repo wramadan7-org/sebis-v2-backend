@@ -8,6 +8,27 @@ const TeacherSubject = sequelize.define('teacherSubject', {
     defaultValue: Sequelize.UUIDV4,
     allowNull: false,
   },
+  gradeId: {
+    type: DataTypes.UUIDV4,
+    allowNull: false,
+  },
+  teacherId: {
+    type: DataTypes.UUIDV4,
+    allowNull: false,
+  },
+  subjectId: {
+    type: DataTypes.UUIDV4,
+    allowNull: false,
+  },
+  type: {
+    type: DataTypes.ENUM('private', 'group'),
+    defaultValue: Sequelize.ENUM('private'),
+    allowNull: false,
+  },
+  status: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+  },
 },
 {
   paranoid: true,
