@@ -12,9 +12,11 @@ const { TeacherSubject } = require('../models/TeacherSubject');
 const { AvailabilityHours } = require('../models/AvailabilityHours');
 
 const availabilityHoursService = require('./availabilityHoursService');
-const nameDay = require('../utils/day');
 
-const homePublic = async () => {
+const nameDay = require('../utils/day');
+const pagination = require('../utils/pagination');
+
+const homePublic = async (page, limit) => {
   const teacherRole = await Role.findOne(
     {
       where: {
@@ -50,17 +52,29 @@ const homePublic = async () => {
     },
   );
 
-  return users;
+  const results = users.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+  const paginating = pagination(results, page, limit);
+
+  return paginating;
 };
 
-const timeAvailabilityPublic = async (teacherId, month, year) => {
-  const availabilityHours = await availabilityHoursService.getTutorScheduleTimes(teacherId);
+const timeAvailabilityPublic = async (teacherId, month, year, page, limit) => {
+  const user = await User.findOne(
+    {
+      where: {
+        id: teacherId,
+      },
+      attributes: {
+        exclude: 'password',
+      },
+    },
+  );
 
   const arrayAvailabilityHours = [];
 
   let dayInMonth = moment(`${year}-${month}`).daysInMonth();
 
-  const mapDay = availabilityHours.map((o) => o.dayCode);
   while (dayInMonth) {
     const date = moment().date(dayInMonth).format('YYYY-MM-DD');
     const day = moment().date(dayInMonth).days();
@@ -94,9 +108,11 @@ const timeAvailabilityPublic = async (teacherId, month, year) => {
 
   const results = [].concat(...arrayAvailabilityHours);
 
-  results.sort((a, b) => new Date(b.dateSort) - new Date(a.dateSort));
+  results.sort((a, b) => new Date(a.dateSort) - new Date(b.dateSort));
 
-  return results;
+  const paginating = pagination(results, page, limit);
+
+  return { user, ...paginating };
 };
 
 module.exports = {
