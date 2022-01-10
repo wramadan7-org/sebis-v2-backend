@@ -16,6 +16,7 @@ const migrationRoute = require('./migrateRoute');
 const cartRoute = require('./cartRoute');
 const bankRoute = require('./bankRoute');
 const referenceRoute = require('./referenceRoute');
+const publicRoute = require('./publicRoute');
 
 const router = express.Router();
 
@@ -87,6 +88,10 @@ const defaultRoutes = [
   {
     path: '/reference',
     route: referenceRoute,
+  },
+  {
+    path: '/public',
+    route: publicRoute,
   },
 ];
 
