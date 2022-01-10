@@ -22,11 +22,17 @@ if (config.env !== 'test') {
 }
 
 // set response wrapper
-app.response.sendWrapped = function (data, statusCode = httpStatus.OK) {
+app.response.sendWrapped = function (data, statusCode = httpStatus.OK, paginator) {
+  if (data && data !== '') {
+    return this.status(statusCode).send({
+      status: statusCode,
+      dataLength: data.length,
+      data,
+    });
+  }
   return this.status(statusCode).send({
     status: statusCode,
-    dataLength: data.length,
-    data,
+    ...paginator,
   });
 };
 
