@@ -212,10 +212,12 @@ const setupSequelizeAssociations = async () => {
 
   Schedule.belongsTo(User, {
     foreignKey: 'teacherId',
+    as: 'teacher',
   });
 
   Schedule.belongsTo(User, {
     foreignKey: 'studentId',
+    as: 'student',
   });
 
   TeacherSubject.hasMany(Schedule, {
