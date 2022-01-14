@@ -1,10 +1,11 @@
 const httpStatus = require('http-status');
 const moment = require('moment');
+const { Op } = require('sequelize');
 const { Schedule } = require('../models/Schedule');
 const ApiError = require('../utils/ApiError');
 
 const {
-  PENDING, ACCEPT, REJECT, EXPIRE, DONE,
+  PENDING, ACCEPT, PROCESS, REJECT, EXPIRE, DONE,
 } = process.env;
 
 /**
@@ -21,6 +22,12 @@ const checkerSchedule = async (teacherId, teacherSubjectId, availabilityHoursId)
         teacherId,
         teacherSubjectId,
         availabilityHoursId,
+        statusSchedule: {
+          [Op.notIn]: [
+            REJECT,
+            EXPIRE,
+          ],
+        },
       },
     },
   );
@@ -48,7 +55,7 @@ const createSchedule = async (scheduleBody) => {
     scheduleBody.availabilityHoursId,
   );
 
-  if (checkerSchedule) throw new ApiError(httpStatus.CONFLICT, 'Schedule already exist. Please order another schedule!');
+  if (checkSchedule) throw new ApiError(httpStatus.CONFLICT, 'Schedule already exist. Please order another schedule!');
 
   const data = {
     dateSchedule,
