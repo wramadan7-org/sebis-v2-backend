@@ -12,7 +12,7 @@ const {
  * Cek semua jadwal les
  * @param {string} teacherId
  * @param {string} teacherSubjectId
- * @param {uuidv4 || string} availabilityHoursId
+ * @param {string} availabilityHoursId
  * @returns boolean
  */
 const checkerSchedule = async (teacherId, teacherSubjectId, availabilityHoursId) => {
