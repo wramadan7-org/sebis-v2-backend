@@ -16,6 +16,7 @@
   "author": "SEBIS Development Team",
   "license": "ISC",
   "dependencies": {
+    "@joi/date": "^2.1.0",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "bull": "^3.29.2",
