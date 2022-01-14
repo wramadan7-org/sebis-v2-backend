@@ -8,5 +8,6 @@ const scheduleValidation = require('../../validations/scheduleValidation');
 const router = Router();
 
 router.post('/', validate(scheduleValidation.createSchedule), scheduleController.createSchedule);
+router.get('/', scheduleController.getSchedule);
 
 module.exports = router;

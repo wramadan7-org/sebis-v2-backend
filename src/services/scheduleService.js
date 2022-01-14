@@ -3,6 +3,11 @@ const moment = require('moment');
 const { Schedule } = require('../models/Schedule');
 const ApiError = require('../utils/ApiError');
 
+/**
+ *
+ * @param {object} scheduleBody
+ * @returns object || error
+ */
 const createSchedule = async (scheduleBody) => {
   const dateSchedule = moment(scheduleBody.dateSchedule).format('YYYY-MM-DD');
 
@@ -18,6 +23,17 @@ const createSchedule = async (scheduleBody) => {
   return schedule;
 };
 
+const getSchedule = async (opts = {}) => {
+  const schedule = await Schedule.findAll(
+    {
+      ...opts,
+    },
+  );
+
+  return schedule;
+};
+
 module.exports = {
   createSchedule,
+  getSchedule,
 };
