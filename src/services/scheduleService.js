@@ -9,7 +9,7 @@ const {
 } = process.env;
 
 /**
- * Check all schedule
+ * Cek semua jadwal les
  * @param {uuidv4 || string} teacherId
  * @param {uuidv4 || string} teacherSubjectId
  * @param {uuidv4 || string} availabilityHoursId
@@ -41,7 +41,7 @@ const checkerSchedule = async (teacherId, teacherSubjectId, availabilityHoursId)
 };
 
 /**
- *
+ * Membuat jadwal les
  * @param {object} scheduleBody
  * @returns object || error
  */
@@ -70,7 +70,7 @@ const createSchedule = async (scheduleBody) => {
 };
 
 /**
- *
+ * Mengambil semua data jadwal les
  * @param {object} opts
  * @returns array of object
  */
@@ -85,7 +85,7 @@ const getSchedule = async (opts = {}) => {
 };
 
 /**
- *
+ * Mengambil data jadwal les berdasarkan id
  * @param {string} id
  * @param {object} opts
  * @returns object
