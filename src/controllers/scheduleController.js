@@ -48,7 +48,44 @@ const getSchedule = catchAsync(async (req, res) => {
   res.sendWrapped(schedule, httpStatus.OK);
 });
 
+const getScheduleById = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const schedule = await scheduleService.getScheduleById(
+    id,
+    {
+      include: [
+        {
+          model: User,
+          as: 'teacher',
+          attributes: {
+            exclude: ['password'],
+          },
+        },
+        {
+          model: User,
+          as: 'student',
+          attributes: {
+            exclude: ['password'],
+          },
+        },
+        {
+          model: TeacherSubject,
+        },
+        {
+          model: AvailabilityHours,
+        },
+      ],
+    },
+  );
+
+  if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found.');
+
+  res.sendWrapped(schedule, httpStatus.OK);
+});
+
 module.exports = {
   createSchedule,
   getSchedule,
+  getScheduleById,
 };

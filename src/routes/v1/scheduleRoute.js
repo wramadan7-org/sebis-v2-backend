@@ -9,5 +9,6 @@ const router = Router();
 
 router.post('/', validate(scheduleValidation.createSchedule), scheduleController.createSchedule);
 router.get('/', scheduleController.getSchedule);
+router.get('/:id', scheduleController.getScheduleById);
 
 module.exports = router;

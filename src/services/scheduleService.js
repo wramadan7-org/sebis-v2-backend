@@ -33,7 +33,21 @@ const getSchedule = async (opts = {}) => {
   return schedule;
 };
 
+const getScheduleById = async (id, opts = {}) => {
+  const schedule = await Schedule.findOne(
+    {
+      where: {
+        id,
+      },
+      ...opts,
+    },
+  );
+
+  return schedule;
+};
+
 module.exports = {
   createSchedule,
   getSchedule,
+  getScheduleById,
 };
