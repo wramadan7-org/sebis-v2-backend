@@ -17,6 +17,7 @@ const cartRoute = require('./cartRoute');
 const bankRoute = require('./bankRoute');
 const referenceRoute = require('./referenceRoute');
 const publicRoute = require('./publicRoute');
+const scheduleRoute = require('./scheduleRoute');
 
 const router = express.Router();
 
@@ -92,6 +93,10 @@ const defaultRoutes = [
   {
     path: '/public',
     route: publicRoute,
+  },
+  {
+    path: '/schedule',
+    route: scheduleRoute,
   },
 ];
 
