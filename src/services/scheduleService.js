@@ -3,6 +3,36 @@ const moment = require('moment');
 const { Schedule } = require('../models/Schedule');
 const ApiError = require('../utils/ApiError');
 
+const {
+  PENDING, ACCEPT, REJECT, EXPIRE, DONE,
+} = process.env;
+
+/**
+ * Check all schedule
+ * @param {uuidv4 || string} teacherId
+ * @param {uuidv4 || string} teacherSubjectId
+ * @param {uuidv4 || string} availabilityHoursId
+ * @returns boolean
+ */
+const checkerSchedule = async (teacherId, teacherSubjectId, availabilityHoursId) => {
+  const schedule = await Schedule.findOne(
+    {
+      where: {
+        teacherId,
+        teacherSubjectId,
+        availabilityHoursId,
+      },
+    },
+  );
+
+  // jika jadwal sudah ada, maka tampilkan true
+  if (schedule) {
+    return true;
+  }
+
+  return false;
+};
+
 /**
  *
  * @param {object} scheduleBody
@@ -10,6 +40,15 @@ const ApiError = require('../utils/ApiError');
  */
 const createSchedule = async (scheduleBody) => {
   const dateSchedule = moment(scheduleBody.dateSchedule).format('YYYY-MM-DD');
+
+  // lakukan pengecekan jadwal
+  const checkSchedule = await checkerSchedule(
+    scheduleBody.teacherId,
+    scheduleBody.teacherSubjectId,
+    scheduleBody.availabilityHoursId,
+  );
+
+  if (checkerSchedule) throw new ApiError(httpStatus.CONFLICT, 'Schedule already exist. Please order another schedule!');
 
   const data = {
     dateSchedule,
@@ -58,6 +97,7 @@ const getScheduleById = async (id, opts = {}) => {
 };
 
 module.exports = {
+  checkerSchedule,
   createSchedule,
   getSchedule,
   getScheduleById,
