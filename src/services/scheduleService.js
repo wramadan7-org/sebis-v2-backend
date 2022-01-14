@@ -10,8 +10,8 @@ const {
 
 /**
  * Cek semua jadwal les
- * @param {uuidv4 || string} teacherId
- * @param {uuidv4 || string} teacherSubjectId
+ * @param {string} teacherId
+ * @param {string} teacherSubjectId
  * @param {uuidv4 || string} availabilityHoursId
  * @returns boolean
  */
