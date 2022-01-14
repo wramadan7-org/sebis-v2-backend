@@ -23,6 +23,11 @@ const createSchedule = async (scheduleBody) => {
   return schedule;
 };
 
+/**
+ *
+ * @param {object} opts
+ * @returns array of object
+ */
 const getSchedule = async (opts = {}) => {
   const schedule = await Schedule.findAll(
     {
@@ -33,6 +38,12 @@ const getSchedule = async (opts = {}) => {
   return schedule;
 };
 
+/**
+ *
+ * @param {string} id
+ * @param {object} opts
+ * @returns object
+ */
 const getScheduleById = async (id, opts = {}) => {
   const schedule = await Schedule.findOne(
     {
