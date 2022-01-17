@@ -84,8 +84,30 @@ const getScheduleById = catchAsync(async (req, res) => {
   res.sendWrapped(schedule, httpStatus.OK);
 });
 
+const updateSchedule = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const scheduleBody = req.body;
+
+  const schedule = await scheduleService.updateScheduleById(id, scheduleBody);
+
+  if (!schedule) throw new ApiError(httpStatus.NOT_MODIFIED, 'Fail to update');
+
+  res.sendWrapped(schedule, httpStatus.OK);
+});
+
+const deleteSchedule = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const schedule = await scheduleService.deleteSchedule(id);
+
+  if (!schedule) throw new ApiError(httpStatus.CONFLICT, 'Fail to delete schedule');
+
+  res.sendWrapped(schedule, httpStatus.OK);
+});
+
 module.exports = {
   createSchedule,
   getSchedule,
   getScheduleById,
+  updateSchedule,
+  deleteSchedule,
 };
