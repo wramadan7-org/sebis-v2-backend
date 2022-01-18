@@ -4,6 +4,12 @@ const { CartItem } = require('../models/CartItem');
 const ApiError = require('../utils/ApiError');
 const userService = require('./userService');
 
+/**
+ * Get all cart
+ * @param {string} query
+ * @param {object} opts
+ * @returns array of object
+ */
 const getCartAll = async (query, opts = {}) => {
   const carts = await Cart.findAll(
     {
@@ -18,9 +24,9 @@ const getCartAll = async (query, opts = {}) => {
 
 /**
  * Get cart by user ID
- * @param {String} studentId
- * @param {Object} opts
- * @return {Promise<Cart | ApiError>}
+ * @param {string} studentId
+ * @param {object} opts
+ * @return object
  */
 const getCartByStudentId = async (studentId, opts = {}) => {
   const cart = await Cart.findOne({
@@ -35,10 +41,10 @@ const getCartByStudentId = async (studentId, opts = {}) => {
 
 /**
  * Get cart item by ID
- * @param {String} id
- * @param {String} teacherId
- * @param {Object} opts
- * @return {Promise<CartItem | ApiError>}
+ * @param {string} id
+ * @param {string} teacherId
+ * @param {object} opts
+ * @return object
  */
 const getCartItemById = async (id, teacherId, opts = {}) => {
   const cartItem = await CartItem.findOne({
@@ -54,9 +60,9 @@ const getCartItemById = async (id, teacherId, opts = {}) => {
 
 /**
  * Create Cart Item
- * @param {teacherId} teacherId
- * @param {teacherId} body
- * @returns {Promise<CartItem | ApiError>}
+ * @param {string} teacherId
+ * @param {object} body
+ * @returns object
  */
 const createCartItem = async (teacherId, body) => {
   const cartItemData = {
@@ -71,9 +77,9 @@ const createCartItem = async (teacherId, body) => {
 
 /**
  * Find or create cart
- * @param {String} studentId
- * @param {Object} opts
- * @return {Promise<[Cart, Boolean] | ApiError>}
+ * @param {string} studentId
+ * @param {sbject} opts
+ * @return object
  */
 const findOrCreateCart = async (studentId, opts = {}) => {
   await userService.getUserById(studentId);
@@ -89,12 +95,12 @@ const findOrCreateCart = async (studentId, opts = {}) => {
 // teacher
 
 /**
- * @param {String} teacherId
- * @param {String} cartItemStatus
- * @param {Object} opts
- * @return {Promise<[OrderList] | ApiError>}
+ * List order
+ * @param {string} teacherId
+ * @param {string} cartItemStatus
+ * @param {object} opts
+ * @return array og object
  */
-
 const orderList = async (teacherId, cartItemStatus, opts = {}) => {
   const orders = await CartItem.findAll(
     {
@@ -109,6 +115,14 @@ const orderList = async (teacherId, cartItemStatus, opts = {}) => {
   return orders;
 };
 
+/**
+ * Approve request cart
+ * @param {string} id
+ * @param {string} teacherId
+ * @param {string} cartItemStatusBody
+ * @param {object} opts
+ * @returns object
+ */
 const approvingCartRequest = async (id, teacherId, cartItemStatusBody, opts = {}) => {
   const cartItem = await getCartItemById(id, teacherId);
 
