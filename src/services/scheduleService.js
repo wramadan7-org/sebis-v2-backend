@@ -70,6 +70,31 @@ const checkerSchedule = async (teacherId, teacherSubjectId, availabilityHoursId,
 };
 
 /**
+ * Check own schedule in same date and time
+ * @param {string} studentId
+ * @param {string date only} dateSchedule
+ * @param {string} availabilityHoursId
+ * @returns boolean
+ */
+const checkAvailDateSchedule = async (studentId, dateSchedule, availabilityHoursId) => {
+  const schedule = await Schedule.findOne(
+    {
+      where: {
+        studentId,
+        dateSchedule,
+        availabilityHoursId,
+      },
+    },
+  );
+
+  if (schedule) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
  * Membuat jadwal les
  * @param {object} scheduleBody
  * @returns object || error
@@ -184,6 +209,7 @@ const deleteSchedule = async (id) => {
 
 module.exports = {
   checkerSchedule,
+  checkAvailDateSchedule,
   createSchedule,
   getSchedule,
   getScheduleById,
