@@ -108,15 +108,6 @@ const getCartItemById = async (id, teacherId, opts = {}) => {
  * @returns object
  */
 const createCartItem = async (teacherId, body) => {
-  const checkCartItem = await checkerCartItem(
-    body.teacherSubjectId,
-    moment(body.startTime).format('YYYY-MM-DD HH:mm:ss'),
-    body.cartId,
-  );
-
-  // Jika hasil dari pengecekan true(cart sudah ada), maka tampilkan error
-  if (checkCartItem) throw new ApiError(httpStatus.CONFLICT, `Cart at ${moment(body.startTime).format('YYYY-MM-DD HH:mm:ss')} already order by another student`);
-
   const cartItemData = {
     teacherId,
     ...body,
@@ -191,4 +182,5 @@ module.exports = {
   createCartItem,
   orderList,
   approvingCartRequest,
+  checkerCartItem,
 };
