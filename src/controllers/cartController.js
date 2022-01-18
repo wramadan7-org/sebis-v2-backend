@@ -7,6 +7,7 @@ const { User } = require('../models/User');
 const { Role } = require('../models/Role');
 const { TeacherSubject } = require('../models/TeacherSubject');
 const cartService = require('../services/cartService');
+const scheduleService = require('../services/scheduleService');
 const ApiError = require('../utils/ApiError');
 
 // teacher
@@ -64,6 +65,7 @@ const addCart = catchAsync(async (req, res) => {
     startTime,
     endTime,
     teacherSubjectId,
+    availabilityHoursId,
   } = req.body;
 
   const createCart = await cartService.findOrCreateCart(studentId);
@@ -78,6 +80,10 @@ const addCart = catchAsync(async (req, res) => {
     cartId: createCart[0].id,
     teacherSubjectId,
   };
+
+  const checkSchedule = await scheduleService.checkAvailDateSchedule(studentId, moment(startTime).format('YYYY-MM-DD'), availabilityHoursId);
+
+  if (checkSchedule) throw new ApiError(httpStatus.CONFLICT, 'You already have a schedule on this date and time');
 
   const createCartItem = await cartService.createCartItem(
     teacherId,
@@ -118,7 +124,6 @@ const viewCart = catchAsync(async (req, res) => {
               attributes: ['roleName'],
             },
           },
-
           {
             model: TeacherSubject,
           },
