@@ -141,27 +141,29 @@ const viewCart = catchAsync(async (req, res) => {
     ],
   });
 
-  // // Ambil data original
-  // const originalData = JSON.stringify(cart[0]);
-  // // Kemudian parsing ke JSON untuk pendefinisian
-  // const convertData = JSON.parse(originalData);
+  /**
+   // Ambil data original
+  const originalData = JSON.stringify(cart[0]);
+  // Kemudian parsing ke JSON untuk pendefinisian
+  const convertData = JSON.parse(originalData);
 
-  // let arrayCartItems = [];
+  let arrayCartItems = [];
 
-  // // Looping untuk mengganti formating tanggal les
-  // if (convertData.cartItems && convertData.cartItems.length > 0) {
-  //   for (const loopCartItems of convertData.cartItems) {
-  //     const dataCartItem = {
-  //       ...loopCartItems,
-  //       startTime: moment(loopCartItems.startTime).format('YYYY-MM-DD HH:mm:ss'),
-  //       endTime: moment(loopCartItems.endTime).format('YYYY-MM-DD HH:mm:ss'),
-  //     };
-  //     arrayCartItems.push(dataCartItem);
-  //   }
-  // }
+  // Looping untuk mengganti formating tanggal les
+  if (convertData.cartItems && convertData.cartItems.length > 0) {
+    for (const loopCartItems of convertData.cartItems) {
+      const dataCartItem = {
+        ...loopCartItems,
+        startTime: moment(loopCartItems.startTime).format('YYYY-MM-DD HH:mm:ss'),
+        endTime: moment(loopCartItems.endTime).format('YYYY-MM-DD HH:mm:ss'),
+      };
+      arrayCartItems.push(dataCartItem);
+    }
+  }
 
-  // // Ambil data original kemudian ganti key cartItems menjadi arrayCartItems
-  // convertData.cartItems = arrayCartItems;
+  // Ambil data original kemudian ganti key cartItems menjadi arrayCartItems
+  convertData.cartItems = arrayCartItems;
+  */
 
   res.sendWrapped(cart[0], httpStatus.OK);
 });
