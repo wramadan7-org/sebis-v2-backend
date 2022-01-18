@@ -5,6 +5,7 @@ const { Cart } = require('../models/Cart');
 const { CartItem } = require('../models/CartItem');
 const { User } = require('../models/User');
 const { Role } = require('../models/Role');
+const { TeacherSubject } = require('../models/TeacherSubject');
 const cartService = require('../services/cartService');
 const ApiError = require('../utils/ApiError');
 
@@ -62,6 +63,7 @@ const addCart = catchAsync(async (req, res) => {
     typeCourse,
     startTime,
     endTime,
+    teacherSubjectId,
   } = req.body;
 
   const createCart = await cartService.findOrCreateCart(studentId);
@@ -74,6 +76,7 @@ const addCart = catchAsync(async (req, res) => {
     startTime: moment(startTime).format('YYYY-MM-DD HH:mm'),
     endTime: moment(endTime).format('YYYY-MM-DD HH:mm'),
     cartId: createCart[0].id,
+    teacherSubjectId,
   };
 
   const createCartItem = await cartService.createCartItem(
@@ -103,17 +106,23 @@ const viewCart = catchAsync(async (req, res) => {
       },
       {
         model: CartItem,
-        include: {
-          model: User,
-          as: 'teacher',
-          attributes: {
-            exclude: ['password'],
+        include: [
+          {
+            model: User,
+            as: 'teacher',
+            attributes: {
+              exclude: ['password'],
+            },
+            include: {
+              model: Role,
+              attributes: ['roleName'],
+            },
           },
-          include: {
-            model: Role,
-            attributes: ['roleName'],
+
+          {
+            model: TeacherSubject,
           },
-        },
+        ],
       },
     ],
   });
