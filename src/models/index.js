@@ -68,6 +68,14 @@ const setupSequelizeAssociations = async () => {
     foreignKey: 'teacherId',
   });
 
+  CartItem.belongsTo(TeacherSubject, {
+    foreignKey: 'teacherSubjectId',
+  });
+
+  TeacherSubject.hasMany(CartItem, {
+    foreignKey: 'teacherSubjectId',
+  });
+
   User.hasMany(TeachingExperience, {
     foreignKey: 'teacherId',
   });
