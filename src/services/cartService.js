@@ -1,8 +1,51 @@
 const httpStatus = require('http-status');
+const moment = require('moment');
+const { Op } = require('sequelize');
 const { Cart } = require('../models/Cart');
 const { CartItem } = require('../models/CartItem');
 const ApiError = require('../utils/ApiError');
 const userService = require('./userService');
+
+const {
+  PENDING, ACCEPT, REJECT, PROCESS, EXPIRE, DONE,
+} = process.env;
+
+/**
+ * Check all cart item
+ * @param {string} teacherSubjectId
+ * @param {string} dateStart
+  * @param {string} cartId
+ * @param {object} opts
+ * @returns boolean
+ */
+const checkerCartItem = async (teacherSubjectId, dateStart, cartId, opts = {}) => {
+  /**
+   * Why not use moment?
+   * Because data in DB use Date and it same use new Date
+   */
+  const convertToDate = new Date(dateStart);
+
+  const cartItem = await CartItem.findOne(
+    {
+      where: {
+        teacherSubjectId,
+        startTIme: convertToDate,
+        cartItemStatus: {
+          [Op.in]: [ACCEPT, PROCESS],
+        },
+      },
+    },
+  );
+
+  // if true = cart already exists, if false = no one cart item like that
+
+  if (cartItem) {
+    if (cartItem.cartId == cartId) throw new ApiError(httpStatus.CONFLICT, 'You already have this les.');
+    return true;
+  }
+
+  return false;
+};
 
 /**
  * Get all cart
@@ -65,6 +108,15 @@ const getCartItemById = async (id, teacherId, opts = {}) => {
  * @returns object
  */
 const createCartItem = async (teacherId, body) => {
+  const checkCartItem = await checkerCartItem(
+    body.teacherSubjectId,
+    moment(body.startTime).format('YYYY-MM-DD HH:mm:ss'),
+    body.cartId,
+  );
+
+  // Jika hasil dari pengecekan true(cart sudah ada), maka tampilkan error
+  if (checkCartItem) throw new ApiError(httpStatus.CONFLICT, `Cart at ${moment(body.startTime).format('YYYY-MM-DD HH:mm:ss')} already order by another student`);
+
   const cartItemData = {
     teacherId,
     ...body,
@@ -78,7 +130,7 @@ const createCartItem = async (teacherId, body) => {
 /**
  * Find or create cart
  * @param {string} studentId
- * @param {sbject} opts
+ * @param {object} opts
  * @return object
  */
 const findOrCreateCart = async (studentId, opts = {}) => {
