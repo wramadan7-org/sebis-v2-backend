@@ -5,7 +5,7 @@ module.exports = {
       'teacherSubjectId',
       {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
         references: {
           model: 'teacherSubjects',
           key: 'id',
