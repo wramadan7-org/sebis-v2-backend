@@ -81,6 +81,15 @@ const addCart = catchAsync(async (req, res) => {
     teacherSubjectId,
   };
 
+  const checkCartItem = await cartService.checkerCartItem(
+    teacherSubjectId,
+    moment(startTime).format('YYYY-MM-DD HH:mm:ss'),
+    createCart[0].id,
+  );
+
+  // Jika hasil dari pengecekan true(cart sudah ada), maka tampilkan error
+  if (checkCartItem) throw new ApiError(httpStatus.CONFLICT, `Cart at ${moment(startTime).format('YYYY-MM-DD HH:mm:ss')} already order by another student`);
+
   const checkSchedule = await scheduleService.checkAvailDateSchedule(studentId, moment(startTime).format('YYYY-MM-DD'), availabilityHoursId);
 
   if (checkSchedule) throw new ApiError(httpStatus.CONFLICT, 'You already have a schedule on this date and time');
@@ -131,6 +140,29 @@ const viewCart = catchAsync(async (req, res) => {
       },
     ],
   });
+
+  // // Ambil data original
+  // const originalData = JSON.stringify(cart[0]);
+  // // Kemudian parsing ke JSON untuk pendefinisian
+  // const convertData = JSON.parse(originalData);
+
+  // let arrayCartItems = [];
+
+  // // Looping untuk mengganti formating tanggal les
+  // if (convertData.cartItems && convertData.cartItems.length > 0) {
+  //   for (const loopCartItems of convertData.cartItems) {
+  //     const dataCartItem = {
+  //       ...loopCartItems,
+  //       startTime: moment(loopCartItems.startTime).format('YYYY-MM-DD HH:mm:ss'),
+  //       endTime: moment(loopCartItems.endTime).format('YYYY-MM-DD HH:mm:ss'),
+  //     };
+  //     arrayCartItems.push(dataCartItem);
+  //   }
+  // }
+
+  // // Ambil data original kemudian ganti key cartItems menjadi arrayCartItems
+  // convertData.cartItems = arrayCartItems;
+
   res.sendWrapped(cart[0], httpStatus.OK);
 });
 
