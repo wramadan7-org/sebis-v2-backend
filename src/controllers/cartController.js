@@ -10,7 +10,9 @@ const cartService = require('../services/cartService');
 const scheduleService = require('../services/scheduleService');
 const ApiError = require('../utils/ApiError');
 
-const { OFFSET_ORDER_HOURS } = process.env;
+const {
+  PENDING, ACCEPT, REJECT, CANCEL, EXPIRE, DONE, OFFSET_ORDER_HOURS,
+} = process.env;
 
 // teacher
 const getOrderList = catchAsync(async (req, res) => {
@@ -184,9 +186,30 @@ const viewCart = catchAsync(async (req, res) => {
   res.sendWrapped(cart[0], httpStatus.OK);
 });
 
+const updateStatusCart = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { id } = req.params;
+  const { cartItemStatus } = req.body;
+
+  const cartItem = await cartService.updateCart(id, cartItemStatus);
+
+  res.sendWrapped(cartItem, httpStatus.OK);
+});
+
+const deleteCartItem = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { id } = req.params;
+
+  const cartItem = await cartService.deleteCartItem(id);
+
+  res.sendWrapped(cartItem, httpStatus.OK);
+});
+
 module.exports = {
   getOrderList,
   addCart,
   approvingOrder,
   viewCart,
+  updateStatusCart,
+  deleteCartItem,
 };

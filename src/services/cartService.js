@@ -194,6 +194,64 @@ const approvingCartRequest = async (id, teacherId, cartItemStatusBody, opts = {}
   return cartItem;
 };
 
+const updateCart = async (id, cartItemStatus, userId) => {
+  let cartItem;
+
+  // Jika ada paramter userId maka udpate status cart bedasarkan cart anda sendiri
+  if (userId) {
+    const cart = await Cart.findOne(
+      {
+        where: {
+          studentId: userId,
+        },
+      },
+    );
+
+    if (!cart) throw new ApiError(httpStatus.CONFLICT, 'Anda belum meiliki keranjang.');
+
+    cartItem = await CartItem.findOne(
+      {
+        where: {
+          id,
+          cartId: cart.id,
+        },
+      },
+    );
+  } else {
+    cartItem = await CartItem.findOne(
+      {
+        where: {
+          id,
+        },
+      },
+    );
+  }
+
+  if (!cartItem) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan item.');
+
+  Object.assign(cartItem, { cartItemStatus });
+
+  await cartItem.save();
+
+  return cartItem;
+};
+
+const deleteCartItem = async (id) => {
+  const cartItem = await CartItem.findOne(
+    {
+      where: {
+        id,
+      },
+    },
+  );
+
+  if (!cartItem) throw new ApiError(httpStatus.NOT_FOUND, 'Item tidak ditemukan.');
+
+  await cartItem.destroy();
+
+  return cartItem;
+};
+
 module.exports = {
   getCartAll,
   getCartByStudentId,
@@ -203,4 +261,6 @@ module.exports = {
   approvingCartRequest,
   checkerCartItem,
   checkBetweenHours,
+  updateCart,
+  deleteCartItem,
 };
