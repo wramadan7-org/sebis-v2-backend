@@ -11,6 +11,25 @@ const {
 } = process.env;
 
 /**
+ * Check between hours
+ * @param {string} scheduleTime
+ * @param {number} offsetHours
+ * @returns boolean
+ */
+const checkBetweenHours = async (scheduleTime, offsetHours) => {
+  const dateNow = new Date();
+  let tempCStart = new Date(`${scheduleTime}:00 GMT+0700`);
+  let tempDateNow = new Date(`${dateNow} GMT+0700`);
+  tempDateNow.setHours(tempDateNow.getHours() + offsetHours);
+
+  if (tempCStart.getTime() < tempDateNow.getTime()) {
+    return false;
+  }
+
+  return true;
+};
+
+/**
  * Check all cart item
  * @param {string} teacherSubjectId
  * @param {string} dateStart
@@ -183,4 +202,5 @@ module.exports = {
   orderList,
   approvingCartRequest,
   checkerCartItem,
+  checkBetweenHours,
 };
