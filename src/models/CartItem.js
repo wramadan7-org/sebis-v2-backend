@@ -1,6 +1,10 @@
 const { DataTypes, Sequelize } = require('sequelize');
 const { sequelize } = require('../config/database');
 
+const {
+  PENDING, ACCEPT, REJECT, CANCEL, PROCESS, EXPIRE, DONE,
+} = process.env;
+
 const CartItem = sequelize.define('cartItem', {
   id: {
     type: DataTypes.UUIDV4,
@@ -9,7 +13,7 @@ const CartItem = sequelize.define('cartItem', {
     allowNull: false,
   },
   cartItemStatus: {
-    type: DataTypes.STRING,
+    type: DataTypes.ENUM(PENDING, ACCEPT, REJECT, CANCEL, PROCESS, EXPIRE, DONE),
     allowNull: false,
   },
   typeCourse: {
