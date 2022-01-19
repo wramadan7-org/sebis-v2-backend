@@ -87,6 +87,12 @@ const addCart = catchAsync(async (req, res) => {
     teacherSubjectId,
   };
 
+  // Cek apakah jam sekarang berseilih lebih dari 2 jam dari jadwal les
+  const offsetHours = parseInt(OFFSET_ORDER_HOURS);
+  const checkBetweenHours = await cartService.checkBetweenHours(cartItemData.startTime, offsetHours);
+
+  if (!checkBetweenHours) throw new ApiError(httpStatus.CONFLICT, `Jam kursus hanya bisa diatas ${offsetHours} Jam dari sekarang`);
+
   // Cek cart sudah ada atau belum
   const checkCartItem = await cartService.checkerCartItem(
     teacherSubjectId,
