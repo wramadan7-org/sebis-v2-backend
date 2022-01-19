@@ -18,6 +18,7 @@ const bankRoute = require('./bankRoute');
 const referenceRoute = require('./referenceRoute');
 const publicRoute = require('./publicRoute');
 const scheduleRoute = require('./scheduleRoute');
+const wishlistRoute = require('./wishlistRoute');
 
 const router = express.Router();
 
@@ -97,6 +98,10 @@ const defaultRoutes = [
   {
     path: '/schedule',
     route: scheduleRoute,
+  },
+  {
+    path: '/wishlist',
+    route: wishlistRoute,
   },
 ];
 

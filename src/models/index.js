@@ -21,6 +21,8 @@ const { Device } = require('./Device');
 const { Bank } = require('./Bank');
 const { Reference } = require('./Reference');
 const { Schedule } = require('./Schedule');
+const { Wishlist } = require('./Wishlist');
+const { WishlistItem } = require('./WishlistItem');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -242,6 +244,15 @@ const setupSequelizeAssociations = async () => {
 
   Schedule.belongsTo(AvailabilityHours, {
     foreignKey: 'availabilityHoursId',
+  });
+
+  Wishlist.belongsTo(User, {
+    foreignKey: 'studentId',
+    as: 'student',
+  });
+
+  User.hasOne(Wishlist, {
+    foreignKey: 'studentId',
   });
 
   // finally sync sequelize
