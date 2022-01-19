@@ -37,7 +37,7 @@ const getOrderList = catchAsync(async (req, res) => {
     },
   );
 
-  if (!cartItems || cartItems.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'You don\'t have order list.');
+  if (!cartItems || cartItems.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'List order kosong.');
 
   res.sendWrapped(cartItems, httpStatus.OK);
 });
@@ -68,9 +68,13 @@ const addCart = catchAsync(async (req, res) => {
     availabilityHoursId,
   } = req.body;
 
+  // Pengecekan jam untuk melakukan pemesanan les
+  const currentHour = parseInt(moment().format('H'));
+  if (currentHour >= 22 || currentHour <= 5) throw new ApiError(httpStatus.BAD_REQUEST, 'Batas jam pemesanan les hanya pukul 06:00 WIB - 21:59 WIB!');
+
   const createCart = await cartService.findOrCreateCart(studentId);
 
-  if (!createCart) throw new ApiError(httpStatus.BAD_REQUEST, 'Fail to create cart.');
+  if (!createCart) throw new ApiError(httpStatus.BAD_REQUEST, 'Gagal membuat cart');
 
   const cartItemData = {
     cartItemStatus: 'pending',
@@ -81,6 +85,7 @@ const addCart = catchAsync(async (req, res) => {
     teacherSubjectId,
   };
 
+  // Cek cart sudah ada atau belum
   const checkCartItem = await cartService.checkerCartItem(
     teacherSubjectId,
     moment(startTime).format('YYYY-MM-DD HH:mm:ss'),
@@ -88,18 +93,21 @@ const addCart = catchAsync(async (req, res) => {
   );
 
   // Jika hasil dari pengecekan true(cart sudah ada), maka tampilkan error
-  if (checkCartItem) throw new ApiError(httpStatus.CONFLICT, `Cart at ${moment(startTime).format('YYYY-MM-DD HH:mm:ss')} already order by another student`);
+  if (checkCartItem) throw new ApiError(httpStatus.CONFLICT, `Sudah ada yang membeli jadwal di jam dan tanggal ini ${moment(startTime).format('YYYY-MM-DD HH:mm:ss')}`);
 
+  // Cek apakah sudah memiliki les di tanggal dan jam yang sama
   const checkSchedule = await scheduleService.checkAvailDateSchedule(studentId, moment(startTime).format('YYYY-MM-DD'), availabilityHoursId);
 
-  if (checkSchedule) throw new ApiError(httpStatus.CONFLICT, 'You already have a schedule on this date and time');
+  // Jika ada maka response true dan mengirim pesan error
+  if (checkSchedule) throw new ApiError(httpStatus.CONFLICT, 'Anda sudah memiliki jadwal les di jam dan tanggal ini.');
 
+  // Buat item cart
   const createCartItem = await cartService.createCartItem(
     teacherId,
     cartItemData,
   );
 
-  if (!createCartItem) throw new ApiError(httpStatus.BAD_REQUEST, 'Fail to add cart item.');
+  if (!createCartItem) throw new ApiError(httpStatus.BAD_REQUEST, 'Gagal menambah item');
 
   res.sendWrapped({ createCart, createCartItem }, httpStatus.OK);
 });
