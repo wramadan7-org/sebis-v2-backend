@@ -10,6 +10,8 @@ const cartService = require('../services/cartService');
 const scheduleService = require('../services/scheduleService');
 const ApiError = require('../utils/ApiError');
 
+const { OFFSET_ORDER_HOURS } = process.env;
+
 // teacher
 const getOrderList = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
