@@ -40,7 +40,7 @@ const checkerCartItem = async (teacherSubjectId, dateStart, cartId, opts = {}) =
   // if true = cart already exists, if false = no one cart item like that
 
   if (cartItem) {
-    if (cartItem.cartId == cartId) throw new ApiError(httpStatus.CONFLICT, 'You already have this les.');
+    if (cartItem.cartId == cartId) throw new ApiError(httpStatus.CONFLICT, 'Anda sudah memiliki les di jam dan tanggal ini.');
     return true;
   }
 
@@ -78,7 +78,7 @@ const getCartByStudentId = async (studentId, opts = {}) => {
     },
     ...opts,
   });
-  if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found.');
+  if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Keranjang tidak ditemukan.');
   return cart;
 };
 
@@ -97,7 +97,7 @@ const getCartItemById = async (id, teacherId, opts = {}) => {
     },
     ...opts,
   });
-  if (!cartItem) throw new ApiError(httpStatus.NOT_FOUND, 'Cart items not found.');
+  if (!cartItem) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan item di keranjang.');
   return cartItem;
 };
 
