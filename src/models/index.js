@@ -78,6 +78,14 @@ const setupSequelizeAssociations = async () => {
     foreignKey: 'teacherSubjectId',
   });
 
+  CartItem.belongsTo(AvailabilityHours, {
+    foreignKey: 'availabilityHoursId',
+  });
+
+  AvailabilityHours.hasMany(CartItem, {
+    foreignKey: 'availabilityHoursId',
+  });
+
   User.hasMany(TeachingExperience, {
     foreignKey: 'teacherId',
   });
@@ -253,6 +261,15 @@ const setupSequelizeAssociations = async () => {
 
   User.hasOne(Wishlist, {
     foreignKey: 'studentId',
+  });
+
+  WishlistItem.belongsTo(User, {
+    foreignKey: 'teacherId',
+    as: 'teacher',
+  });
+
+  User.hasMany(WishlistItem, {
+    foreignKey: 'teacherId',
   });
 
   // finally sync sequelize
