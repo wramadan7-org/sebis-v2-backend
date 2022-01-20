@@ -59,7 +59,11 @@ const checkerCartItem = async (teacherSubjectId, dateStart, cartId, opts = {}) =
   // if true = cart already exists, if false = no one cart item like that
 
   if (cartItem) {
-    if (cartItem.cartId == cartId) throw new ApiError(httpStatus.CONFLICT, 'Anda sudah memiliki les di jam dan tanggal ini.');
+    let checkExists = false;
+    if (cartId) {
+      checkExists = cartId.includes(cartItem.cartId);
+    }
+    if (checkExists) throw new ApiError(httpStatus.CONFLICT, 'Anda sudah memiliki les di jam dan tanggal ini.');
     return true;
   }
 
@@ -91,7 +95,7 @@ const getCartAll = async (query, opts = {}) => {
  * @return object
  */
 const getCartByStudentId = async (studentId, opts = {}) => {
-  const cart = await Cart.findOne({
+  const cart = await Cart.findAll({
     where: {
       studentId,
     },
@@ -140,15 +144,17 @@ const createCartItem = async (teacherId, body) => {
 /**
  * Find or create cart
  * @param {string} studentId
+ * @param {string} teacherId
  * @param {object} opts
  * @return object
  */
-const findOrCreateCart = async (studentId, opts = {}) => {
+const findOrCreateCart = async (studentId, teacherId, opts = {}) => {
   await userService.getUserById(studentId);
 
   return Cart.findOrCreate({
     where: {
       studentId,
+      teacherId,
     },
     ...opts,
   });
