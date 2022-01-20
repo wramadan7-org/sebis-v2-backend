@@ -53,6 +53,15 @@ const setupSequelizeAssociations = async () => {
     foreignKey: 'studentId',
   });
 
+  Cart.belongsTo(User, {
+    foreignKey: 'teacherId',
+    as: 'teacher',
+  });
+
+  User.hasOne(Cart, {
+    foreignKey: 'teacherId',
+  });
+
   CartItem.belongsTo(Cart, {
     foreignKey: 'cartId',
   });
