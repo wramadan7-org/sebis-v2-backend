@@ -6,9 +6,14 @@ const { CartItem } = require('../models/CartItem');
 const { User } = require('../models/User');
 const { Role } = require('../models/Role');
 const { TeacherSubject } = require('../models/TeacherSubject');
+const { AvailabilityHours } = require('../models/AvailabilityHours');
 const cartService = require('../services/cartService');
 const scheduleService = require('../services/scheduleService');
 const ApiError = require('../utils/ApiError');
+const days = require('../utils/day');
+const dates = require('../utils/date');
+const { Subject } = require('../models/Subject');
+const { Grade } = require('../models/Grade');
 
 const {
   PENDING, ACCEPT, REJECT, CANCEL, EXPIRE, DONE, OFFSET_ORDER_HOURS,
@@ -76,7 +81,7 @@ const addCart = catchAsync(async (req, res) => {
   const currentHour = parseInt(moment().format('H'));
   if (currentHour >= 22 || currentHour <= 5) throw new ApiError(httpStatus.BAD_REQUEST, 'Batas jam pemesanan les hanya pukul 06:00 WIB - 21:59 WIB!');
 
-  const createCart = await cartService.findOrCreateCart(studentId);
+  const createCart = await cartService.findOrCreateCart(studentId, teacherId);
 
   if (!createCart) throw new ApiError(httpStatus.BAD_REQUEST, 'Gagal membuat cart');
 
@@ -87,6 +92,7 @@ const addCart = catchAsync(async (req, res) => {
     endTime: moment(endTime).format('YYYY-MM-DD HH:mm'),
     cartId: createCart[0].id,
     teacherSubjectId,
+    availabilityHoursId,
   };
 
   // Cek apakah jam sekarang berseilih lebih dari 2 jam dari jadwal les
@@ -95,11 +101,18 @@ const addCart = catchAsync(async (req, res) => {
 
   if (!checkBetweenHours) throw new ApiError(httpStatus.CONFLICT, `Jam kursus hanya bisa diatas ${offsetHours} Jam dari sekarang`);
 
+  // Ambil semua data keranjang milik kita sendiri
+  const ownCart = await cartService.getCartByStudentId(studentId);
+
+  if (!ownCart && ownCart.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Anda belum memiliki keranjang.');
+
+  const mapCartId = ownCart.map((o) => o.id);
+
   // Cek cart sudah ada atau belum
   const checkCartItem = await cartService.checkerCartItem(
     teacherSubjectId,
     moment(startTime).format('YYYY-MM-DD HH:mm:ss'),
-    createCart[0].id,
+    mapCartId,
   );
 
   // Jika hasil dari pengecekan true(cart sudah ada), maka tampilkan error
@@ -124,7 +137,7 @@ const addCart = catchAsync(async (req, res) => {
 
 const viewCart = catchAsync(async (req, res) => {
   const studentId = req.user.id;
-  const cart = await cartService.findOrCreateCart(studentId, {
+  const cart = await cartService.getCartByStudentId(studentId, {
     include: [
       {
         model: User,
@@ -138,29 +151,86 @@ const viewCart = catchAsync(async (req, res) => {
         },
       },
       {
+        model: User,
+        as: 'teacher',
+        attributes: {
+          exclude: ['password'],
+        },
+        include: {
+          model: Role,
+          attributes: ['roleName'],
+        },
+      },
+      {
         model: CartItem,
         include: [
           {
-            model: User,
-            as: 'teacher',
-            attributes: {
-              exclude: ['password'],
-            },
-            include: {
-              model: Role,
-              attributes: ['roleName'],
-            },
+            model: TeacherSubject,
+            include: [
+              {
+                model: Subject,
+              },
+              {
+                model: Grade,
+              },
+            ],
           },
           {
-            model: TeacherSubject,
+            model: AvailabilityHours,
           },
         ],
       },
     ],
   });
 
+  // Ambil data original
+  const originalData = JSON.stringify(cart);
+  // Kemudian parsing ke JSON untuk pendefinisian
+  const convertData = JSON.parse(originalData);
+
+  const mapingData = convertData.map((o) => {
+    const arrayResults = [];
+    const item = o.cartItems.map((itm) => {
+      const convertDay = itm.availabilityHour ? days(itm.availabilityHour.dayCode) : days(moment(itm.startTime).day());
+      const convertDate = itm.startTime ? dates(itm.startTime) : null;
+
+      const dataCartItem = {
+        cartItemId: itm.id,
+        teacherId: itm.teacherId,
+        teacherSubjectId: itm.teacherSubjectId,
+        availabilityHoursId: itm.availabilityHoursId,
+        gradeId: itm.teacherSubject.gradeId,
+        subjectId: itm.teacherSubject.subjectId,
+        type: itm.teacherSubject.type,
+        subject: itm.teacherSubject.subject.subjectName,
+        grade: itm.teacherSubject.grade.gradeName,
+        date: `${convertDay}, ${convertDate}`,
+        time: `${moment(itm.startTime).format('HH:mm')} - ${moment(itm.endTime).format('HH:mm')}`,
+        status: itm.cartItemStatus,
+      };
+
+      return arrayResults.push(dataCartItem);
+    });
+
+    const data = {
+      cartId: o.id,
+      studentId: o.studentId,
+      teacherId: o.teacherId,
+      student: `${o.student.firstName} ${o.student.lastName}`,
+      teacher: `${o.teacher.firstName} ${o.teacher.lastName}`,
+      profile: o.student.profile,
+      referralCOde: o.student.referralCode,
+      referredBy: o.student.referredBy,
+      cartItems: arrayResults,
+    };
+
+    return data;
+  });
+
+  res.sendWrapped(mapingData, httpStatus.OK);
+
   /**
-   // Ambil data original
+  // Ambil data original
   const originalData = JSON.stringify(cart[0]);
   // Kemudian parsing ke JSON untuk pendefinisian
   const convertData = JSON.parse(originalData);
@@ -170,10 +240,21 @@ const viewCart = catchAsync(async (req, res) => {
   // Looping untuk mengganti formating tanggal les
   if (convertData.cartItems && convertData.cartItems.length > 0) {
     for (const loopCartItems of convertData.cartItems) {
+      const convertDay = loopCartItems.availabilityHour ? days(loopCartItems.availabilityHour.dayCode) : days(moment(loopCartItems.startTime).day());
+      const convertDate = loopCartItems.startTime ? dates(loopCartItems.startTime) : null;
       const dataCartItem = {
-        ...loopCartItems,
-        startTime: moment(loopCartItems.startTime).format('YYYY-MM-DD HH:mm:ss'),
-        endTime: moment(loopCartItems.endTime).format('YYYY-MM-DD HH:mm:ss'),
+        cartItemId: loopCartItems.id,
+        teacherId: loopCartItems.teacherId,
+        teacherSubjectId: loopCartItems.teacherSubjectId,
+        availabilityHoursId: loopCartItems.availabilityHoursId,
+        gradeId: loopCartItems.teacherSubject.gradeId,
+        subjectId: loopCartItems.teacherSubject.subjectId,
+        teacher: `${loopCartItems.teacher.firstName} ${loopCartItems.teacher.lastName}`,
+        type: loopCartItems.teacherSubject.type,
+        subject: loopCartItems.teacherSubject.subject.subjectName,
+        grade: loopCartItems.teacherSubject.grade.gradeName,
+        date: `${convertDay}, ${convertDate}`,
+        time: `${moment(loopCartItems.startTime).format('HH:mm')} - ${moment(loopCartItems.endTime).format('HH:mm')}`,
       };
       arrayCartItems.push(dataCartItem);
     }
@@ -181,9 +262,23 @@ const viewCart = catchAsync(async (req, res) => {
 
   // Ambil data original kemudian ganti key cartItems menjadi arrayCartItems
   convertData.cartItems = arrayCartItems;
-  */
 
-  res.sendWrapped(cart[0], httpStatus.OK);
+  const data = {
+    cartId: convertData.id,
+    studentId: convertData.studentId,
+    student: `${convertData.student.firstName} ${convertData.lastName}`,
+    profile: convertData.student.profile,
+    referralCOde: convertData.student.referralCode,
+    referredBy: convertData.student.referredBy,
+    cartItems: arrayCartItems,
+  };
+
+  const mapToDistinct = new Map();
+
+  arrayCartItems.forEach((item) => mapToDistinct.set(item.teacherId, { ...mapToDistinct.get(item.teacherId), ...item }));
+
+  const results = Array.from(mapToDistinct.values());
+*/
 });
 
 const updateStatusCart = catchAsync(async (req, res) => {
