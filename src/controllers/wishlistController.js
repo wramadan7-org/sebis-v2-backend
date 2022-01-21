@@ -201,8 +201,23 @@ const getWihslistItemById = catchAsync(async (req, res) => {
   res.sendWrapped(wishlist, httpStatus.OK);
 });
 
+const deleteWishlistItemById = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const wishlist = await wishlistService.getWishlistItemById(id);
+
+  if (!wishlist) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan item wishlist.');
+
+  const deleteWishlist = await wishlistService.deleteWishlistItemById(wishlist.id);
+
+  if (!deleteWishlist) throw new ApiError(httpStatus.CONFLICT, 'Gagal menghapus item wishlist.');
+
+  res.sendWrapped(deleteWishlist, httpStatus.OK);
+});
+
 module.exports = {
   addWishlist,
   getWishlist,
   getWihslistItemById,
+  deleteWishlistItemById,
 };

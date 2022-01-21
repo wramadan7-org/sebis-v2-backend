@@ -135,6 +135,18 @@ const getWishlistItemById = async (id, userId, opts = {}) => {
   return wishlistItem;
 };
 
+const deleteWishlistItemById = async (id, opts = {}) => {
+  const wishlist = await WishlistItem.destroy(
+    {
+      where: {
+        id,
+      },
+    },
+  );
+
+  return wishlist;
+};
+
 module.exports = {
   findOrCreateWishlist,
   getWishlistByStudentId,
@@ -142,4 +154,5 @@ module.exports = {
   createWishlistItem,
   checkerWishlist,
   checkBetweenHours,
+  deleteWishlistItemById,
 };
