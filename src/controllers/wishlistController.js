@@ -11,6 +11,7 @@ const { AvailabilityHours } = require('../models/AvailabilityHours');
 const ApiError = require('../utils/ApiError');
 const days = require('../utils/day');
 const dates = require('../utils/date');
+const pagination = require('../utils/pagination');
 
 const { OFFSET_ORDER_HOURS } = process.env;
 
@@ -80,7 +81,20 @@ const addWishlist = catchAsync(async (req, res) => {
 });
 
 const getWishlist = catchAsync(async (req, res) => {
+  let { page, limit } = req.query;
   const studentId = req.user.id;
+
+  if (page) {
+    parseInt(page);
+  } else {
+    page = 1;
+  }
+
+  if (limit) {
+    parseInt(limit);
+  } else {
+    limit = 10;
+  }
 
   const wishlist = await wishlistService.getWishlistByStudentId(
     studentId,
@@ -146,11 +160,16 @@ const getWishlist = catchAsync(async (req, res) => {
           time: `${moment(itm.dateTimeStart).format('HH:mm')} - ${moment(itm.dateTimeEnd).format('HH:mm')}`,
           subject: itm.teacherSubject.subject.subjectName,
           grade: itm.teacherSubject.gradeName,
+          createdAt: itm.createdAt,
+          updatedAt: itm.updatedAt,
         };
 
         return arrayWishlistItem.push(dataWishlistItem);
       });
     }
+
+    // Sorting isi item
+    const sortingItem = arrayWishlistItem.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
     const data = {
       wishlistId: o.id,
@@ -158,13 +177,19 @@ const getWishlist = catchAsync(async (req, res) => {
       teacherId: o.teacherId,
       student: `${o.student.firstName} ${o.student.lastName}`,
       teacher: `${o.teacher.firstName} ${o.teacher.lastName}`,
-      wishlistItem: arrayWishlistItem,
+      wishlistItem: sortingItem,
+      createdAt: o.createdAt,
+      updatedAt: o.updatedAt,
     };
 
     return data;
   });
 
-  res.sendWrapped(mapingData, httpStatus.OK);
+  // Sorting parent
+  const sorting = mapingData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  const paginateData = pagination(sorting, page, limit);
+
+  res.sendWrapped('', httpStatus.OK, paginateData);
 });
 
 const getWihslistItemById = catchAsync(async (req, res) => {
