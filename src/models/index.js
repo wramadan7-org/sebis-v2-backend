@@ -268,8 +268,25 @@ const setupSequelizeAssociations = async () => {
     as: 'student',
   });
 
-  User.hasOne(Wishlist, {
+  User.hasMany(Wishlist, {
     foreignKey: 'studentId',
+  });
+
+  Wishlist.belongsTo(User, {
+    foreignKey: 'teacherId',
+    as: 'teacher',
+  });
+
+  User.hasMany(Wishlist, {
+    foreignKey: 'teacherId',
+  });
+
+  WishlistItem.belongsTo(Wishlist, {
+    foreignKey: 'wishlistId',
+  });
+
+  Wishlist.hasMany(WishlistItem, {
+    foreignKey: 'wishlistId',
   });
 
   WishlistItem.belongsTo(User, {
@@ -279,6 +296,22 @@ const setupSequelizeAssociations = async () => {
 
   User.hasMany(WishlistItem, {
     foreignKey: 'teacherId',
+  });
+
+  WishlistItem.belongsTo(TeacherSubject, {
+    foreignKey: 'teacherSubjectId',
+  });
+
+  TeacherSubject.hasMany(WishlistItem, {
+    foreignKey: 'teacherSubjectId',
+  });
+
+  WishlistItem.belongsTo(AvailabilityHours, {
+    foreignKey: 'availabilityHoursId',
+  });
+
+  AvailabilityHours.hasMany(WishlistItem, {
+    foreignKey: 'availabilityHoursId',
   });
 
   // finally sync sequelize
