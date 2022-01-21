@@ -141,17 +141,13 @@ const getWishlistItemById = async (id, userId, opts = {}) => {
  * @param {object} opts
  * @returns boolean || 1/2
  */
-const deleteWishlistItemById = async (id, opts = {}) => {
-  const wishlist = await WishlistItem.destroy(
-    {
-      where: {
-        id,
-      },
+const deleteWishlistItemById = async (id, opts = {}) => WishlistItem.destroy(
+  {
+    where: {
+      id,
     },
-  );
-
-  return wishlist;
-};
+  },
+);
 
 module.exports = {
   findOrCreateWishlist,
