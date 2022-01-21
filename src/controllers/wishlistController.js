@@ -88,14 +88,14 @@ const getWishlist = catchAsync(async (req, res) => {
           model: User,
           as: 'student',
           attributes: {
-            exlude: ['password'],
+            exclude: ['password'],
           },
         },
         {
           model: User,
           as: 'teacher',
           attributes: {
-            exlude: ['password'],
+            exclude: ['password'],
           },
         },
         {
