@@ -249,7 +249,10 @@ const viewCart = catchAsync(async (req, res) => {
     return data;
   });
 
-  const sorting = mapingData.sort((a, b) => new Date(a.createAt) - new Date(b.createAt));
+  // Filter untuk menampikan data yang memiliki item wishlist
+  const filteringItem = mapingData.filter((o) => o.cartItems.length > 0);
+  // Sorting parent cart
+  const sorting = filteringItem.sort((a, b) => new Date(a.createAt) - new Date(b.createAt));
   const paginateData = pagination(sorting, page, limit);
 
   res.sendWrapped('', httpStatus.OK, paginateData);
