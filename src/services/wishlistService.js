@@ -135,6 +135,12 @@ const getWishlistItemById = async (id, userId, opts = {}) => {
   return wishlistItem;
 };
 
+/**
+ * Deete wishlist item by id
+ * @param {string} id
+ * @param {object} opts
+ * @returns boolean || 1/2
+ */
 const deleteWishlistItemById = async (id, opts = {}) => {
   const wishlist = await WishlistItem.destroy(
     {
