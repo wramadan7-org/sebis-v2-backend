@@ -23,6 +23,14 @@ const checkBetweenHours = async (scheduleTime, offsetHours) => {
   return true;
 };
 
+/**
+ * Check own wishlist, already exists or not
+ * @param {string} teacherId
+ * @param {array} wishlistId
+ * @param {string} teacherSubjectId
+ * @param {string} availabilityHoursId
+ * @returns boolean
+ */
 const checkerWishlist = async (teacherId, wishlistId, teacherSubjectId, availabilityHoursId) => {
   const wishlist = await WishlistItem.findAll(
     {
@@ -44,6 +52,13 @@ const checkerWishlist = async (teacherId, wishlistId, teacherSubjectId, availabi
   return false;
 };
 
+/**
+ * Create wishlist
+ * @param {string} studentId
+ * @param {string} teacherId
+ * @param {object} opts
+ * @returns array of object
+ */
 const findOrCreateWishlist = async (studentId, teacherId, opts = {}) => {
   const wihslist = await Wishlist.findOrCreate(
     {
@@ -58,6 +73,12 @@ const findOrCreateWishlist = async (studentId, teacherId, opts = {}) => {
   return wihslist;
 };
 
+/**
+ * Get own wishlist and wishlist item
+ * @param {string} studentId
+ * @param {object} opts
+ * @returns array of object
+ */
 const getWishlistByStudentId = async (studentId, opts = {}) => {
   const wishlist = await Wishlist.findAll(
     {
@@ -73,6 +94,12 @@ const getWishlistByStudentId = async (studentId, opts = {}) => {
   return wishlist;
 };
 
+/**
+ * Create wishlist item
+ * @param {array} wishlistId
+ * @param {object} wishlistItemBody
+ * @returns object
+ */
 const createWishlistItem = async (wishlistId, wishlistItemBody) => {
   const data = {
     ...wishlistItemBody,
@@ -84,6 +111,13 @@ const createWishlistItem = async (wishlistId, wishlistItemBody) => {
   return wishlist;
 };
 
+/**
+ * Get wishlist item by id
+ * @param {string} id
+ * @param {string} userId
+ * @param {object} opts
+ * @returns object
+ */
 const getWishlistItemById = async (id, userId, opts = {}) => {
   // const wishlist = await getWishlistByStudentId(userId);
 
