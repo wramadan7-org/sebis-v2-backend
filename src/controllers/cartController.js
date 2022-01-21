@@ -14,6 +14,7 @@ const days = require('../utils/day');
 const dates = require('../utils/date');
 const { Subject } = require('../models/Subject');
 const { Grade } = require('../models/Grade');
+const pagination = require('../utils/pagination');
 
 const {
   PENDING, ACCEPT, REJECT, CANCEL, EXPIRE, DONE, OFFSET_ORDER_HOURS,
@@ -136,7 +137,21 @@ const addCart = catchAsync(async (req, res) => {
 });
 
 const viewCart = catchAsync(async (req, res) => {
+  let { page, limit } = req.query;
   const studentId = req.user.id;
+
+  if (page) {
+    parseInt(page);
+  } else {
+    page = 1;
+  }
+
+  if (limit) {
+    parseInt(limit);
+  } else {
+    limit = 10;
+  }
+
   const cart = await cartService.getCartByStudentId(studentId, {
     include: [
       {
@@ -207,10 +222,15 @@ const viewCart = catchAsync(async (req, res) => {
         date: `${convertDay}, ${convertDate}`,
         time: `${moment(itm.startTime).format('HH:mm')} - ${moment(itm.endTime).format('HH:mm')}`,
         status: itm.cartItemStatus,
+        createdAt: itm.createdAt,
+        updatedAt: itm.updatedAt,
       };
 
       return arrayResults.push(dataCartItem);
     });
+
+    // Sorting item cart
+    const sortingItem = arrayResults.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
     const data = {
       cartId: o.id,
@@ -221,13 +241,18 @@ const viewCart = catchAsync(async (req, res) => {
       profile: o.student.profile,
       referralCOde: o.student.referralCode,
       referredBy: o.student.referredBy,
-      cartItems: arrayResults,
+      cartItems: sortingItem,
+      createdAt: o.createdAt,
+      updatedAt: o.updatedAt,
     };
 
     return data;
   });
 
-  res.sendWrapped(mapingData, httpStatus.OK);
+  const sorting = mapingData.sort((a, b) => new Date(a.createAt) - new Date(b.createAt));
+  const paginateData = pagination(sorting, page, limit);
+
+  res.sendWrapped(paginateData, httpStatus.OK);
 
   /**
   // Ambil data original
