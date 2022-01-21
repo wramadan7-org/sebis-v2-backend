@@ -177,7 +177,7 @@ const getWishlist = catchAsync(async (req, res) => {
       teacherId: o.teacherId,
       student: `${o.student.firstName} ${o.student.lastName}`,
       teacher: `${o.teacher.firstName} ${o.teacher.lastName}`,
-      wishlistItem: sortingItem,
+      wishlistItems: sortingItem,
       createdAt: o.createdAt,
       updatedAt: o.updatedAt,
     };
@@ -185,8 +185,10 @@ const getWishlist = catchAsync(async (req, res) => {
     return data;
   });
 
+  // Filter untuk menampikan data yang memiliki item wishlist
+  const filteringItem = mapingData.filter((o) => o.wishlistItems.length > 0);
   // Sorting parent
-  const sorting = mapingData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  const sorting = filteringItem.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   const paginateData = pagination(sorting, page, limit);
 
   res.sendWrapped('', httpStatus.OK, paginateData);
