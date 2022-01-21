@@ -4,6 +4,25 @@ const ApiError = require('../utils/ApiError');
 const { Wishlist } = require('../models/Wishlist');
 const { WishlistItem } = require('../models/WishlistItem');
 
+/**
+ * Check between hours
+ * @param {string} scheduleTime
+ * @param {number} offsetHours
+ * @returns boolean
+ */
+const checkBetweenHours = async (scheduleTime, offsetHours) => {
+  const dateNow = new Date();
+  let tempCStart = new Date(`${scheduleTime}:00 GMT+0700`);
+  let tempDateNow = new Date(`${dateNow} GMT+0700`);
+  tempDateNow.setHours(tempDateNow.getHours() + offsetHours);
+
+  if (tempCStart.getTime() < tempDateNow.getTime()) {
+    return false;
+  }
+
+  return true;
+};
+
 const checkerWishlist = async (teacherId, wishlistId, teacherSubjectId, availabilityHoursId) => {
   const wishlist = await WishlistItem.findAll(
     {
@@ -88,4 +107,5 @@ module.exports = {
   getWishlistItemById,
   createWishlistItem,
   checkerWishlist,
+  checkBetweenHours,
 };
