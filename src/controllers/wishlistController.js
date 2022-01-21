@@ -10,6 +10,8 @@ const { Grade } = require('../models/Grade');
 const { AvailabilityHours } = require('../models/AvailabilityHours');
 const ApiError = require('../utils/ApiError');
 
+const { OFFSET_ORDER_HOURS } = process.env;
+
 const addWishlist = catchAsync(async (req, res) => {
   const { id } = req.user;
   const wishlistBody = req.body;
@@ -46,6 +48,16 @@ const addWishlist = catchAsync(async (req, res) => {
     dateTimeEnd: moment(wishlistBody.dateTimeEnd).format('YYYY-MM-DD HH:mm:ss'),
   };
 
+  // Cek apakah jam sekarang berseilih lebih dari 2 jam dari jadwal les
+  const offsetHours = parseInt(OFFSET_ORDER_HOURS);
+  const checkBetweenHours = await wishlistService.checkBetweenHours(
+    dataWishlistItem.dateTimeStart,
+    offsetHours,
+  );
+
+  if (!checkBetweenHours) throw new ApiError(httpStatus.CONFLICT, `Penambahan wishlist maksimal ${offsetHours} jam sebelum kelas dimulai`);
+
+  // Cek untuk melihat apakah sudah ada wishlist yang sama
   const ownWishlist = await wishlistService.getWishlistByStudentId(id);
   const mapWishlistId = ownWishlist.map((o) => o.id);
 
