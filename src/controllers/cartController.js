@@ -252,7 +252,7 @@ const viewCart = catchAsync(async (req, res) => {
   const sorting = mapingData.sort((a, b) => new Date(a.createAt) - new Date(b.createAt));
   const paginateData = pagination(sorting, page, limit);
 
-  res.sendWrapped(paginateData, httpStatus.OK);
+  res.sendWrapped('', httpStatus.OK, paginateData);
 
   /**
   // Ambil data original
