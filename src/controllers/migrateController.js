@@ -78,6 +78,13 @@ const addTeacherSubjects = catchAsync(async (req, res) => {
   res.sendWrapped(teacherSubject, httpStatus.CREATED);
 });
 
+const addPrice = catchAsync(async (req, res) => {
+  const priceBody = req.body;
+  const price = await migrateService.addPrice(priceBody);
+
+  res.sendWrapped(price, httpStatus.OK);
+});
+
 module.exports = {
   listUser,
   addUser,
@@ -90,4 +97,5 @@ module.exports = {
   addGradeGroup,
   addAvailabilityHours,
   addTeacherSubjects,
+  addPrice,
 };

@@ -16,6 +16,7 @@ const { Curriculum } = require('../models/Curriculum');
 const { GradeGroup } = require('../models/GradeGroup');
 const { Grade } = require('../models/Grade');
 const { TeacherSubject } = require('../models/TeacherSubject');
+const { Price } = require('../models/Price');
 const dataJson = require('../../public/files/userJson.json');
 const teachingJson = require('../../public/Migration_Dec_16_21_15/teaching_exps.json');
 
@@ -834,6 +835,8 @@ const addTeacherSubjects = async () => {
   return insertTeacherSubject;
 };
 
+const addPrice = async (body) => Price.create(body);
+
 module.exports = {
   listUser,
   addUser,
@@ -846,4 +849,5 @@ module.exports = {
   addGradeGroup,
   addAvailabilityHours,
   addTeacherSubjects,
+  addPrice,
 };

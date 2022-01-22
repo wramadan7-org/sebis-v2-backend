@@ -15,5 +15,6 @@ router.post('/user-subject', migrateController.addSubject);
 router.post('/user-grade-group', migrateController.addGradeGroup);
 router.post('/user-availability-hours', migrateController.addAvailabilityHours);
 router.post('/user-teacher-subject', migrateController.addTeacherSubjects);
+router.post('/user-price', migrateController.addPrice);
 
 module.exports = router;
