@@ -15,6 +15,18 @@ const Price = sequelize.define('price', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  type: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  temporaryId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   paranoid: true,
 });
