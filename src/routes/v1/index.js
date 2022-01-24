@@ -19,6 +19,7 @@ const referenceRoute = require('./referenceRoute');
 const publicRoute = require('./publicRoute');
 const scheduleRoute = require('./scheduleRoute');
 const wishlistRoute = require('./wishlistRoute');
+const priceRoute = require('./priceRoute');
 
 const router = express.Router();
 
@@ -102,6 +103,10 @@ const defaultRoutes = [
   {
     path: '/wishlist',
     route: wishlistRoute,
+  },
+  {
+    path: '/price',
+    route: priceRoute,
   },
 ];
 
