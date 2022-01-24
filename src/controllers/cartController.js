@@ -7,6 +7,7 @@ const { User } = require('../models/User');
 const { Role } = require('../models/Role');
 const { TeacherSubject } = require('../models/TeacherSubject');
 const { AvailabilityHours } = require('../models/AvailabilityHours');
+const { Price } = require('../models/Price');
 const cartService = require('../services/cartService');
 const scheduleService = require('../services/scheduleService');
 const ApiError = require('../utils/ApiError');
@@ -15,6 +16,7 @@ const dates = require('../utils/date');
 const { Subject } = require('../models/Subject');
 const { Grade } = require('../models/Grade');
 const pagination = require('../utils/pagination');
+const { UserDetail } = require('../models/UserDetail');
 
 const {
   PENDING, ACCEPT, REJECT, CANCEL, EXPIRE, DONE, OFFSET_ORDER_HOURS,
@@ -175,6 +177,12 @@ const viewCart = catchAsync(async (req, res) => {
           model: Role,
           attributes: ['roleName'],
         },
+        include: {
+          model: UserDetail,
+          include: {
+            model: Price,
+          },
+        },
       },
       {
         model: CartItem,
@@ -203,6 +211,25 @@ const viewCart = catchAsync(async (req, res) => {
   // Kemudian parsing ke JSON untuk pendefinisian
   const convertData = JSON.parse(originalData);
 
+  let privatePrice = 0;
+  let groupPrice = 0;
+
+  if (convertData.teacher && convertData.teacher.userDetail && convertData.teacher.userDetail.price) {
+    privatePrice = convertData.teacher.userDetail.price.private;
+    groupPrice = convertData.teacher.userDetail.price.group;
+  } else {
+    const defaultPrice = await Price.findOne(
+      {
+        where: {
+          type: 'A',
+        },
+      },
+    );
+
+    privatePrice = defaultPrice.private;
+    groupPrice = defaultPrice.group;
+  }
+
   const mapingData = convertData.map((o) => {
     const arrayResults = [];
     const item = o.cartItems.map((itm) => {
@@ -216,12 +243,13 @@ const viewCart = catchAsync(async (req, res) => {
         availabilityHoursId: itm.availabilityHoursId,
         gradeId: itm.teacherSubject.gradeId,
         subjectId: itm.teacherSubject.subjectId,
-        type: itm.teacherSubject.type,
+        type: itm.typeCourse,
         subject: itm.teacherSubject.subject.subjectName,
         grade: itm.teacherSubject.grade.gradeName,
         date: `${convertDay}, ${convertDate}`,
         time: `${moment(itm.startTime).format('HH:mm')} - ${moment(itm.endTime).format('HH:mm')}`,
         status: itm.cartItemStatus,
+        price: itm.typeCourse == 'private' ? privatePrice : groupPrice,
         createdAt: itm.createdAt,
         updatedAt: itm.updatedAt,
       };
@@ -230,7 +258,7 @@ const viewCart = catchAsync(async (req, res) => {
     });
 
     // Sorting item cart
-    const sortingItem = arrayResults.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    const sortingItem = arrayResults.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     const data = {
       cartId: o.id,
@@ -252,7 +280,7 @@ const viewCart = catchAsync(async (req, res) => {
   // Filter untuk menampikan data yang memiliki item wishlist
   const filteringItem = mapingData.filter((o) => o.cartItems.length > 0);
   // Sorting parent cart
-  const sorting = filteringItem.sort((a, b) => new Date(a.createAt) - new Date(b.createAt));
+  const sorting = filteringItem.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   const paginateData = pagination(sorting, page, limit);
 
   res.sendWrapped('', httpStatus.OK, paginateData);
