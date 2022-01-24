@@ -73,6 +73,25 @@ const timeAvailabilityPublic = async (teacherId, month, year, page, limit, opts 
     },
   );
 
+  let privatePrice = 0;
+  let groupPrice = 0;
+
+  if (user.userDetail && user.userDetail.price) {
+    privatePrice = user.userDetail.price.private;
+    groupPrice = user.userDetail.price.group;
+  } else {
+    const defaultPrice = await Price.findOne(
+      {
+        where: {
+          type: 'A',
+        },
+      },
+    );
+
+    privatePrice = defaultPrice.private;
+    groupPrice = defaultPrice.group;
+  }
+
   const arrayAvailabilityHours = [];
 
   let dayInMonth = moment(`${year}-${month}`).daysInMonth();
@@ -96,6 +115,8 @@ const timeAvailabilityPublic = async (teacherId, month, year, page, limit, opts 
         const data = {
           date: `${namingDay}, ${date}`,
           ...o.dataValues,
+          private: privatePrice,
+          group: groupPrice,
           dateSort: date,
         };
 
