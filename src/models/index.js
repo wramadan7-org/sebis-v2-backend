@@ -34,11 +34,11 @@ const setupSequelizeAssociations = async () => {
   // });
   User.hasOne(UserDetail);
 
-  UserDetail.hasOne(Price);
-
   UserDetail.belongsTo(User);
 
-  Price.belongsTo(UserDetail);
+  UserDetail.belongsTo(Price);
+
+  Price.hasOne(UserDetail);
 
   School.hasMany(User);
 
