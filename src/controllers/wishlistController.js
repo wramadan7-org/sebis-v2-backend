@@ -8,10 +8,13 @@ const { TeacherSubject } = require('../models/TeacherSubject');
 const { Subject } = require('../models/Subject');
 const { Grade } = require('../models/Grade');
 const { AvailabilityHours } = require('../models/AvailabilityHours');
+const { UserDetail } = require('../models/UserDetail');
+const { Price } = require('../models/Price');
 const ApiError = require('../utils/ApiError');
 const days = require('../utils/day');
 const dates = require('../utils/date');
 const pagination = require('../utils/pagination');
+const { Wishlist } = require('../models/Wishlist');
 
 const { OFFSET_ORDER_HOURS } = process.env;
 
@@ -113,6 +116,12 @@ const getWishlist = catchAsync(async (req, res) => {
           attributes: {
             exclude: ['password'],
           },
+          include: {
+            model: UserDetail,
+            include: {
+              model: Price,
+            },
+          },
         },
         {
           model: WishlistItem,
@@ -142,6 +151,25 @@ const getWishlist = catchAsync(async (req, res) => {
   // Kemudian parsing ke JSON untuk pendefinisian
   const convertData = JSON.parse(originalData);
 
+  let privatePrice = 0;
+  let groupPrice = 0;
+
+  if (convertData.teacher && convertData.teacher.userDetail && convertData.teacher.userDetail.price) {
+    privatePrice = convertData.teacher.userDetail.price.private;
+    groupPrice = convertData.teacher.userDetail.price.group;
+  } else {
+    const defaultPrice = await Price.findOne(
+      {
+        where: {
+          type: 'A',
+        },
+      },
+    );
+
+    privatePrice = defaultPrice.private;
+    groupPrice = defaultPrice.group;
+  }
+
   const mapingData = convertData.map((o) => {
     const arrayWishlistItem = [];
 
@@ -160,6 +188,7 @@ const getWishlist = catchAsync(async (req, res) => {
           time: `${moment(itm.dateTimeStart).format('HH:mm')} - ${moment(itm.dateTimeEnd).format('HH:mm')}`,
           subject: itm.teacherSubject.subject.subjectName,
           grade: itm.teacherSubject.gradeName,
+          price: itm.typeCourse == 'private' ? privatePrice : groupPrice,
           createdAt: itm.createdAt,
           updatedAt: itm.updatedAt,
         };
@@ -169,7 +198,7 @@ const getWishlist = catchAsync(async (req, res) => {
     }
 
     // Sorting isi item
-    const sortingItem = arrayWishlistItem.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    const sortingItem = arrayWishlistItem.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     const data = {
       wishlistId: o.id,
@@ -188,7 +217,7 @@ const getWishlist = catchAsync(async (req, res) => {
   // Filter untuk menampikan data yang memiliki item wishlist
   const filteringItem = mapingData.filter((o) => o.wishlistItems.length > 0);
   // Sorting parent
-  const sorting = filteringItem.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  const sorting = filteringItem.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   const paginateData = pagination(sorting, page, limit);
 
   res.sendWrapped('', httpStatus.OK, paginateData);
@@ -198,9 +227,89 @@ const getWihslistItemById = catchAsync(async (req, res) => {
   const { id } = req.params;
   const studentId = req.user.id;
 
-  const wishlist = await wishlistService.getWishlistItemById(id, studentId);
+  const wishlist = await wishlistService.getWishlistItemById(
+    id,
+    studentId,
+    {
+      include: [
+        {
+          model: User,
+          as: 'teacher',
+          include: [
+            {
+              model: UserDetail,
+              include: {
+                model: Price,
+              },
+            },
+          ],
+        },
+        {
+          model: TeacherSubject,
+          include: [
+            {
+              model: Subject,
+            },
+            {
+              model: Grade,
+            },
+          ],
+        },
+        {
+          model: AvailabilityHours,
+        },
+        {
+          model: Wishlist,
+          include: {
+            model: User,
+            as: 'student',
+          },
+        },
+      ],
+    },
+  );
 
-  res.sendWrapped(wishlist, httpStatus.OK);
+  let privatePrice = 0;
+  let groupPrice = 0;
+
+  if (wishlist.teacher && wishlist.teacher.userDetail && wishlist.teacher.userDetail.price) {
+    privatePrice = wishlist.teacher.userDetail.price.private;
+    groupPrice = wishlist.teacher.userDetail.price.group;
+  } else {
+    const defaultPrice = await Price.findOne(
+      {
+        where: {
+          type: 'A',
+        },
+      },
+    );
+
+    privatePrice = defaultPrice.private;
+    groupPrice = defaultPrice.group;
+  }
+
+  const convertDay = wishlist.availabilityHour ? days(wishlist.availabilityHour.dayCode) : days(moment(wishlist.dateTimeStart).day());
+  const convertDate = wishlist.dateTimeStart ? dates(wishlist.dateTimeStart) : null;
+
+  const data = {
+    wishlistItemId: wishlist.id,
+    teacherSubjectId: wishlist.teacherSubjectId,
+    availabilityHoursId: wishlist.availabilityHoursId,
+    teacherId: wishlist.teacherId,
+    studentId: wishlist.wishlist.student.id,
+    teacher: `${wishlist.teacher.firstName} ${wishlist.teacher.lastName}`,
+    student: `${wishlist.wishlist.student.firstName} ${wishlist.wishlist.student.lastName}`,
+    typeCourse: wishlist.typeCourse,
+    date: `${convertDay}, ${convertDate}`,
+    time: `${moment(wishlist.dateTimeStart).format('HH:mm')} - ${moment(wishlist.dateTimeEnd).format('HH:mm')}`,
+    subject: wishlist.teacherSubject.subject.subjectName,
+    grade: wishlist.teacherSubject.gradeName,
+    price: wishlist.typeCourse == 'private' ? privatePrice : groupPrice,
+    createdAt: wishlist.createdAt,
+    updatedAt: wishlist.updatedAt,
+  };
+
+  res.sendWrapped(data, httpStatus.OK);
 });
 
 const deleteWishlistItemById = catchAsync(async (req, res) => {
