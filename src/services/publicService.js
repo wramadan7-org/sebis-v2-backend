@@ -15,6 +15,7 @@ const availabilityHoursService = require('./availabilityHoursService');
 
 const nameDay = require('../utils/day');
 const pagination = require('../utils/pagination');
+const { Price } = require('../models/Price');
 
 const homePublic = async (page, limit) => {
   const teacherRole = await Role.findOne(
@@ -59,7 +60,7 @@ const homePublic = async (page, limit) => {
   return paginating;
 };
 
-const timeAvailabilityPublic = async (teacherId, month, year, page, limit) => {
+const timeAvailabilityPublic = async (teacherId, month, year, page, limit, opts = {}) => {
   const user = await User.findOne(
     {
       where: {
@@ -68,6 +69,7 @@ const timeAvailabilityPublic = async (teacherId, month, year, page, limit) => {
       attributes: {
         exclude: 'password',
       },
+      ...opts,
     },
   );
 

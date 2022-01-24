@@ -4,6 +4,8 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 
 const publicService = require('../services/publicService');
+const { UserDetail } = require('../models/UserDetail');
+const { Price } = require('../models/Price');
 
 const publicHome = catchAsync(async (req, res) => {
   let { page, limit } = req.query;
@@ -53,7 +55,21 @@ const availabilityHours = catchAsync(async (req, res) => {
 
   const year = moment().format('YYYY');
 
-  const availabilityHoursTutor = await publicService.timeAvailabilityPublic(teacherId, theMonth, year, page, limit);
+  const availabilityHoursTutor = await publicService.timeAvailabilityPublic(
+    teacherId,
+    theMonth,
+    year,
+    page,
+    limit,
+    {
+      include: [
+        {
+          model: UserDetail,
+          include: Price,
+        },
+      ],
+    },
+  );
 
   if (!availabilityHoursTutor) throw new ApiError(httpStatus.NOT_FOUND, 'Teacher don\'t have availability hours.');
 
