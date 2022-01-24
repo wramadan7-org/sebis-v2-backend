@@ -13,6 +13,7 @@ const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail
 const { EducationBackground } = require('../models/EducationBackground');
 const { File } = require('../models/Files');
 const { User } = require('../models/User');
+const { Price } = require('../models/Price');
 const multering = require('../utils/multer');
 
 const profileInfo = catchAsync(async (req, res) => {
@@ -428,7 +429,12 @@ const getUserDetail = catchAsync(async (req, res) => {
   const teacher = await userService.getUserById(
     teacherId,
     {
-      include: ['userDetail'],
+      include: [
+        {
+          model: UserDetail,
+          include: Price,
+        },
+      ],
     },
   );
 
