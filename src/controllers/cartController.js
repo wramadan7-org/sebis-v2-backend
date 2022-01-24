@@ -337,6 +337,87 @@ const viewCart = catchAsync(async (req, res) => {
 */
 });
 
+const getCartById = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const cartItem = await cartService.getCartItemById(
+    id,
+    {
+      include: [
+        {
+          model: User,
+          as: 'teacher',
+        },
+        {
+          model: TeacherSubject,
+          include: [
+            {
+              model: Subject,
+            },
+            {
+              model: Grade,
+            },
+          ],
+        },
+        {
+          model: AvailabilityHours,
+        },
+        {
+          model: Cart,
+          include: {
+            model: User,
+            as: 'student',
+          },
+        },
+      ],
+    },
+  );
+
+  let privatePrice = 0;
+  let groupPrice = 0;
+
+  if (cartItem.teacher && cartItem.teacher.userDetail && cartItem.teacher.userDetail.price) {
+    privatePrice = cartItem.teacher.userDetail.price.private;
+    groupPrice = cartItem.teacher.userDetail.price.group;
+  } else {
+    const defaultPrice = await Price.findOne(
+      {
+        where: {
+          type: 'A',
+        },
+      },
+    );
+
+    privatePrice = defaultPrice.private;
+    groupPrice = defaultPrice.group;
+  }
+
+  const convertDay = cartItem.availabilityHour ? days(cartItem.availabilityHour.dayCode) : days(moment(cartItem.startTime).day());
+  const convertDate = cartItem.startTime ? dates(cartItem.startTime) : null;
+
+  const data = {
+    cartItemId: cartItem.id,
+    teacherId: cartItem.teacherId,
+    studentId: cartItem.cart.student.id,
+    teacherSubjectId: cartItem.teacherSubjectId,
+    availabilityHoursId: cartItem.availabilityHoursId,
+    gradeId: cartItem.teacherSubject.gradeId,
+    subjectId: cartItem.teacherSubject.subjectId,
+    student: `${cartItem.cart.student.firstName} ${cartItem.cart.student.lastName}`,
+    teacher: `${cartItem.teacher.firstName} ${cartItem.teacher.lastName}`,
+    type: cartItem.typeCourse,
+    subject: cartItem.teacherSubject.subject.subjectName,
+    grade: cartItem.teacherSubject.grade.gradeName,
+    date: `${convertDay}, ${convertDate}`,
+    time: `${moment(cartItem.startTime).format('HH:mm')} - ${moment(cartItem.endTime).format('HH:mm')}`,
+    status: cartItem.cartItemStatus,
+    price: cartItem.typeCourse == 'private' ? privatePrice : groupPrice,
+    createdAt: cartItem.createdAt,
+    updatedAt: cartItem.updatedAt,
+  };
+
+  res.sendWrapped(data, httpStatus.OK);
+});
+
 const updateStatusCart = catchAsync(async (req, res) => {
   const userId = req.user.id;
   const { id } = req.params;
@@ -361,6 +442,7 @@ module.exports = {
   addCart,
   approvingOrder,
   viewCart,
+  getCartById,
   updateStatusCart,
   deleteCartItem,
 };

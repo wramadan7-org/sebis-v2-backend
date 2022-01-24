@@ -112,11 +112,10 @@ const getCartByStudentId = async (studentId, opts = {}) => {
  * @param {object} opts
  * @return object
  */
-const getCartItemById = async (id, teacherId, opts = {}) => {
+const getCartItemById = async (id, opts = {}) => {
   const cartItem = await CartItem.findOne({
     where: {
       id,
-      teacherId,
     },
     ...opts,
   });
@@ -192,7 +191,7 @@ const orderList = async (teacherId, cartItemStatus, opts = {}) => {
  * @returns object
  */
 const approvingCartRequest = async (id, teacherId, cartItemStatusBody, opts = {}) => {
-  const cartItem = await getCartItemById(id, teacherId);
+  const cartItem = await getCartItemById(id);
 
   cartItem.cartItemStatus = cartItemStatusBody;
   cartItem.save();
@@ -261,6 +260,7 @@ const deleteCartItem = async (id) => {
 module.exports = {
   getCartAll,
   getCartByStudentId,
+  getCartItemById,
   findOrCreateCart,
   createCartItem,
   orderList,
