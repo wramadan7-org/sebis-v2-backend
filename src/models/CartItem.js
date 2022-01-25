@@ -28,6 +28,14 @@ const CartItem = sequelize.define('cartItem', {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  requestMaterial: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  imageMaterial: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 },
 {
   paranoid: true,
