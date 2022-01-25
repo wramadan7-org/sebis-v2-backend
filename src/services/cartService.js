@@ -264,6 +264,11 @@ const updateRequestMateri = async (id, file, description) => {
   return cartItem;
 };
 
+/**
+ * Delete cart item
+ * @param {string} id
+ * @returns object
+ */
 const deleteCartItem = async (id) => {
   const cartItem = await CartItem.findOne(
     {
