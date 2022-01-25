@@ -2,10 +2,12 @@ const httpStatus = require('http-status');
 const moment = require('moment');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-
-const publicService = require('../services/publicService');
 const { UserDetail } = require('../models/UserDetail');
 const { Price } = require('../models/Price');
+
+const publicService = require('../services/publicService');
+
+const pagination = require('../utils/pagination');
 
 const publicHome = catchAsync(async (req, res) => {
   let { page, limit } = req.query;
@@ -22,11 +24,17 @@ const publicHome = catchAsync(async (req, res) => {
     page = 1;
   }
 
-  const home = await publicService.homePublic(page, limit);
+  const home = await publicService.homePublic();
 
-  if (!home) throw new ApiError(httpStatus.NOT_FOUND, 'Empty data');
+  if (!home || home.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'List tutor masih kosong.');
 
-  res.sendWrapped('', httpStatus.OK, home);
+  const results = home.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const paginating = pagination(results, page, limit);
+
+  // if (!paginating || paginating.data.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'List tutor masih kosong.');
+
+  res.sendWrapped('', httpStatus.OK, paginating);
 });
 
 const availabilityHours = catchAsync(async (req, res) => {

@@ -10,14 +10,14 @@ const { Grade } = require('../models/Grade');
 const { GradeGroup } = require('../models/GradeGroup');
 const { TeacherSubject } = require('../models/TeacherSubject');
 const { AvailabilityHours } = require('../models/AvailabilityHours');
+const { Price } = require('../models/Price');
 
 const availabilityHoursService = require('./availabilityHoursService');
 
 const nameDay = require('../utils/day');
 const pagination = require('../utils/pagination');
-const { Price } = require('../models/Price');
 
-const homePublic = async (page, limit) => {
+const homePublic = async () => {
   const teacherRole = await Role.findOne(
     {
       where: {
@@ -37,6 +37,9 @@ const homePublic = async (page, limit) => {
       include: [
         {
           model: UserDetail,
+          include: {
+            model: Price,
+          },
         },
         {
           model: TeacherSubject,
@@ -53,11 +56,7 @@ const homePublic = async (page, limit) => {
     },
   );
 
-  const results = users.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-
-  const paginating = pagination(results, page, limit);
-
-  return paginating;
+  return users;
 };
 
 const timeAvailabilityPublic = async (teacherId, month, year, page, limit, opts = {}) => {
