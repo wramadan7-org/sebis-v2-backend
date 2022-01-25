@@ -213,6 +213,7 @@ const viewCart = catchAsync(async (req, res) => {
 
   let privatePrice = 0;
   let groupPrice = 0;
+  let total = 0;
 
   if (convertData.teacher && convertData.teacher.userDetail && convertData.teacher.userDetail.price) {
     privatePrice = convertData.teacher.userDetail.price.private;
@@ -254,6 +255,8 @@ const viewCart = catchAsync(async (req, res) => {
         updatedAt: itm.updatedAt,
       };
 
+      total += dataCartItem.price;
+
       return arrayResults.push(dataCartItem);
     });
 
@@ -282,8 +285,12 @@ const viewCart = catchAsync(async (req, res) => {
   // Sorting parent cart
   const sorting = filteringItem.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   const paginateData = pagination(sorting, page, limit);
+  const concatData = {
+    ...paginateData,
+    total,
+  };
 
-  res.sendWrapped('', httpStatus.OK, paginateData);
+  res.sendWrapped('', httpStatus.OK, concatData);
 
   /**
   // Ambil data original
