@@ -241,6 +241,22 @@ const updateCart = async (id, cartItemStatus, userId) => {
   return cartItem;
 };
 
+const updateRequestMateri = async (id, file, description) => {
+  const cartItem = await getCartItemById(id);
+
+  if (!cartItem) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat meneukan item.');
+
+  const dataRequestMateri = {
+    requestMaterial: description,
+    imageMaterial: file,
+  };
+
+  Object.assign(cartItem, dataRequestMateri);
+
+  await cartItem.save();
+  return cartItem;
+};
+
 const deleteCartItem = async (id) => {
   const cartItem = await CartItem.findOne(
     {
@@ -269,4 +285,5 @@ module.exports = {
   checkBetweenHours,
   updateCart,
   deleteCartItem,
+  updateRequestMateri,
 };

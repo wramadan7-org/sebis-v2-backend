@@ -17,6 +17,8 @@ const ApiError = require('../utils/ApiError');
 const days = require('../utils/day');
 const dates = require('../utils/date');
 const pagination = require('../utils/pagination');
+const multering = require('../utils/multer');
+const resizing = require('../utils/resizeImage');
 
 const {
   PENDING, ACCEPT, REJECT, CANCEL, EXPIRE, DONE, OFFSET_ORDER_HOURS,
@@ -435,6 +437,29 @@ const updateStatusCart = catchAsync(async (req, res) => {
   res.sendWrapped(cartItem, httpStatus.OK);
 });
 
+const updateRequestMateri = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const destination = 'images/material';
+
+  multering.options('./', id).single('fileMaterial')(req, res, async (err) => {
+    if (err) {
+      res.sendWrapped(err);
+    } else {
+      if (!req.file.filename) {
+        return res.sendWrapped('Please insert file/photo!', httpStatus.BAD_REQUEST);
+      }
+
+      const { requestMaterial } = req.body;
+
+      const updateMaterial = await cartService.updateRequestMateri(id, `static/${destination}/${req.file.filename}`, requestMaterial);
+
+      await resizing(req.file.path, 200, 200, 90, `./public/${destination}/${req.file.filename}`);
+
+      res.sendWrapped(updateMaterial, httpStatus.OK);
+    }
+  });
+});
+
 const deleteCartItem = catchAsync(async (req, res) => {
   const userId = req.user.id;
   const { id } = req.params;
@@ -451,5 +476,6 @@ module.exports = {
   viewCart,
   getCartById,
   updateStatusCart,
+  updateRequestMateri,
   deleteCartItem,
 };
