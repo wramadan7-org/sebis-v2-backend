@@ -345,7 +345,7 @@ const createFileKTP = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const destination = 'images/ktp';
 
-  multering.options(`./public/${destination}`, teacherId).single('fileKTP')(req, res, async (err) => {
+  multering.options('./', teacherId).single('fileKTP')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
     } else {
@@ -360,6 +360,8 @@ const createFileKTP = catchAsync(async (req, res) => {
 
       const insertKtp = await fileService.addFile(teacherId, fileBody);
 
+      await resizing(req.file.path, 200, 200, 90, `./public/${destination}/${req.file.filename}`);
+
       res.sendWrapped(insertKtp, httpStatus.OK);
     }
   });
@@ -369,7 +371,7 @@ const createFileNPWP = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const destination = 'images/npwp';
 
-  multering.options(`./public/${destination}`, teacherId).single('fileNPWP')(req, res, async (err) => {
+  multering.options('./', teacherId).single('fileNPWP')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
     } else {
@@ -383,6 +385,8 @@ const createFileNPWP = catchAsync(async (req, res) => {
       };
 
       const insertNPWP = await fileService.addFile(teacherId, fileBody);
+
+      await resizing(req.file.path, 200, 200, 90, `./public/${destination}/${req.file.filename}`);
 
       res.sendWrapped(insertNPWP, httpStatus.OK);
     }
