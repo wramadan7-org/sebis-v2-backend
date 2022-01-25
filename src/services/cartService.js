@@ -241,6 +241,13 @@ const updateCart = async (id, cartItemStatus, userId) => {
   return cartItem;
 };
 
+/**
+ * Update request material
+ * @param {string} id
+ * @param {string} file
+ * @param {string} description
+ * @returns object
+ */
 const updateRequestMateri = async (id, file, description) => {
   const cartItem = await getCartItemById(id);
 
