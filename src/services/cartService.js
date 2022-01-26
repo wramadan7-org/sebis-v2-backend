@@ -199,6 +199,13 @@ const approvingCartRequest = async (id, teacherId, cartItemStatusBody, opts = {}
   return cartItem;
 };
 
+/**
+ * Update status item cart
+ * @param {string} id
+ * @param {string} cartItemStatus
+ * @param {string} userId
+ * @returns object
+ */
 const updateCart = async (id, cartItemStatus, userId) => {
   let cartItem;
 
