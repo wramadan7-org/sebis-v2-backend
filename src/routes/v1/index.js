@@ -26,7 +26,7 @@ const cronController = require('../../controllers/cronController');
 
 const router = express.Router();
 
-// cron.schedule('* * * * * *', cronController.cronJobCartExperience);
+cron.schedule('* * * * *', cronController.cronJobCartPendingTwoHoursBeforeLes);
 
 const defaultRoutes = [
   {
