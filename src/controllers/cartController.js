@@ -253,6 +253,8 @@ const viewCart = catchAsync(async (req, res) => {
         time: `${moment(itm.startTime).format('HH:mm')} - ${moment(itm.endTime).format('HH:mm')}`,
         status: itm.cartItemStatus,
         price: itm.typeCourse == 'private' ? privatePrice : groupPrice,
+        requestMaterial: itm.requestMaterial ? itm.requestMaterial : null,
+        imageMaterial: itm.imageMaterial ? itm.imageMaterial : null,
         createdAt: itm.createdAt,
         updatedAt: itm.updatedAt,
       };
@@ -420,6 +422,8 @@ const getCartById = catchAsync(async (req, res) => {
     time: `${moment(cartItem.startTime).format('HH:mm')} - ${moment(cartItem.endTime).format('HH:mm')}`,
     status: cartItem.cartItemStatus,
     price: cartItem.typeCourse == 'private' ? privatePrice : groupPrice,
+    requestMaterial: cartItem.requestMaterial ? cartItem.requestMaterial : null,
+    imageMaterial: cartItem.imageMaterial ? cartItem.imageMaterial : null,
     createdAt: cartItem.createdAt,
     updatedAt: cartItem.updatedAt,
   };
