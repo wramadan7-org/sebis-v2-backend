@@ -1,4 +1,5 @@
 const express = require('express');
+const cron = require('node-cron');
 const authRoute = require('./authRoute');
 const profileRoute = require('./profileRoute');
 const schoolRoute = require('./schoolRoute');
@@ -21,7 +22,11 @@ const scheduleRoute = require('./scheduleRoute');
 const wishlistRoute = require('./wishlistRoute');
 const priceRoute = require('./priceRoute');
 
+const cronController = require('../../controllers/cronController');
+
 const router = express.Router();
+
+// cron.schedule('* * * * * *', cronController.cronJobCartExperience);
 
 const defaultRoutes = [
   {
