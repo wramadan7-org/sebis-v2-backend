@@ -25,6 +25,7 @@
     "no-restricted-syntax": "off",
     "no-unneeded-ternary": "off",
     "no-await-in-loop": "off",
-    "eqeqeq": "off"
+    "eqeqeq": "off",
+    "camelcase": "off"
   }
 }

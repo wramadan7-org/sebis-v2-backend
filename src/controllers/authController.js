@@ -12,10 +12,28 @@ const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(userBody);
   res.sendWrapped(user, httpStatus.CREATED);
 });
-const loginByGoogle = catchAsync(async (req, res) => {
-  const { idToken } = req.body;
 
-  const googleUser = await googleAuth(idToken);
+const loginByGoogleTeacher = catchAsync(async (req, res) => {
+  const { idToken } = req.body;
+  const role = '437e0221-eb3d-477f-a3b3-799256fbcab6';
+  const googleUser = await googleAuth(idToken, role);
+  const { access, refresh } = await tokenService.generateAuthTokens(googleUser);
+
+  const message = 'Login Sucessfully';
+  const user = {
+    message,
+    googleUser,
+    access,
+    refresh,
+  };
+
+  res.sendWrapped(user, httpStatus.OK);
+});
+
+const loginByGoogleStudent = catchAsync(async (req, res) => {
+  const { idToken } = req.body;
+  const role = 'a0a76676-e446-49d2-ab7a-ae622783d7b8';
+  const googleUser = await googleAuth(idToken, role);
   const { access, refresh } = await tokenService.generateAuthTokens(googleUser);
 
   const message = 'Login Sucessfully';
@@ -42,7 +60,9 @@ const login = catchAsync(async (req, res) => {
 const refreshTokens = catchAsync(async (req, res) => {
   const { refreshToken } = req.body;
   const tokenData = await authService.refreshAuth(refreshToken);
-  const user = await userService.getUserById(tokenData.userId);
+  const user = await userService.getUserById(tokenData.userId, {
+    opts: { include: 'role' },
+  });
   const token = await tokenService.generateAuthTokens(user);
   res.sendWrapped(token, httpStatus.OK);
 });
@@ -73,5 +93,6 @@ module.exports = {
   logout,
   testProtected,
   resetPassword,
-  loginByGoogle,
+  loginByGoogleTeacher,
+  loginByGoogleStudent,
 };

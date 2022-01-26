@@ -6,7 +6,8 @@ const auth = require('../../middlewares/auth');
 
 const router = express.Router();
 
-router.post('/google', authController.loginByGoogle);
+router.post('/google', authController.loginByGoogleTeacher);
+router.post('/google-student', authController.loginByGoogleStudent);
 router.post(
   '/register',
   validate(authValidation.register),

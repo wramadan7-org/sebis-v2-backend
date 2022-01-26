@@ -43,3 +43,160 @@ Error: Error: listen EADDRINUSE: address already in use :::8080
     at /Users/sebis/Project/Backend/SebisV2/src/server.js:53:26
     at processTicksAndRejections (internal/process/task_queues.js:95:5)
 
+========== 2022-01-10 10:40:01 ==========
+RangeError [ERR_HTTP_INVALID_STATUS_CODE]: RangeError [ERR_HTTP_INVALID_STATUS_CODE]: Invalid status code: { user: [user], schedule: [Object] }
+    at new NodeError (node:internal/errors:371:5)
+    at ServerResponse.writeHead (node:_http_server:274:11)
+    at ServerResponse.writeHead (/Users/michael/Project/sebislesV2/node_modules/on-headers/index.js:44:26)
+    at ServerResponse.writeHead (/Users/michael/Project/sebislesV2/node_modules/on-headers/index.js:44:26)
+    at ServerResponse.writeHead (/Users/michael/Project/sebislesV2/node_modules/on-headers/index.js:44:26)
+    at ServerResponse.writeHead (/Users/michael/Project/sebislesV2/node_modules/on-headers/index.js:44:26)
+    at ServerResponse._implicitHeader (node:_http_server:265:8)
+    at ServerResponse.end (/Users/michael/Project/sebislesV2/node_modules/compression/index.js:103:14)
+    at writeend (/Users/michael/Project/sebislesV2/node_modules/express-session/index.js:262:22)
+    at Immediate.onsave (/Users/michael/Project/sebislesV2/node_modules/express-session/index.js:340:11)
+
+========== 2022-01-14 15:26:29 ==========
+TypeError: TypeError: include.model.getTableName is not a function
+    at Function._validateIncludedElement (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:460:30)
+    at /Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:405:37
+    at Array.map (<anonymous>)
+    at Function._validateIncludedElements (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:401:39)
+    at Function.findAll (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:1086:12)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async Object.getSchedule (/Users/michael/Project/sebislesV2/src/services/scheduleService.js:27:20)
+
+========== 2022-01-14 15:26:51 ==========
+TypeError: TypeError: include.model.getTableName is not a function
+    at Function._validateIncludedElement (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:460:30)
+    at /Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:405:37
+    at Array.map (<anonymous>)
+    at Function._validateIncludedElements (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:401:39)
+    at Function.findAll (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:1086:12)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async Object.getSchedule (/Users/michael/Project/sebislesV2/src/services/scheduleService.js:27:20)
+
+========== 2022-01-14 15:27:45 ==========
+TypeError: TypeError: include.model.getTableName is not a function
+    at Function._validateIncludedElement (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:460:30)
+    at /Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:405:37
+    at Array.map (<anonymous>)
+    at Function._validateIncludedElements (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:401:39)
+    at Function.findAll (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:1086:12)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async Object.getSchedule (/Users/michael/Project/sebislesV2/src/services/scheduleService.js:27:20)
+
+========== 2022-01-14 15:27:47 ==========
+TypeError: TypeError: include.model.getTableName is not a function
+    at Function._validateIncludedElement (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:460:30)
+    at /Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:405:37
+    at Array.map (<anonymous>)
+    at Function._validateIncludedElements (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:401:39)
+    at Function.findAll (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:1086:12)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async Object.getSchedule (/Users/michael/Project/sebislesV2/src/services/scheduleService.js:27:20)
+
+========== 2022-01-14 15:28:40 ==========
+TypeError: TypeError: include.model.getTableName is not a function
+    at Function._validateIncludedElement (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:460:30)
+    at /Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:405:37
+    at Array.map (<anonymous>)
+    at Function._validateIncludedElements (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:401:39)
+    at Function.findAll (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:1086:12)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async Object.getSchedule (/Users/michael/Project/sebislesV2/src/services/scheduleService.js:27:20)
+
+========== 2022-01-14 15:43:36 ==========
+SequelizeAssociationError: SequelizeAssociationError: You have used the alias teacher in two separate associations. Aliased associations must have unique aliases.
+    at new Association (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/associations/base.js:13:13)
+    at new BelongsTo (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/associations/belongs-to.js:25:5)
+    at Function.<anonymous> (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/associations/mixin.js:70:25)
+    at setupSequelizeAssociations (/Users/michael/Project/sebislesV2/src/models/index.js:218:12)
+    at /Users/michael/Project/sebislesV2/src/server.js:34:7
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+========== 2022-01-17 12:16:57 ==========
+function () { [native code] }
+
+========== 2022-01-17 12:16:59 ==========
+function () { [native code] }
+
+========== 2022-01-17 12:16:59 ==========
+function () { [native code] }
+
+========== 2022-01-17 12:17:00 ==========
+function () { [native code] }
+
+========== 2022-01-17 12:17:01 ==========
+function () { [native code] }
+
+========== 2022-01-17 12:18:21 ==========
+function () { [native code] }
+
+========== 2022-01-17 12:19:50 ==========
+SequelizeForeignKeyConstraintError: Error
+    at Query.run (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/dialects/mysql/query.js:52:25)
+    at /Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/sequelize.js:313:28
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async MySQLQueryInterface.update (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/dialects/abstract/query-interface.js:338:12)
+    at async model.save (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:2400:35)
+
+========== 2022-01-17 12:19:59 ==========
+SequelizeForeignKeyConstraintError: Error
+    at Query.run (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/dialects/mysql/query.js:52:25)
+    at /Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/sequelize.js:313:28
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async MySQLQueryInterface.update (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/dialects/abstract/query-interface.js:338:12)
+    at async model.save (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:2400:35)
+
+========== 2022-01-17 12:20:02 ==========
+SequelizeForeignKeyConstraintError: Error
+    at Query.run (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/dialects/mysql/query.js:52:25)
+    at /Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/sequelize.js:313:28
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async MySQLQueryInterface.update (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/dialects/abstract/query-interface.js:338:12)
+    at async model.save (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:2400:35)
+
+========== 2022-01-17 12:23:00 ==========
+SequelizeForeignKeyConstraintError: Error
+    at Query.run (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/dialects/mysql/query.js:52:25)
+    at /Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/sequelize.js:313:28
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async MySQLQueryInterface.update (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/dialects/abstract/query-interface.js:338:12)
+    at async model.save (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:2400:35)
+
+========== 2022-01-19 16:25:15 ==========
+SequelizeDatabaseError: Error
+    at Query.run (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/dialects/mysql/query.js:52:25)
+    at /Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/sequelize.js:313:28
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async MySQLQueryInterface.update (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/dialects/abstract/query-interface.js:338:12)
+    at async model.save (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/model.js:2400:35)
+
+========== 2022-01-21 10:19:04 ==========
+Error: Error: Naming collision between attribute 'teacher' and association 'teacher' on model wishlist. To remedy this, change either foreignKey or as in your association definition
+    at Object.checkNamingCollision (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/associations/helpers.js:4:11)
+    at BelongsTo._injectAttributes (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/associations/belongs-to.js:86:13)
+    at Function.<anonymous> (/Users/michael/Project/sebislesV2/node_modules/sequelize/dist/lib/associations/mixin.js:72:17)
+    at setupSequelizeAssociations (/Users/michael/Project/sebislesV2/src/models/index.js:275:12)
+    at /Users/michael/Project/sebislesV2/src/server.js:34:7
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+========== 2022-01-24 14:00:48 ==========
+ReferenceError: ReferenceError: priceId is not defined
+    at setupSequelizeAssociations (/Users/michael/Project/sebislesV2/src/models/index.js:37:42)
+    at /Users/michael/Project/sebislesV2/src/server.js:34:7
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+========== 2022-01-24 14:35:17 ==========
+TypeError: TypeError: Price.haveOne is not a function
+    at setupSequelizeAssociations (/Users/michael/Project/sebislesV2/src/models/index.js:41:9)
+    at /Users/michael/Project/sebislesV2/src/server.js:34:7
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+========== 2022-01-24 14:36:13 ==========
+TypeError: TypeError: Price.haveOne is not a function
+    at setupSequelizeAssociations (/Users/michael/Project/sebislesV2/src/models/index.js:41:9)
+    at /Users/michael/Project/sebislesV2/src/server.js:34:7
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
