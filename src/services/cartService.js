@@ -108,7 +108,6 @@ const getCartByStudentId = async (studentId, opts = {}) => {
 /**
  * Get cart item by ID
  * @param {string} id
- * @param {string} teacherId
  * @param {object} opts
  * @return object
  */
