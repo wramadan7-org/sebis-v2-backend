@@ -17,7 +17,7 @@ const { Grade } = require('../models/Grade');
 const { AvailabilityHours } = require('../models/AvailabilityHours');
 const { Price } = require('../models/Price');
 
-const paginator = require('../utils/pagination');
+const pagination = require('../utils/pagination');
 const dates = require('../utils/date');
 const days = require('../utils/day');
 
@@ -158,7 +158,7 @@ const createSchedule = catchAsync(async (req, res) => {
 });
 
 const getSchedule = catchAsync(async (req, res) => {
-  let { page, limit } = req.params;
+  let { page, limit } = req.query;
 
   if (page) {
     page = parseInt(page);
@@ -214,7 +214,42 @@ const getSchedule = catchAsync(async (req, res) => {
   // Kemudian parsing ke JSON untuk pendefinisian
   const convertData = JSON.parse(originalData);
 
-  res.sendWrapped(schedule, httpStatus.OK);
+  const arrayResults = [];
+
+  for (const loopSchedule of convertData) {
+    const convertDay = days(loopSchedule.availabilityHour.dayCode);
+    const convertDate = loopSchedule.dateSchedule ? dates(loopSchedule.dateSchedule) : null;
+
+    const dataSchedule = {
+      scheduleId: loopSchedule.id,
+      teacherId: loopSchedule.teacherId,
+      studentId: loopSchedule.studentId,
+      teacherSubjectId: loopSchedule.teacherSubjectId,
+      availabilityHoursId: loopSchedule.availabilityHoursId,
+      gradeId: loopSchedule.teacherSubject.gradeId,
+      subjectId: loopSchedule.teacherSubject.subjectId,
+      type: loopSchedule.typeClass,
+      status: loopSchedule.statusSchedule,
+      subject: loopSchedule.teacherSubject.subject.subjectName,
+      grade: loopSchedule.teacherSubject.grade.gradeName,
+      date: `${convertDay}, ${convertDate}`,
+      time: `${loopSchedule.availabilityHour.timeStart} - ${loopSchedule.availabilityHour.timeEnd}`,
+      requestMaterial: loopSchedule.requestMaterial ? loopSchedule.requestMaterial : null,
+      imageMaterial: loopSchedule.imageMaterial ? loopSchedule.imageMaterial : null,
+      createdAt: loopSchedule.createdAt,
+      updatedAt: loopSchedule.updatedAt,
+      dateSortingSchedule: loopSchedule.dateSchedule,
+    };
+
+    arrayResults.push(dataSchedule);
+  }
+
+  // Sorting schedule
+  const sortingSchedule = arrayResults.sort((a, b) => new Date(a.dateSortingSchedule) - new Date(b.dateSortingSchedule));
+  // Pagination data
+  const paginateData = pagination(sortingSchedule, page, limit);
+
+  res.sendWrapped('', httpStatus.OK, paginateData);
 });
 
 const getScheduleById = catchAsync(async (req, res) => {
@@ -240,6 +275,14 @@ const getScheduleById = catchAsync(async (req, res) => {
         },
         {
           model: TeacherSubject,
+          include: [
+            {
+              model: Grade,
+            },
+            {
+              model: Subject,
+            },
+          ],
         },
         {
           model: AvailabilityHours,
@@ -250,7 +293,36 @@ const getScheduleById = catchAsync(async (req, res) => {
 
   if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found.');
 
-  res.sendWrapped(schedule, httpStatus.OK);
+  // Ambil data original
+  const originalData = JSON.stringify(schedule);
+  // Kemudian parsing ke JSON untuk pendefinisian
+  const convertData = JSON.parse(originalData);
+
+  const convertDay = days(convertData.availabilityHour.dayCode);
+  const convertDate = convertData.dateSchedule ? dates(convertData.dateSchedule) : null;
+
+  const dataSchedule = {
+    scheduleId: convertData.id,
+    teacherId: convertData.teacherId,
+    studentId: convertData.studentId,
+    teacherSubjectId: convertData.teacherSubjectId,
+    availabilityHoursId: convertData.availabilityHoursId,
+    gradeId: convertData.teacherSubject.gradeId,
+    subjectId: convertData.teacherSubject.subjectId,
+    type: convertData.typeClass,
+    status: convertData.statusSchedule,
+    subject: convertData.teacherSubject.subject.subjectName,
+    grade: convertData.teacherSubject.grade.gradeName,
+    date: `${convertDay}, ${convertDate}`,
+    time: `${convertData.availabilityHour.timeStart} - ${convertData.availabilityHour.timeEnd}`,
+    requestMaterial: convertData.requestMaterial ? convertData.requestMaterial : null,
+    imageMaterial: convertData.imageMaterial ? convertData.imageMaterial : null,
+    createdAt: convertData.createdAt,
+    updatedAt: convertData.updatedAt,
+    dateSortingSchedule: convertData.dateSchedule,
+  };
+
+  res.sendWrapped(dataSchedule, httpStatus.OK);
 });
 
 const updateSchedule = catchAsync(async (req, res) => {
