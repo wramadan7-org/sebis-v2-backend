@@ -7,7 +7,7 @@ const scheduleValidation = require('../../validations/scheduleValidation');
 
 const router = Router();
 
-router.post('/', validate(scheduleValidation.createSchedule), scheduleController.createSchedule);
+router.post('/', auth, scheduleController.createSchedule);
 router.get('/', scheduleController.getSchedule);
 router.get('/:id', scheduleController.getScheduleById);
 router.patch('/:id', scheduleController.updateSchedule);
