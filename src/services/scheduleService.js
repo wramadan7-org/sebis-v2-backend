@@ -19,7 +19,6 @@ const {
  */
 const checkerSchedule = async (teacherId, teacherSubjectId, availabilityHoursId, id) => {
   if (id) {
-    console.log('depa');
     const ownSchedule = await Schedule.findOne(
       {
         where: {
@@ -96,29 +95,34 @@ const checkAvailDateSchedule = async (studentId, dateSchedule, availabilityHours
 
 /**
  * Membuat jadwal les
- * @param {object} scheduleBody
- * @returns object || error
+ * @param {Array.<{
+ * dateSchedule: dateOnly,
+ * typeClass: string,
+ * statusSchedule: string,
+ * teacherSubjectId: string,
+ * availabilityHoursId: string,
+ * teacherId: string,
+ * studentId: string,
+ * requestMaterial: string,
+ * imageMaterial: string,
+ * }>} scheduleBody
+ * @returns Object
  */
 const createSchedule = async (scheduleBody) => {
-  const dateSchedule = moment(scheduleBody.dateSchedule).format('YYYY-MM-DD');
-
   // lakukan pengecekan jadwal
-  const checkSchedule = await checkerSchedule(
-    scheduleBody.teacherId,
-    scheduleBody.teacherSubjectId,
-    scheduleBody.availabilityHoursId,
-  );
+  for (const loopBody of scheduleBody) {
+    const checkSchedule = await checkerSchedule(
+      loopBody.teacherId,
+      loopBody.teacherSubjectId,
+      loopBody.availabilityHoursId,
+    );
 
-  if (checkSchedule) throw new ApiError(httpStatus.CONFLICT, 'Schedule already exist. Please order another schedule!');
+    if (checkSchedule) throw new ApiError(httpStatus.CONFLICT, 'Sudah ada yang membeli jadwal les ini, harap pilih les jadwal lain.');
+  }
 
-  const data = {
-    dateSchedule,
-    ...scheduleBody,
-  };
+  const schedule = await Schedule.bulkCreate(scheduleBody);
 
-  const schedule = await Schedule.create(data);
-
-  if (!schedule) throw new ApiError(httpStatus.CONFLICT, 'Fail to create schedule, something wrong.');
+  if (!schedule) throw new ApiError(httpStatus.CONFLICT, 'Gagal membuat jadwal les. Harap hubungi administrator kita.');
 
   return schedule;
 };
@@ -157,10 +161,17 @@ const getScheduleById = async (id, opts = {}) => {
   return schedule;
 };
 
+/**
+ * Update jadwal les berdasarkan id
+ * @param {string} id
+ * @param {object} scheduleBody
+ * @param {object} opts
+ * @returns object
+ */
 const updateScheduleById = async (id, scheduleBody, opts = {}) => {
   const schedule = await getScheduleById(id);
 
-  if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found.');
+  if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan jadwal les yang anda inginkan.');
 
   const checkSchedule = await checkerSchedule(
     scheduleBody.teacherId,
@@ -169,7 +180,7 @@ const updateScheduleById = async (id, scheduleBody, opts = {}) => {
     id,
   );
 
-  if (checkSchedule) throw new ApiError(httpStatus.CONFLICT, 'Schedule already exist. Please order another schedule!');
+  if (checkSchedule) throw new ApiError(httpStatus.CONFLICT, 'Jadwal les sudah ada. Harap masukkan jadwal les yang lain!');
 
   Object.assign(schedule, scheduleBody);
 
@@ -189,18 +200,23 @@ const updateScheduleById = async (id, scheduleBody, opts = {}) => {
     },
   );
 
-  if (!checkTeacher) throw new ApiError(httpStatus.NOT_FOUND, 'Teacher not found.');
-  if (!checkStudent) throw new ApiError(httpStatus.NOT_FOUND, 'Student not found.');
+  if (!checkTeacher) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan tutor..');
+  if (!checkStudent) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan murid.');
 
   schedule.save();
 
   return schedule;
 };
 
+/**
+ * Hapus jadwal les berdasarkan id
+ * @param {string} id
+ * @returns object
+ */
 const deleteSchedule = async (id) => {
   const schedule = await getScheduleById(id);
 
-  if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found.');
+  if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan jadwal les yang anda inginkan.');
 
   schedule.destroy();
 
