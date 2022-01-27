@@ -23,21 +23,13 @@ const Schedule = sequelize.define('schedule', {
     type: DataTypes.ENUM(ACCEPT, PENDING, REJECT, EXPIRE, PROCESS, DONE),
     allowNull: false,
   },
-  teacherId: {
+  requestMaterial: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
-  studentId: {
+  imageMaterial: {
     type: DataTypes.STRING,
-    allowNull: false,
-  },
-  teacherSubjectId: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  availabilityHoursId: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 }, {
   paranoid: true,
