@@ -117,16 +117,16 @@ const createSchedule = catchAsync(async (req, res) => {
 
   if (!schedule) throw new ApiError(httpStatus.CONFLICT, 'Gagal membuat jadwal les. Harap hubungi administrator kita.');
 
-  const paying = user.point - total;
+  // const paying = user.point - total;
 
-  const updatePoint = await userService.updateUserById(
-    id,
-    {
-      point: paying,
-    },
-  );
+  // const updatePoint = await userService.updateUserById(
+  //   id,
+  //   {
+  //     point: paying,
+  //   },
+  // );
 
-  if (!updatePoint) throw new ApiError(httpStatus.CONFLICT, 'Gagal mengupdate saldo.');
+  // if (!updatePoint) throw new ApiError(httpStatus.CONFLICT, 'Gagal mengupdate saldo.');
 
   res.sendWrapped(arrayDataBody, httpStatus.CREATED);
   /*
