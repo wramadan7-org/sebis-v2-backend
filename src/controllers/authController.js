@@ -6,6 +6,8 @@ const authService = require('../services/authService');
 const tokenService = require('../services/tokenService');
 const { tokenTypes } = require('../config/tokens');
 const { googleAuth } = require('../utils/googleOauth');
+const { read } = require('../config/logger');
+const { roleId } = require('../config/roles');
 
 const register = catchAsync(async (req, res) => {
   const userBody = req.body;
@@ -13,9 +15,35 @@ const register = catchAsync(async (req, res) => {
   res.sendWrapped(user, httpStatus.CREATED);
 });
 
+const loginByPhoneNumber = catchAsync(async (req, res) => {
+  const { phoneNumber } = req.body;
+  const role = roleId.STUDENT;
+
+  let user;
+  user = await userService.getUserByPhoneNumber(phoneNumber, {
+    include: 'role',
+  });
+  console.log(user);
+  if (!user) {
+    await userService.createUserByPhoneNumber(phoneNumber, role);
+    user = await userService.getUserByPhoneNumber(phoneNumber, {
+      include: 'role',
+    });
+  }
+  const token = await tokenService.generateAuthTokens(user);
+  const message = 'Login Sucessfully';
+  const login = {
+    message,
+    user,
+    token,
+  };
+
+  res.sendWrapped(login, httpStatus.OK);
+});
+
 const loginByGoogleTeacher = catchAsync(async (req, res) => {
   const { idToken } = req.body;
-  const role = '437e0221-eb3d-477f-a3b3-799256fbcab6';
+  const role = roleId.TEACHER;
   const googleUser = await googleAuth(idToken, role);
   const { access, refresh } = await tokenService.generateAuthTokens(googleUser);
 
@@ -32,7 +60,7 @@ const loginByGoogleTeacher = catchAsync(async (req, res) => {
 
 const loginByGoogleStudent = catchAsync(async (req, res) => {
   const { idToken } = req.body;
-  const role = 'a0a76676-e446-49d2-ab7a-ae622783d7b8';
+  const role = roleId.STUDENT;
   const googleUser = await googleAuth(idToken, role);
   const { access, refresh } = await tokenService.generateAuthTokens(googleUser);
 
@@ -95,4 +123,5 @@ module.exports = {
   resetPassword,
   loginByGoogleTeacher,
   loginByGoogleStudent,
+  loginByPhoneNumber,
 };

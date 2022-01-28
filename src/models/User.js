@@ -19,7 +19,7 @@ const User = sequelize.define(
     email: {
       type: DataTypes.STRING,
       // unique: true,
-      allowNull: false,
+      allowNull: true,
     },
     phoneNumber: {
       type: DataTypes.STRING,
@@ -37,11 +37,11 @@ const User = sequelize.define(
     },
     firstName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     referralCode: {
       type: DataTypes.STRING,

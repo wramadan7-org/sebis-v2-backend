@@ -15,7 +15,12 @@ const loginWithIdentityAndPassword = async (identity, password) => {
   const user = await userService.getUserByEmail(identity, {
     include: 'role',
   });
-  if (!user || !await bcrypt.compare(password, user.password)) throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid identity combination.');
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      'Invalid identity combination.',
+    );
+  }
   return user;
 };
 
@@ -25,7 +30,9 @@ const loginWithIdentityAndPassword = async (identity, password) => {
  * @returns {Promise<Object>}
  */
 const refreshAuth = async (refreshToken) => {
-  const tokenData = await redis.getObject(`${redisRefreshTokenKey}:${refreshToken}`);
+  const tokenData = await redis.getObject(
+    `${redisRefreshTokenKey}:${refreshToken}`,
+  );
   if (!tokenData || tokenData.blacklist !== 'false') throw new ApiError(httpStatus.UNAUTHORIZED, 'Refresh token not valid.');
   return tokenData;
 };
@@ -42,8 +49,15 @@ const updatePassword = async (userId, newPassword) => {
   return userService.updateUserById(userId, { password });
 };
 
+/**
+ * Login with phone number
+ * @params {string}
+ */
+
+const loginWithPhoneNumber = async (identity) => {};
 module.exports = {
   loginWithIdentityAndPassword,
   refreshAuth,
   updatePassword,
+  loginWithPhoneNumber,
 };
