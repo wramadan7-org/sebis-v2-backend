@@ -3,6 +3,23 @@ const { User } = require('../models/User');
 const ApiError = require('../utils/ApiError');
 
 /**
+ * Get user by phone number
+ * @param {string} phoneNumber
+ * @param {object} opts
+ * @returns {Promise<User | null>}
+ */
+
+const getUserByPhoneNumber = async (phoneNumber, opts = {}) => {
+  const user = await User.findOne({
+    where: {
+      phoneNumber,
+    },
+    ...opts,
+  });
+  return user;
+};
+
+/**
  * Create user
  * @param {object} userBody
  * @returns {Promise<User>}
@@ -36,7 +53,10 @@ const createUserByPhoneNumber = async (phoneNumber, roleId) => {
   };
 
   if (user) throw new ApiError(httpStatus.CONFLICT, 'Phone number already taken.');
-  const userCreated = await User.create(body);
+  await User.create(body);
+  const userCreated = await getUserByPhoneNumber(phoneNumber, {
+    include: 'role',
+  });
   return userCreated;
 };
 
@@ -50,24 +70,6 @@ const getUserByEmail = async (email, opts = {}) => {
   const user = await User.findOne({
     where: {
       email,
-    },
-    ...opts,
-  });
-  if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  return user;
-};
-
-/**
- * Get user by phone number
- * @param {string} phoneNumber
- * @param {object} opts
- * @returns {Promise<User | null>}
- */
-
-const getUserByPhoneNumber = async (phoneNumber, opts = {}) => {
-  const user = await User.findOne({
-    where: {
-      phoneNumber,
     },
     ...opts,
   });

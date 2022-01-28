@@ -23,13 +23,10 @@ const loginByPhoneNumber = catchAsync(async (req, res) => {
   user = await userService.getUserByPhoneNumber(phoneNumber, {
     include: 'role',
   });
-  console.log(user);
   if (!user) {
-    await userService.createUserByPhoneNumber(phoneNumber, role);
-    user = await userService.getUserByPhoneNumber(phoneNumber, {
-      include: 'role',
-    });
+    user = await userService.createUserByPhoneNumber(phoneNumber, role);
   }
+
   const token = await tokenService.generateAuthTokens(user);
   const message = 'Login Sucessfully';
   const login = {
@@ -61,18 +58,18 @@ const loginByGoogleTeacher = catchAsync(async (req, res) => {
 const loginByGoogleStudent = catchAsync(async (req, res) => {
   const { idToken } = req.body;
   const role = roleId.STUDENT;
-  const googleUser = await googleAuth(idToken, role);
-  const { access, refresh } = await tokenService.generateAuthTokens(googleUser);
+  const user = await googleAuth(idToken, role);
+  const { access, refresh } = await tokenService.generateAuthTokens(user);
 
   const message = 'Login Sucessfully';
-  const user = {
+  const login = {
     message,
-    googleUser,
+    user,
     access,
     refresh,
   };
 
-  res.sendWrapped(user, httpStatus.OK);
+  res.sendWrapped(login, httpStatus.OK);
 });
 
 const login = catchAsync(async (req, res) => {

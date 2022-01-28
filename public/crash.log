@@ -652,3 +652,250 @@ Only strings, dates and buffers are accepted. Please update your code to use val
     at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:34:36
     at processTicksAndRejections (internal/process/task_queues.js:95:5)
 
+========== 2022-01-28 13:34:20 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:191:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:32:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 13:38:19 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:32:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 13:41:02 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:32:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 13:42:07 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:34:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 13:42:39 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:34:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 13:43:10 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:34:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 13:44:01 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:37:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 13:44:21 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:37:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 13:46:11 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:41:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 13:55:08 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:51:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 13:56:15 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:51:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 14:00:19 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:45:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 14:00:20 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:45:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 14:01:02 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:42:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 14:03:40 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:42:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 14:05:10 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:42:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 14:05:22 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:42:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 14:07:58 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:33:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+========== 2022-01-28 14:12:49 ==========
+Error: Error: node_redis: The HMSET command contains a invalid argument type.
+Only strings, dates and buffers are accepted. Please update your code to use valid argument types.
+    at RedisClient.internal_send_command (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/index.js:835:39)
+    at RedisClient.hmset (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/redis/lib/individualCommands.js:364:17)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:35:15
+    at new Promise (<anonymous>)
+    at Object.setObject (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/utils/redis.js:34:36)
+    at signUser (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:133:16)
+    at Object.generateAuthTokens (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/services/tokenService.js:192:3)
+    at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:30:36
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+

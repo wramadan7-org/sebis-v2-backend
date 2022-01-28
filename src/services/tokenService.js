@@ -133,6 +133,7 @@ const signUser = (user) => {
   return redis.setObject(redisKey, {
     id: user.id,
     email: user.email,
+    phoneNumber: user.phoneNumber,
     firstName: user.firstName,
     lastName: user.lastName,
     role: user.role.roleName,
