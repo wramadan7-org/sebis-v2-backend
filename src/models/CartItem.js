@@ -36,11 +36,6 @@ const CartItem = sequelize.define('cartItem', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  price: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    defaultValue: 0,
-  },
 },
 {
   paranoid: true,
