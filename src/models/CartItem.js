@@ -2,7 +2,7 @@ const { DataTypes, Sequelize } = require('sequelize');
 const { sequelize } = require('../config/database');
 
 const {
-  PENDING, ACCEPT, REJECT, CANCEL, PROCESS, EXPIRE, DONE,
+  PENDING, ACCEPT, REJECT, CANCEL, PROCESS, EXPIRE, DONE, DELETE,
 } = process.env;
 
 const CartItem = sequelize.define('cartItem', {
@@ -13,7 +13,7 @@ const CartItem = sequelize.define('cartItem', {
     allowNull: false,
   },
   cartItemStatus: {
-    type: DataTypes.ENUM(PENDING, ACCEPT, REJECT, CANCEL, PROCESS, EXPIRE, DONE),
+    type: DataTypes.ENUM(PENDING, ACCEPT, REJECT, CANCEL, PROCESS, EXPIRE, DONE, DELETE),
     allowNull: false,
   },
   typeCourse: {
@@ -35,6 +35,11 @@ const CartItem = sequelize.define('cartItem', {
   imageMaterial: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  price: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    defaultValue: 0,
   },
 },
 {
