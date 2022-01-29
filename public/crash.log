@@ -899,3 +899,16 @@ Only strings, dates and buffers are accepted. Please update your code to use val
     at /Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/src/controllers/authController.js:30:36
     at processTicksAndRejections (internal/process/task_queues.js:95:5)
 
+========== 2022-01-29 10:45:32 ==========
+RangeError [ERR_HTTP_INVALID_STATUS_CODE]: RangeError [ERR_HTTP_INVALID_STATUS_CODE]: Invalid status code: Account has not been confirmed, please confirm your email and re-login
+    at new NodeError (internal/errors.js:322:7)
+    at ServerResponse.writeHead (_http_server.js:259:11)
+    at ServerResponse.writeHead (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/on-headers/index.js:44:26)
+    at ServerResponse.writeHead (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/on-headers/index.js:44:26)
+    at ServerResponse.writeHead (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/on-headers/index.js:44:26)
+    at ServerResponse.writeHead (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/on-headers/index.js:44:26)
+    at ServerResponse._implicitHeader (_http_server.js:250:8)
+    at ServerResponse.end (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/compression/index.js:103:14)
+    at writeend (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/express-session/index.js:262:22)
+    at Immediate.onsave [as _onImmediate] (/Users/Julhendri/Sleepyhead/Project/SEBIS/les-backend-express/node_modules/express-session/index.js:340:11)
+

@@ -22,6 +22,7 @@ const googleAuth = async (idToken, role) => {
         firstName: given_name,
         lastName: family_name,
         roleId: role,
+        isVerified: true,
       });
       const createdUser = await getUserByEmail(user.email, {
         include: 'role',

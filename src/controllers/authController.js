@@ -37,6 +37,51 @@ const register = catchAsync(async (req, res) => {
   res.sendWrapped(result, httpStatus.CREATED);
 });
 
+const registerByPhoneNumber = catchAsync(async (req, res) => {
+  // belum otp
+  const { body } = req;
+  body.roleId = roleId.STUDENT;
+  body.isVerified = true;
+  const user = await userService.createUserByPhoneNumber(body);
+  const token = await tokenService.generateAuthTokens(user);
+  const login = {
+    user,
+    token,
+  };
+  res.sendWrapped(login, httpStatus.CREATED);
+});
+const resendEmailConfirmation = catchAsync(async (req, res) => {
+  const { email } = req.query;
+  const user = await userService.getUserByEmail(email, { include: 'role' });
+  const { access } = await tokenService.generateAuthTokens(user);
+  const url = `${req.protocol}://${req.headers.host}/v1/auth/confirmation/${access.token}`;
+  let textEmail = `Hello ${email}, <br>`;
+  textEmail
+    += 'Silahkan klik link dibawah ini untuk melakukan verifikasi pendaftaran akun:<br>';
+  textEmail += `Link Validasi: <u><b>${url}</b></u>`;
+  textEmail += '<br><br><br>';
+  textEmail += 'Regards,<br>';
+  textEmail += 'SebisLes Staff';
+
+  sendMail(email, 'SEBIS Les - User Email', textEmail);
+  res.sendWrapped(
+    'Link confirmation already send to your email, please check your inbox',
+    httpStatus.OK,
+  );
+});
+
+const emailConfirmation = catchAsync(async (req, res) => {
+  const { sub } = jwt.verify(req.params.token, config.jwt.secret);
+  const body = {
+    isVerified: true,
+  };
+  userService.updateUserById(sub, body);
+  res.sendWrapped(
+    'Your account successfully confirmed, now you can login using your email and password',
+    httpStatus.OK,
+  );
+});
+
 const loginByPhoneNumber = catchAsync(async (req, res) => {
   // belum otp
   const { phoneNumber } = req.body;
@@ -54,51 +99,6 @@ const loginByPhoneNumber = catchAsync(async (req, res) => {
   };
 
   res.sendWrapped(login, httpStatus.OK);
-});
-
-const resendEmailConfirmation = catchAsync(async (req, res) => {
-  const { email } = req.query;
-  const user = await userService.getUserByEmail(email, { include: 'role' });
-  const { access } = await tokenService.generateAuthTokens(user);
-  const url = `${req.protocol}://${req.headers.host}/v1/auth/confirmation/${access.token}`;
-  let textEmail = `Hello ${email}, <br>`;
-  textEmail
-    += 'Silahkan klik link dibawah ini untuk melakukan verifikasi pendaftaran akun:<br>';
-  textEmail += `Link Validasi: <u><b>${url}</b></u>`;
-  textEmail += '<br><br><br>';
-  textEmail += 'Regards,<br>';
-  textEmail += 'SebisLes Staff';
-
-  sendMail(email, 'SEBIS Les - User Email', textEmail);
-  res.sendWrapped(
-    'Email confirmation already send to your email, please check your inbox',
-    httpStatus.OK,
-  );
-});
-
-const emailConfirmation = catchAsync(async (req, res) => {
-  const { sub } = jwt.verify(req.params.token, config.jwt.secret);
-  const body = {
-    isVerified: true,
-  };
-  userService.updateUserById(sub, body);
-  res.sendWrapped(
-    'Your account successfully confirmed, now you can login using your email and password',
-    httpStatus.OK,
-  );
-});
-
-const registerByPhoneNumber = catchAsync(async (req, res) => {
-  // belum otp
-  const { body } = req;
-  body.roleId = roleId.STUDENT;
-  const user = await userService.createUserByPhoneNumber(body);
-  const token = await tokenService.generateAuthTokens(user);
-  const login = {
-    user,
-    token,
-  };
-  res.sendWrapped(login, httpStatus.CREATED);
 });
 
 const loginByGoogleTeacher = catchAsync(async (req, res) => {
@@ -142,6 +142,12 @@ const login = catchAsync(async (req, res) => {
     password,
   );
   const token = await tokenService.generateAuthTokens(user);
+  if (user.isVerified === false) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Account has not been confirmed, please confirm your email and re login',
+    );
+  }
   res.sendWrapped(token, httpStatus.OK);
 });
 
