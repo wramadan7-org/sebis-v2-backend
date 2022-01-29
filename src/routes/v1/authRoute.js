@@ -29,6 +29,7 @@ router.post(
   authController.resetPassword,
 );
 
+router.post('/register-phone-number', authController.registerByPhoneNumber);
 router.post('/login-phone-number', authController.loginByPhoneNumber);
 
 module.exports = router;

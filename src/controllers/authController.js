@@ -6,36 +6,59 @@ const authService = require('../services/authService');
 const tokenService = require('../services/tokenService');
 const { tokenTypes } = require('../config/tokens');
 const { googleAuth } = require('../utils/googleOauth');
-const { read } = require('../config/logger');
 const { roleId } = require('../config/roles');
+const ApiError = require('../utils/ApiError');
+const { sendMail } = require('../utils/mailer');
 
 const register = catchAsync(async (req, res) => {
   const userBody = req.body;
   const user = await userService.createUser(userBody);
+
+  // let linkUri = `${baseurl}/reset-password/${randomString}`;
+  let url;
+  let textEmail = `Hello ${user.email}, <br>`;
+  textEmail
+    += 'Silahkan klik link dibawah ini untuk melakukan verifikasi pergatian password:<br>';
+  textEmail += `Link Validasi: <u><b>${url}</b></u>`;
+  textEmail += '<br><br><br>';
+  textEmail += 'Regards,<br>';
+  textEmail += 'SebisLes Staff';
+
+  sendMail(user.email, 'SEBIS Les - User Email', textEmail);
+
   res.sendWrapped(user, httpStatus.CREATED);
 });
 
 const loginByPhoneNumber = catchAsync(async (req, res) => {
+  // belum otp
   const { phoneNumber } = req.body;
-  const role = roleId.STUDENT;
-
-  let user;
-  user = await userService.getUserByPhoneNumber(phoneNumber, {
+  const user = await userService.getUserByPhoneNumber(phoneNumber, {
     include: 'role',
   });
   if (!user) {
-    user = await userService.createUserByPhoneNumber(phoneNumber, role);
+    throw new ApiError(httpStatus.NOT_FOUND, 'Phone not registered');
   }
 
   const token = await tokenService.generateAuthTokens(user);
-  const message = 'Login Sucessfully';
   const login = {
-    message,
     user,
     token,
   };
 
   res.sendWrapped(login, httpStatus.OK);
+});
+
+const registerByPhoneNumber = catchAsync(async (req, res) => {
+  // belum otp
+  const { body } = req;
+  body.roleId = roleId.STUDENT;
+  const user = await userService.createUserByPhoneNumber(body);
+  const token = await tokenService.generateAuthTokens(user);
+  const login = {
+    user,
+    token,
+  };
+  res.sendWrapped(login, httpStatus.CREATED);
 });
 
 const loginByGoogleTeacher = catchAsync(async (req, res) => {
@@ -121,4 +144,5 @@ module.exports = {
   loginByGoogleTeacher,
   loginByGoogleStudent,
   loginByPhoneNumber,
+  registerByPhoneNumber,
 };

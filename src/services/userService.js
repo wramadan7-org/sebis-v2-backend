@@ -16,48 +16,8 @@ const getUserByPhoneNumber = async (phoneNumber, opts = {}) => {
     },
     ...opts,
   });
+
   return user;
-};
-
-/**
- * Create user
- * @param {object} userBody
- * @returns {Promise<User>}
- */
-const createUser = async (userBody) => {
-  const user = await User.findOne({
-    where: {
-      email: userBody.email,
-    },
-  });
-
-  if (user && user.email === userBody.email) throw new ApiError(httpStatus.CONFLICT, 'Email already taken.');
-
-  return User.create(userBody);
-};
-
-/**
- * Create user by phone number
- * @param {object} userBody
- * @returns {Promise<User>}
- */
-const createUserByPhoneNumber = async (phoneNumber, roleId) => {
-  const user = await User.findOne({
-    where: {
-      phoneNumber,
-    },
-  });
-  const body = {
-    phoneNumber,
-    roleId,
-  };
-
-  if (user) throw new ApiError(httpStatus.CONFLICT, 'Phone number already taken.');
-  await User.create(body);
-  const userCreated = await getUserByPhoneNumber(phoneNumber, {
-    include: 'role',
-  });
-  return userCreated;
 };
 
 /**
@@ -93,6 +53,44 @@ const getUserById = async (userId, opts = {}) => {
   return user;
 };
 
+/**
+ * Create user
+ * @param {object} userBody
+ * @returns {Promise<User>}
+ */
+const createUser = async (userBody) => {
+  const checkEmail = await getUserByEmail(userBody.email);
+  if (checkEmail) {
+    throw new ApiError(httpStatus.CONFLICT, 'Email already taken.');
+  }
+  const checkPhone = await getUserByPhoneNumber(userBody.phoneNumber);
+  if (checkPhone) {
+    throw new ApiError(httpStatus.CONFLICT, 'Phone Number already taken.');
+  }
+
+  return User.create(userBody);
+};
+/**
+ * Create user by phone number
+ * @param {object} userBody
+ * @returns {Promise<User>}
+ */
+const createUserByPhoneNumber = async (userBody) => {
+  const checkEmail = await getUserByEmail(userBody.email);
+  if (checkEmail) {
+    throw new ApiError(httpStatus.CONFLICT, 'Email already taken.');
+  }
+  const checkPhone = await getUserByPhoneNumber(userBody.phoneNumber);
+  if (checkPhone) {
+    throw new ApiError(httpStatus.CONFLICT, 'Phone Number already taken.');
+  }
+
+  await User.create(userBody);
+  const userCreated = await getUserByPhoneNumber(userBody.phoneNumber, {
+    include: 'role',
+  });
+  return userCreated;
+};
 /**
  * Update user by id
  * @param {string} userId
