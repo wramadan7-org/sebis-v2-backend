@@ -7,7 +7,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
         references: {
-          model: 'tutoringTransaction',
+          model: 'tutoringTransactions',
           key: 'id',
         },
         onUpdate: 'CASCADE',
