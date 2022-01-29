@@ -29,6 +29,8 @@ router.post(
   authController.resetPassword,
 );
 
+router.post('/resend-confirmation', authController.resendEmailConfirmation);
+router.get('/confirmation/:token', authController.emailConfirmation);
 router.post('/register-phone-number', authController.registerByPhoneNumber);
 router.post('/login-phone-number', authController.loginByPhoneNumber);
 

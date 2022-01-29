@@ -69,6 +69,10 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    },
   },
   {
     paranoid: true,

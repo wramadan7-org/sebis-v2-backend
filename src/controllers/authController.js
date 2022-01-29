@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
 const catchAsync = require('../utils/catchAsync');
 const userService = require('../services/userService');
 const authService = require('../services/authService');
@@ -9,24 +10,31 @@ const { googleAuth } = require('../utils/googleOauth');
 const { roleId } = require('../config/roles');
 const ApiError = require('../utils/ApiError');
 const { sendMail } = require('../utils/mailer');
+const config = require('../config/config');
 
 const register = catchAsync(async (req, res) => {
   const userBody = req.body;
   const user = await userService.createUser(userBody);
-
-  // let linkUri = `${baseurl}/reset-password/${randomString}`;
-  let url;
-  let textEmail = `Hello ${user.email}, <br>`;
+  const { email, id } = user;
+  const registeredUser = await userService.getUserById(id, { include: 'role' });
+  const { access } = await tokenService.generateAuthTokens(registeredUser);
+  const url = `${req.protocol}://${req.headers.host}/v1/auth/confirmation/${access.token}`;
+  let textEmail = `Hello ${email}, <br>`;
   textEmail
-    += 'Silahkan klik link dibawah ini untuk melakukan verifikasi pergatian password:<br>';
+    += 'Silahkan klik link dibawah ini untuk melakukan verifikasi pendaftaran akun:<br>';
   textEmail += `Link Validasi: <u><b>${url}</b></u>`;
   textEmail += '<br><br><br>';
   textEmail += 'Regards,<br>';
   textEmail += 'SebisLes Staff';
 
-  sendMail(user.email, 'SEBIS Les - User Email', textEmail);
+  sendMail(email, 'SEBIS Les - User Email', textEmail);
 
-  res.sendWrapped(user, httpStatus.CREATED);
+  const message = 'Registration is successful, please check your email to confirm';
+  const result = {
+    user,
+    message,
+  };
+  res.sendWrapped(result, httpStatus.CREATED);
 });
 
 const loginByPhoneNumber = catchAsync(async (req, res) => {
@@ -46,6 +54,38 @@ const loginByPhoneNumber = catchAsync(async (req, res) => {
   };
 
   res.sendWrapped(login, httpStatus.OK);
+});
+
+const resendEmailConfirmation = catchAsync(async (req, res) => {
+  const { email } = req.query;
+  const user = await userService.getUserByEmail(email, { include: 'role' });
+  const { access } = await tokenService.generateAuthTokens(user);
+  const url = `${req.protocol}://${req.headers.host}/v1/auth/confirmation/${access.token}`;
+  let textEmail = `Hello ${email}, <br>`;
+  textEmail
+    += 'Silahkan klik link dibawah ini untuk melakukan verifikasi pendaftaran akun:<br>';
+  textEmail += `Link Validasi: <u><b>${url}</b></u>`;
+  textEmail += '<br><br><br>';
+  textEmail += 'Regards,<br>';
+  textEmail += 'SebisLes Staff';
+
+  sendMail(email, 'SEBIS Les - User Email', textEmail);
+  res.sendWrapped(
+    'Email confirmation already send to your email, please check your inbox',
+    httpStatus.OK,
+  );
+});
+
+const emailConfirmation = catchAsync(async (req, res) => {
+  const { sub } = jwt.verify(req.params.token, config.jwt.secret);
+  const body = {
+    isVerified: true,
+  };
+  userService.updateUserById(sub, body);
+  res.sendWrapped(
+    'Your account successfully confirmed, now you can login using your email and password',
+    httpStatus.OK,
+  );
 });
 
 const registerByPhoneNumber = catchAsync(async (req, res) => {
@@ -145,4 +185,6 @@ module.exports = {
   loginByGoogleStudent,
   loginByPhoneNumber,
   registerByPhoneNumber,
+  emailConfirmation,
+  resendEmailConfirmation,
 };
