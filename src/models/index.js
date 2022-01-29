@@ -23,6 +23,7 @@ const { Reference } = require('./Reference');
 const { Schedule } = require('./Schedule');
 const { Wishlist } = require('./Wishlist');
 const { WishlistItem } = require('./WishlistItem');
+const { TutoringTransaction } = require('./TutoringTransaction');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -312,6 +313,14 @@ const setupSequelizeAssociations = async () => {
 
   AvailabilityHours.hasMany(WishlistItem, {
     foreignKey: 'availabilityHoursId',
+  });
+
+  TutoringTransaction.belongsTo(User, {
+    foreignKey: 'studentId',
+  });
+
+  User.hasMany(TutoringTransaction, {
+    foreignKey: 'studentId',
   });
 
   // finally sync sequelize
