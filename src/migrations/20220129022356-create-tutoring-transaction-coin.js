@@ -5,7 +5,7 @@ const {
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable(
-      'tutoringTransaction',
+      'tutoringTransactions',
       {
         id: {
           type: Sequelize.STRING,
@@ -41,6 +41,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('tutoringTransaction');
+    await queryInterface.dropTable('tutoringTransactions');
   },
 };

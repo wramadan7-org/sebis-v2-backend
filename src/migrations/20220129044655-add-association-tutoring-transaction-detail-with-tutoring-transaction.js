@@ -1,7 +1,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn(
-      'tutoringTransactionDetail',
+      'tutoringTransactionDetails',
       'tutoringTransactionId',
       {
         type: Sequelize.STRING,
@@ -19,7 +19,7 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     await queryInterface.removeColumn(
-      'tutoringTransactionDetail',
+      'tutoringTransactionDetails',
       'tutoringTransactionId',
     );
   },
