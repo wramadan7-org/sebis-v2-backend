@@ -33,5 +33,11 @@ router.post('/resend-confirmation', authController.resendEmailConfirmation);
 router.get('/confirmation/:token', authController.emailConfirmation);
 router.post('/register-phone-number', authController.registerByPhoneNumber);
 router.post('/login-phone-number', authController.loginByPhoneNumber);
+router.post('/forgot-password', authController.sendEmailResetPassword);
+router.post(
+  '/reset-password/:userId/:token',
+  validate(authValidation.resetPassword),
+  authController.resetPasswordByEmail,
+);
 
 module.exports = router;

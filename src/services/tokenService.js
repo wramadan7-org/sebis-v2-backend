@@ -203,6 +203,16 @@ const generateAuthTokens = async (user) => {
   };
 };
 
+const generateResetPasswordToken = async (user) => {
+  const secret = config.jwt.secret + user.password;
+  const payload = {
+    email: user.email,
+    id: user.id,
+  };
+  const token = jwt.sign(payload, secret, { expiresIn: '15m' });
+  return token;
+};
+
 module.exports = {
   generateAuthTokens,
   revokeToken,
@@ -211,4 +221,5 @@ module.exports = {
   revokeRefreshToken,
   isTokenActive,
   isRefreshTokenActive,
+  generateResetPasswordToken,
 };

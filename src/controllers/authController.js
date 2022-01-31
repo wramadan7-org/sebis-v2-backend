@@ -180,6 +180,55 @@ const resetPassword = catchAsync(async (req, res) => {
   res.sendWrapped('Password updated.', httpStatus.OK);
 });
 
+const sendEmailResetPassword = catchAsync(async (req, res) => {
+  const { email } = req.body;
+
+  const registeredUser = await userService.getUserByEmail(email, {
+    include: 'role',
+  });
+  if (!registeredUser) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      'User not found, please input your registered email',
+    );
+  }
+  const token = await tokenService.generateResetPasswordToken(registeredUser);
+  const url = `${req.protocol}://${req.headers.host}/v1/auth/reset-password/${registeredUser.id}/${token}`;
+  let textEmail = `Hello ${email}, <br>`;
+  textEmail
+    += 'Silahkan klik link dibawah ini untuk mereset password kamu:<br>';
+  textEmail += `Link reset password: <u><b>${url}</b></u>`;
+  textEmail += '<br><br><br>';
+  textEmail += 'Regards,<br>';
+  textEmail += 'SebisLes Staff';
+
+  sendMail(email, 'SEBIS Les - User Email', textEmail);
+
+  res.sendWrapped(
+    'Password reset link has been sent to your email',
+    httpStatus.CREATED,
+  );
+});
+
+const resetPasswordByEmail = catchAsync(async (req, res) => {
+  const { userId, token } = req.params;
+  const { password } = req.body;
+  try {
+    const user = await userService.getUserById(userId, { include: 'role' });
+    const secret = config.jwt.secret + user.password;
+    const verify = await jwt.verify(token, secret);
+    console.log(verify);
+    await authService.updatePassword(userId, password);
+    res.sendWrapped('Password updated', httpStatus.OK);
+  } catch (error) {
+    console.log(error);
+    res.sendWrapped(
+      'The password reset link has expired, please request a password reset again',
+      httpStatus.BAD_REQUEST,
+    );
+  }
+});
+
 module.exports = {
   login,
   refreshTokens,
@@ -193,4 +242,6 @@ module.exports = {
   registerByPhoneNumber,
   emailConfirmation,
   resendEmailConfirmation,
+  sendEmailResetPassword,
+  resetPasswordByEmail,
 };
