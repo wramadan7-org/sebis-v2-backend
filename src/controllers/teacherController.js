@@ -13,7 +13,9 @@ const { TeachingExperienceDetail } = require('../models/TeachingExperienceDetail
 const { EducationBackground } = require('../models/EducationBackground');
 const { File } = require('../models/Files');
 const { User } = require('../models/User');
+const { Price } = require('../models/Price');
 const multering = require('../utils/multer');
+const resizing = require('../utils/resizeImage');
 
 const profileInfo = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
@@ -322,7 +324,7 @@ const createdFilesProfile = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const destination = 'images/profile';
 
-  multering.options(`./public/${destination}`, teacherId).single('fileProfile')(req, res, async (err) => {
+  multering.options('./', teacherId).single('fileProfile')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
     } else {
@@ -331,6 +333,8 @@ const createdFilesProfile = catchAsync(async (req, res) => {
       }
 
       const updateProfile = await userService.updateProfile(teacherId, `static/${destination}/${req.file.filename}`);
+
+      await resizing(req.file.path, 200, 200, 90, `./public/${destination}/${req.file.filename}`);
 
       res.sendWrapped(updateProfile, httpStatus.OK);
     }
@@ -341,7 +345,7 @@ const createFileKTP = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const destination = 'images/ktp';
 
-  multering.options(`./public/${destination}`, teacherId).single('fileKTP')(req, res, async (err) => {
+  multering.options('./', teacherId).single('fileKTP')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
     } else {
@@ -356,6 +360,8 @@ const createFileKTP = catchAsync(async (req, res) => {
 
       const insertKtp = await fileService.addFile(teacherId, fileBody);
 
+      await resizing(req.file.path, 200, 200, 90, `./public/${destination}/${req.file.filename}`);
+
       res.sendWrapped(insertKtp, httpStatus.OK);
     }
   });
@@ -365,7 +371,7 @@ const createFileNPWP = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const destination = 'images/npwp';
 
-  multering.options(`./public/${destination}`, teacherId).single('fileNPWP')(req, res, async (err) => {
+  multering.options('./', teacherId).single('fileNPWP')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
     } else {
@@ -379,6 +385,8 @@ const createFileNPWP = catchAsync(async (req, res) => {
       };
 
       const insertNPWP = await fileService.addFile(teacherId, fileBody);
+
+      await resizing(req.file.path, 200, 200, 90, `./public/${destination}/${req.file.filename}`);
 
       res.sendWrapped(insertNPWP, httpStatus.OK);
     }
@@ -428,7 +436,12 @@ const getUserDetail = catchAsync(async (req, res) => {
   const teacher = await userService.getUserById(
     teacherId,
     {
-      include: ['userDetail'],
+      include: [
+        {
+          model: UserDetail,
+          include: Price,
+        },
+      ],
     },
   );
 

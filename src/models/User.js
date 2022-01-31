@@ -73,6 +73,11 @@ const User = sequelize.define(
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },
+    point: {
+      type: DataTypes.BIGINT,
+      allowNull: true,
+      defaultValue: 0,
+    },
   },
   {
     paranoid: true,

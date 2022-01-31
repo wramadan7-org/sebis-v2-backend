@@ -26,6 +26,6 @@
     "no-unneeded-ternary": "off",
     "no-await-in-loop": "off",
     "eqeqeq": "off",
-    "camelcase": "off"
+    "no-dupe-keys": "off"
   }
 }

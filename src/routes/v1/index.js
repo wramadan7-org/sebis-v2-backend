@@ -1,4 +1,5 @@
 const express = require('express');
+const cron = require('node-cron');
 const authRoute = require('./authRoute');
 const profileRoute = require('./profileRoute');
 const schoolRoute = require('./schoolRoute');
@@ -13,12 +14,19 @@ const gradeRoute = require('./gradeRoute');
 const subjectRoute = require('./subjectRoute');
 const teacherSubjectRoute = require('./teacherSubjectRoute');
 const migrationRoute = require('./migrateRoute');
-// const publicRoute = require('./publicRoute');
 const cartRoute = require('./cartRoute');
 const bankRoute = require('./bankRoute');
 const referenceRoute = require('./referenceRoute');
+const publicRoute = require('./publicRoute');
+const scheduleRoute = require('./scheduleRoute');
+const wishlistRoute = require('./wishlistRoute');
+const priceRoute = require('./priceRoute');
+
+const cronController = require('../../controllers/cronController');
 
 const router = express.Router();
+
+cron.schedule('* * * * *', cronController.cronJobCartPendingTwoHoursBeforeLes);
 
 const defaultRoutes = [
   {
@@ -77,10 +85,6 @@ const defaultRoutes = [
     path: '/migrate',
     route: migrationRoute,
   },
-  // {
-  //   path: '/public',
-  //   route: publicRoute,
-  // },
   {
     path: '/cart',
     route: cartRoute,
@@ -92,6 +96,22 @@ const defaultRoutes = [
   {
     path: '/reference',
     route: referenceRoute,
+  },
+  {
+    path: '/public',
+    route: publicRoute,
+  },
+  {
+    path: '/schedule',
+    route: scheduleRoute,
+  },
+  {
+    path: '/wishlist',
+    route: wishlistRoute,
+  },
+  {
+    path: '/price',
+    route: priceRoute,
   },
 ];
 

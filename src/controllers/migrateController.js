@@ -66,6 +66,25 @@ const addGradeGroup = catchAsync(async (req, res) => {
   res.sendWrapped(grade, httpStatus.CREATED);
 });
 
+const addAvailabilityHours = catchAsync(async (req, res) => {
+  const availabilityHours = await migrateService.addAvailabilityHours();
+
+  res.sendWrapped(availabilityHours, httpStatus.CREATED);
+});
+
+const addTeacherSubjects = catchAsync(async (req, res) => {
+  const teacherSubject = await migrateService.addTeacherSubjects();
+
+  res.sendWrapped(teacherSubject, httpStatus.CREATED);
+});
+
+const addPrice = catchAsync(async (req, res) => {
+  const priceBody = req.body;
+  const price = await migrateService.addPrice(priceBody);
+
+  res.sendWrapped(price, httpStatus.OK);
+});
+
 module.exports = {
   listUser,
   addUser,
@@ -76,4 +95,7 @@ module.exports = {
   addDevice,
   addSubject,
   addGradeGroup,
+  addAvailabilityHours,
+  addTeacherSubjects,
+  addPrice,
 };

@@ -20,7 +20,9 @@ const { ReferralHistory } = require('./ReferralHistory');
 const { Device } = require('./Device');
 const { Bank } = require('./Bank');
 const { Reference } = require('./Reference');
-const { Message } = require('./Message');
+const { Schedule } = require('./Schedule');
+const { Wishlist } = require('./Wishlist');
+const { WishlistItem } = require('./WishlistItem');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -32,11 +34,11 @@ const setupSequelizeAssociations = async () => {
   // });
   User.hasOne(UserDetail);
 
-  UserDetail.hasOne(Price);
-
   UserDetail.belongsTo(User);
 
-  Price.belongsTo(UserDetail);
+  UserDetail.belongsTo(Price);
+
+  Price.hasOne(UserDetail);
 
   School.hasMany(User);
 
@@ -49,6 +51,15 @@ const setupSequelizeAssociations = async () => {
 
   User.hasOne(Cart, {
     foreignKey: 'studentId',
+  });
+
+  Cart.belongsTo(User, {
+    foreignKey: 'teacherId',
+    as: 'teacher',
+  });
+
+  User.hasOne(Cart, {
+    foreignKey: 'teacherId',
   });
 
   CartItem.belongsTo(Cart, {
@@ -66,6 +77,22 @@ const setupSequelizeAssociations = async () => {
 
   User.hasMany(CartItem, {
     foreignKey: 'teacherId',
+  });
+
+  CartItem.belongsTo(TeacherSubject, {
+    foreignKey: 'teacherSubjectId',
+  });
+
+  TeacherSubject.hasMany(CartItem, {
+    foreignKey: 'teacherSubjectId',
+  });
+
+  CartItem.belongsTo(AvailabilityHours, {
+    foreignKey: 'availabilityHoursId',
+  });
+
+  AvailabilityHours.hasMany(CartItem, {
+    foreignKey: 'availabilityHoursId',
   });
 
   User.hasMany(TeachingExperience, {
@@ -202,24 +229,89 @@ const setupSequelizeAssociations = async () => {
     foreignKey: 'userRefer',
   });
 
-  User.hasMany(Message, {
-    foreignKey: 'senderId',
-    as: 'sender',
+  User.hasMany(Schedule, {
+    foreignKey: 'teacherId',
   });
 
-  Message.belongsTo(User, {
-    foreignKey: 'senderId',
-    as: 'sender',
+  User.hasMany(Schedule, {
+    foreignKey: 'studentId',
   });
 
-  User.hasMany(Message, {
-    foreignKey: 'recipientId',
-    as: 'recipient',
+  Schedule.belongsTo(User, {
+    foreignKey: 'teacherId',
+    as: 'teacher',
   });
 
-  Message.belongsTo(User, {
-    foreignKey: 'recipientId',
-    as: 'recipient',
+  Schedule.belongsTo(User, {
+    foreignKey: 'studentId',
+    as: 'student',
+  });
+
+  TeacherSubject.hasMany(Schedule, {
+    foreignKey: 'teacherSubjectId',
+  });
+
+  Schedule.belongsTo(TeacherSubject, {
+    foreignKey: 'teacherSubjectId',
+  });
+
+  AvailabilityHours.hasMany(Schedule, {
+    foreignKey: 'availabilityHoursId',
+  });
+
+  Schedule.belongsTo(AvailabilityHours, {
+    foreignKey: 'availabilityHoursId',
+  });
+
+  Wishlist.belongsTo(User, {
+    foreignKey: 'studentId',
+    as: 'student',
+  });
+
+  User.hasMany(Wishlist, {
+    foreignKey: 'studentId',
+  });
+
+  Wishlist.belongsTo(User, {
+    foreignKey: 'teacherId',
+    as: 'teacher',
+  });
+
+  User.hasMany(Wishlist, {
+    foreignKey: 'teacherId',
+  });
+
+  WishlistItem.belongsTo(Wishlist, {
+    foreignKey: 'wishlistId',
+  });
+
+  Wishlist.hasMany(WishlistItem, {
+    foreignKey: 'wishlistId',
+  });
+
+  WishlistItem.belongsTo(User, {
+    foreignKey: 'teacherId',
+    as: 'teacher',
+  });
+
+  User.hasMany(WishlistItem, {
+    foreignKey: 'teacherId',
+  });
+
+  WishlistItem.belongsTo(TeacherSubject, {
+    foreignKey: 'teacherSubjectId',
+  });
+
+  TeacherSubject.hasMany(WishlistItem, {
+    foreignKey: 'teacherSubjectId',
+  });
+
+  WishlistItem.belongsTo(AvailabilityHours, {
+    foreignKey: 'availabilityHoursId',
+  });
+
+  AvailabilityHours.hasMany(WishlistItem, {
+    foreignKey: 'availabilityHoursId',
   });
 
   // finally sync sequelize
