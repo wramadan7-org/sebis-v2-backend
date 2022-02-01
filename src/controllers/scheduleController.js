@@ -1,11 +1,13 @@
 const httpStatus = require('http-status');
 const moment = require('moment');
+const { condition } = require('sequelize');
 const catchAsync = require('../utils/catchAsync');
 const scheduleService = require('../services/scheduleService');
 const cartService = require('../services/cartService');
 const userService = require('../services/userService');
 const userDetailService = require('../services/userDetailService');
 const priceService = require('../services/priceService');
+const tutoringTransactionService = require('../services/tutoringTransactionService');
 const ApiError = require('../utils/ApiError');
 
 const { User } = require('../models/User');
@@ -21,6 +23,10 @@ const pagination = require('../utils/pagination');
 const dates = require('../utils/date');
 const days = require('../utils/day');
 
+const {
+  PENDING, ACCEPT, REJECT, CANCEL, PROCESS, EXPIRE, DONE, DELETE,
+} = process.env;
+
 const createSchedule = catchAsync(async (req, res) => {
   const { id } = req.user;
   const scheduleBody = req.body;
@@ -30,8 +36,11 @@ const createSchedule = catchAsync(async (req, res) => {
   const user = await userService.getUserById(id);
 
   const arrayDataBody = [];
+  let discount = 0;
   let subtotal = 0;
   let total = 0;
+
+  const conditionStatus = [PENDING, REJECT, CANCEL, PROCESS, EXPIRE, DONE, DELETE];
 
   for (const loopBody of scheduleBody) {
     const checkCart = await cartService.getCartItemById(
@@ -75,6 +84,10 @@ const createSchedule = catchAsync(async (req, res) => {
       },
     );
 
+    const checkStatusCartItem = conditionStatus.some((value) => checkCart.cartItemStatus.includes(value));
+
+    if (checkStatusCartItem) throw new ApiError(httpStatus.BAD_REQUEST, 'Hanya bisa menambah item yang sudah di setujui oleh guru.');
+
     let pricePrivate = 0;
     let priceGroup = 0;
 
@@ -98,7 +111,7 @@ const createSchedule = catchAsync(async (req, res) => {
     const dataBody = {
       dateSchedule: moment(checkCart.startTime).format('YYYY-MM-DD'),
       typeClass: checkCart.typeCourse,
-      statusSchedule: 'pending',
+      statusSchedule: PENDING,
       teacherSubjectId: checkCart.teacherSubjectId,
       availabilityHoursId: checkCart.availabilityHoursId,
       teacherId: checkCart.teacherId,
@@ -106,10 +119,26 @@ const createSchedule = catchAsync(async (req, res) => {
       requestMaterial: checkCart.requestMaterial ? checkCart.requestMaterial : null,
       imageMaterial: checkCart.imageMaterial ? checkCart.imageMaterial : null,
       price: checkCart.typeCourse == 'private' ? pricePrivate : priceGroup,
+      // data untuk transaksi detail
+      teacherName: `${checkCart.cart.teacher.firstName} ${checkCart.cart.teacher.lastName}`,
+      lessonSchedule: checkCart.startTime,
+      subject: checkCart.teacherSubject.subject.subjectName,
+      grade: checkCart.teacherSubject.grade.gradeName,
+      discount,
     };
+
+    subtotal += Math.abs(((discount / 100) * dataBody.price) - dataBody.price);
     total += dataBody.price;
     arrayDataBody.push(dataBody);
   }
+
+  const dataTransaction = {
+    statusTransaction: PROCESS,
+    discount,
+    subtotal,
+    total,
+    paid: user.point,
+  };
 
   if (user.point < total) throw new ApiError(httpStatus.CONFLICT, 'Point anda tidak cukup untuk membeli kelas ini.');
 
@@ -117,18 +146,43 @@ const createSchedule = catchAsync(async (req, res) => {
 
   if (!schedule) throw new ApiError(httpStatus.CONFLICT, 'Gagal membuat jadwal les. Harap hubungi administrator kita.');
 
-  // const paying = user.point - total;
+  const transaction = await tutoringTransactionService.createTransactionLes(id, dataTransaction);
 
-  // const updatePoint = await userService.updateUserById(
-  //   id,
-  //   {
-  //     point: paying,
-  //   },
-  // );
+  if (!transaction) throw new ApiError(httpStatus.BAD_REQUEST, 'Gagal membuat transaksi');
 
-  // if (!updatePoint) throw new ApiError(httpStatus.CONFLICT, 'Gagal mengupdate saldo.');
+  const arrayDataTransactionDetail = [];
 
-  res.sendWrapped(arrayDataBody, httpStatus.CREATED);
+  for (const loopForTransactionDetail of schedule) {
+    const dataTransactionDetail = {
+      tutoringTransactionId: transaction.dataValues.id,
+      scheduleId: loopForTransactionDetail.schedule.dataValues.id,
+      teacherName: loopForTransactionDetail.body.teacherName,
+      lessonSchedule: loopForTransactionDetail.body.lessonSchedule,
+      subject: loopForTransactionDetail.body.subject,
+      grade: loopForTransactionDetail.body.grade,
+      discount: loopForTransactionDetail.body.discount,
+      price: loopForTransactionDetail.body.price,
+    };
+
+    arrayDataTransactionDetail.push(dataTransactionDetail);
+  }
+
+  const transactionDetail = await tutoringTransactionService.createTransactionDetailLes(arrayDataTransactionDetail);
+
+  if (!transactionDetail) throw new ApiError(httpStatus.BAD_REQUEST, 'Gagal membuat transaksi detail.');
+
+  const paying = user.point - total;
+
+  const updatePoint = await userService.updateUserById(
+    id,
+    {
+      point: paying,
+    },
+  );
+  if (!updatePoint) throw new ApiError(httpStatus.CONFLICT, 'Gagal mengupdate saldo.');
+  res.sendWrapped(arrayDataTransactionDetail, httpStatus.CREATED);
+
+  // old logic
   /*
     const user = await userService.getUserById(id);
     const teacherPrice = await userDetailService.getUserDetailByUserId(
