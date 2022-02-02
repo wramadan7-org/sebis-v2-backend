@@ -133,7 +133,7 @@ const createSchedule = catchAsync(async (req, res) => {
   }
 
   const dataTransaction = {
-    statusTransaction: PROCESS,
+    statusTransaction: DONE,
     discount,
     subtotal,
     total,
