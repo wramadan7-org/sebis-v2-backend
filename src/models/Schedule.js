@@ -1,7 +1,7 @@
 const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
 
 const {
-  PENDING, ACCEPT, PROCESS, EXPIRE, REJECT, DONE,
+  PENDING, ACCEPT, PROCESS, EXPIRE, REJECT, DONE, DELETE,
 } = process.env;
 
 const Schedule = sequelize.define('schedule', {
@@ -20,7 +20,7 @@ const Schedule = sequelize.define('schedule', {
     allowNull: true,
   },
   statusSchedule: {
-    type: DataTypes.ENUM(ACCEPT, PENDING, REJECT, EXPIRE, PROCESS, DONE),
+    type: DataTypes.ENUM(ACCEPT, PENDING, REJECT, EXPIRE, PROCESS, DONE, DELETE),
     allowNull: false,
   },
   requestMaterial: {

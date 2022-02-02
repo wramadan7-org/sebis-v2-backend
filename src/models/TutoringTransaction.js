@@ -5,42 +5,41 @@ const {
   PENDING, ACCEPT, REJECT, CANCEL, PROCESS, EXPIRE, DONE, DELETE,
 } = process.env;
 
-const CartItem = sequelize.define('cartItem', {
+const TutoringTransaction = sequelize.define('tutoringTransaction', {
   id: {
     type: DataTypes.UUIDV4,
     primaryKey: true,
     defaultValue: Sequelize.UUIDV4,
     allowNull: false,
   },
-  cartItemStatus: {
+  statusTransaction: {
     type: DataTypes.ENUM(PENDING, ACCEPT, REJECT, CANCEL, PROCESS, EXPIRE, DONE, DELETE),
     allowNull: false,
   },
-  typeCourse: {
-    type: DataTypes.ENUM('private', 'group'),
+  discount: {
+    type: DataTypes.BIGINT,
     allowNull: false,
+    defaultValue: 0,
   },
-  startTime: {
-    type: DataTypes.DATE,
+  subtotal: {
+    type: DataTypes.BIGINT,
     allowNull: false,
+    defaultValue: 0,
   },
-  endTime: {
-    type: DataTypes.DATE,
+  total: {
+    type: DataTypes.BIGINT,
     allowNull: false,
+    defaultValue: 0,
   },
-  requestMaterial: {
-    type: DataTypes.STRING,
-    allowNull: true,
+  paid: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    defaultValue: 0,
   },
-  imageMaterial: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-},
-{
+}, {
   paranoid: true,
 });
 
 module.exports = {
-  CartItem,
+  TutoringTransaction,
 };

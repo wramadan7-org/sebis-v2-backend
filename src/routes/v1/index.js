@@ -21,6 +21,7 @@ const publicRoute = require('./publicRoute');
 const scheduleRoute = require('./scheduleRoute');
 const wishlistRoute = require('./wishlistRoute');
 const priceRoute = require('./priceRoute');
+const tutoringTransactionRoute = require('./tutoringTransactionRoute');
 
 const cronController = require('../../controllers/cronController');
 
@@ -112,6 +113,10 @@ const defaultRoutes = [
   {
     path: '/price',
     route: priceRoute,
+  },
+  {
+    path: '/tutoring-transaction',
+    route: tutoringTransactionRoute,
   },
 ];
 

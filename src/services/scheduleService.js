@@ -124,7 +124,18 @@ const createSchedule = async (scheduleBody) => {
 
   if (!schedule) throw new ApiError(httpStatus.CONFLICT, 'Gagal membuat jadwal les. Harap hubungi administrator kita.');
 
-  return schedule;
+  const arrayResults = [];
+
+  for (let loopSchedule = 0; schedule.length > loopSchedule; loopSchedule++) {
+    const data = {
+      body: scheduleBody[loopSchedule],
+      schedule: schedule[loopSchedule],
+    };
+
+    arrayResults.push(data);
+  }
+
+  return arrayResults;
 };
 
 /**
