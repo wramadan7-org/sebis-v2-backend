@@ -133,6 +133,7 @@ const signUser = (user) => {
   return redis.setObject(redisKey, {
     id: user.id,
     email: user.email,
+    phoneNumber: user.phoneNumber,
     firstName: user.firstName,
     lastName: user.lastName,
     role: user.role.roleName,
@@ -202,6 +203,16 @@ const generateAuthTokens = async (user) => {
   };
 };
 
+const generateResetPasswordToken = async (user) => {
+  const secret = config.jwt.secret + user.password;
+  const payload = {
+    email: user.email,
+    id: user.id,
+  };
+  const token = jwt.sign(payload, secret, { expiresIn: '15m' });
+  return token;
+};
+
 module.exports = {
   generateAuthTokens,
   revokeToken,
@@ -210,4 +221,5 @@ module.exports = {
   revokeRefreshToken,
   isTokenActive,
   isRefreshTokenActive,
+  generateResetPasswordToken,
 };

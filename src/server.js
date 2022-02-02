@@ -1,6 +1,8 @@
 const cluster = require('cluster');
 const scanner = require('sonarqube-scanner');
 const numCpus = require('os').cpus().length;
+const { createServer } = require('http');
+const { Server } = require('socket.io');
 const app = require('./app');
 const config = require('./config/config');
 const { connectDb } = require('./config/database');
@@ -10,6 +12,21 @@ const { initializeQueue } = require('./queues');
 const { writeError } = require('./utils/common');
 
 let server;
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+  },
+});
+
+io.on('connection', (socket) => {
+  console.log(socket.id);
+
+  // socket io for send and receiver message
+  // socket.on('message', (data) => {
+  //   socket.broadcast.emit('message', data);
+  // });
+});
 
 const exitHandler = () => {
   if (server) {
@@ -50,7 +67,7 @@ const initializeServer = () => {
               logger.info(`Current workers: ${Object.keys(cluster.workers).length}`);
             });
           } else {
-            server = app.listen(config.port, () => {
+            server = httpServer.listen(config.port, () => {
               logger.info(`Listening to port ${config.port}`);
             });
           }

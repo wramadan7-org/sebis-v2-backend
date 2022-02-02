@@ -3,20 +3,21 @@ const { User } = require('../models/User');
 const ApiError = require('../utils/ApiError');
 
 /**
- * Create user
- * @param {object} userBody
- * @returns {Promise<User>}
+ * Get user by phone number
+ * @param {string} phoneNumber
+ * @param {object} opts
+ * @returns {Promise<User | null>}
  */
-const createUser = async (userBody) => {
+
+const getUserByPhoneNumber = async (phoneNumber, opts = {}) => {
   const user = await User.findOne({
     where: {
-      email: userBody.email,
+      phoneNumber,
     },
+    ...opts,
   });
 
-  if (user && user.email === userBody.email) throw new ApiError(httpStatus.CONFLICT, 'Email already taken.');
-
-  return User.create(userBody);
+  return user;
 };
 
 /**
@@ -25,12 +26,15 @@ const createUser = async (userBody) => {
  * @param {object} opts
  * @returns {Promise<User | null>}
  */
-const getUserByEmail = async (email, opts = {}) => User.findOne({
-  where: {
-    email,
-  },
-  ...opts,
-});
+const getUserByEmail = async (email, opts = {}) => {
+  const user = await User.findOne({
+    where: {
+      email,
+    },
+    ...opts,
+  });
+  return user;
+};
 
 /**
  * Get user by id
@@ -39,18 +43,54 @@ const getUserByEmail = async (email, opts = {}) => User.findOne({
  * @returns {Promise<User | ApiError>}
  */
 const getUserById = async (userId, opts = {}) => {
-  const user = await User.findOne(
-    {
-      where: {
-        id: userId,
-      },
-      ...opts,
+  const user = await User.findOne({
+    where: {
+      id: userId,
     },
-  );
+    ...opts,
+  });
   if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
   return user;
 };
 
+/**
+ * Create user
+ * @param {object} userBody
+ * @returns {Promise<User>}
+ */
+const createUser = async (userBody) => {
+  const checkEmail = await getUserByEmail(userBody.email);
+  if (checkEmail) {
+    throw new ApiError(httpStatus.CONFLICT, 'Email already taken.');
+  }
+  const checkPhone = await getUserByPhoneNumber(userBody.phoneNumber);
+  if (checkPhone) {
+    throw new ApiError(httpStatus.CONFLICT, 'Phone Number already taken.');
+  }
+
+  return User.create(userBody);
+};
+/**
+ * Create user by phone number
+ * @param {object} userBody
+ * @returns {Promise<User>}
+ */
+const createUserByPhoneNumber = async (userBody) => {
+  const checkEmail = await getUserByEmail(userBody.email);
+  if (checkEmail) {
+    throw new ApiError(httpStatus.CONFLICT, 'Email already taken.');
+  }
+  const checkPhone = await getUserByPhoneNumber(userBody.phoneNumber);
+  if (checkPhone) {
+    throw new ApiError(httpStatus.CONFLICT, 'Phone Number already taken.');
+  }
+
+  await User.create(userBody);
+  const userCreated = await getUserByPhoneNumber(userBody.phoneNumber, {
+    include: 'role',
+  });
+  return userCreated;
+};
 /**
  * Update user by id
  * @param {string} userId
@@ -98,4 +138,6 @@ module.exports = {
   updateUserById,
   updateProfile,
   deleteUserById,
+  getUserByPhoneNumber,
+  createUserByPhoneNumber,
 };
