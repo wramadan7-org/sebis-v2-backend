@@ -1,3 +1,4 @@
+const moment = require('moment');
 const { SequelizeInstance, sequelize, DataTypes } = require('../config/database');
 
 const File = sequelize.define('file', {
@@ -14,6 +15,16 @@ const File = sequelize.define('file', {
   fileType: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
   },
 }, {
   paranoid: true,

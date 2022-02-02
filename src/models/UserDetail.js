@@ -1,3 +1,4 @@
+const moment = require('moment');
 const { teacherStatuses } = require('../config/users');
 const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
 
@@ -66,6 +67,16 @@ const UserDetail = sequelize.define('userDetail', {
   teacherStatus: {
     type: DataTypes.ENUM(Object.values(teacherStatuses)),
     defaultValue: teacherStatuses.PENDING,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
   },
 }, {
   paranoid: true,

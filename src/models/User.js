@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const moment = require('moment');
 const {
   sequelize,
   SequelizeInstance,
@@ -77,6 +78,16 @@ const User = sequelize.define(
       type: DataTypes.BIGINT,
       allowNull: true,
       defaultValue: 0,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
     },
   },
   {
