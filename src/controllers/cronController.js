@@ -16,12 +16,21 @@ const {
 
 const cronJobCartPendingTwoHoursBeforeLes = async () => {
   const twoHoursBeforeLes = moment().add(2, 'hours').format('YYYY-MM-DD HH:mm:00');
+  const aDayBeforeNow = moment().add(-1, 'days').format('YYYY-MM-DD HH:mm:00');
 
   const cartItem = await CartItem.findAll(
     {
       where: {
-        cartItemStatus: PENDING,
-        startTime: twoHoursBeforeLes,
+        [Op.or]: [
+          {
+            cartItemStatus: PENDING,
+            startTime: twoHoursBeforeLes,
+          },
+          {
+            cartItemStatus: PENDING,
+            createdAt: aDayBeforeNow,
+          },
+        ],
       },
     },
   );
