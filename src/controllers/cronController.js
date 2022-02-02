@@ -106,7 +106,7 @@ const cronJobExpireScheduleLes = async (req, res) => {
         userId: loopValues.userId,
         total: sum + checkPoint.point,
       };
-      // await userService.updateUserById(loopValues.userId, { point: data.total });
+      await userService.updateUserById(loopValues.userId, { point: data.total });
     }
 
     const mapScheduleId = schedulePending.map((o) => o.id);
