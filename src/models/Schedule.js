@@ -1,3 +1,4 @@
+const moment = require('moment');
 const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
 
 const {
@@ -30,6 +31,16 @@ const Schedule = sequelize.define('schedule', {
   imageMaterial: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
   },
 }, {
   paranoid: true,
