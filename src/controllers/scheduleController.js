@@ -109,7 +109,7 @@ const createSchedule = catchAsync(async (req, res) => {
     }
 
     const dataBody = {
-      dateSchedule: moment(checkCart.startTime).format('YYYY-MM-DD'),
+      dateSchedule: moment(checkCart.startTime).format('YYYY-MM-DD HH:mm:ss'),
       typeClass: checkCart.typeCourse,
       statusSchedule: PENDING,
       teacherSubjectId: checkCart.teacherSubjectId,
