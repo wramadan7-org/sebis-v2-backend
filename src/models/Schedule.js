@@ -12,7 +12,7 @@ const Schedule = sequelize.define('schedule', {
     allowNull: false,
   },
   dateSchedule: {
-    type: DataTypes.DATEONLY,
+    type: DataTypes.DATE,
     allowNull: false,
   },
   typeClass: {
