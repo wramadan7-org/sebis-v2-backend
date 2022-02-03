@@ -1,3 +1,4 @@
+const moment = require('moment');
 const { sequelize, SequelizeInstance, DataTypes } = require('../config/database');
 
 const TeachingExperienceDetail = sequelize.define('teachingExperienceDetail', {
@@ -14,6 +15,16 @@ const TeachingExperienceDetail = sequelize.define('teachingExperienceDetail', {
   subject: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
   },
 }, {
   paranoid: true,

@@ -23,11 +23,13 @@ const wishlistRoute = require('./wishlistRoute');
 const priceRoute = require('./priceRoute');
 const tutoringTransactionRoute = require('./tutoringTransactionRoute');
 
+const statusController = require('../../controllers/statusController');
 const cronController = require('../../controllers/cronController');
 
 const router = express.Router();
 
 cron.schedule('* * * * *', cronController.cronJobCartPendingTwoHoursBeforeLes);
+cron.schedule('* * * * *', cronController.cronJobExpireScheduleLes);
 
 const defaultRoutes = [
   {
@@ -122,6 +124,7 @@ const defaultRoutes = [
 
 defaultRoutes.forEach((route) => {
   router.use(route.path, route.route);
+  router.patch('/update-status/:id', statusController.updateStatus);
 });
 
 module.exports = router;

@@ -1,3 +1,4 @@
+const moment = require('moment');
 const { SequelizeInstance, sequelize, DataTypes } = require('../config/database');
 
 const Reference = sequelize.define('reference', {
@@ -18,6 +19,16 @@ const Reference = sequelize.define('reference', {
   userRefer: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: moment().format('YYYY-MM-DD HH:mm:00'),
   },
 }, {
   paranoid: true,
