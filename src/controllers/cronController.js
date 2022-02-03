@@ -57,7 +57,6 @@ const cronJobExpireScheduleLes = async (req, res) => {
   const twoHoursBeforeLes = moment().add(2, 'hours').format('YYYY-MM-DD HH:mm:00');
   const aDayBeforeNow = moment().add(-1, 'days').format('YYYY-MM-DD HH:mm:00');
 
-  // proses kadaluarsa 2jam sebelum les dimulai status masih pending
   const schedulePending = await Schedule.findAll(
     {
       where: {
