@@ -6,8 +6,10 @@ const ApiError = require('../utils/ApiError');
  * Get all Coin
  * @return {Promise<ApiError | Coin>}
  */
-const getAllCoin = async () => {
-  const coin = await Coin.findAll();
+const getAllCoin = async (query) => {
+  const coin = await Coin.findAll({
+    where: query,
+  });
   return coin;
 };
 
@@ -70,6 +72,7 @@ const updateCoinById = async (id, body) => {
  */
 const deleteCoinById = async (id) => {
   const coin = await getCoinById(id);
+  if (!coin) throw new ApiError(httpStatus.NOT_FOUND, 'Koin tidak ditemukan');
   coin.destroy();
   return coin;
 };

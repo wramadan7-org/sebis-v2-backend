@@ -10,40 +10,8 @@ const {
 
 const router = Router();
 
-router.get(
-  '/',
-  auth,
-  admin,
-  administrator,
-  verifikator,
-  finance,
-  coinController.getCoin,
-);
-router.post(
-  '/',
-  auth,
-  admin,
-  administrator,
-  verifikator,
-  finance,
-  coinController.createNewCoin,
-);
-router.patch(
-  '/',
-  auth,
-  admin,
-  administrator,
-  verifikator,
-  finance,
-  coinController.updateCoin,
-);
-router.delete(
-  '/',
-  auth,
-  admin,
-  administrator,
-  verifikator,
-  finance,
-  coinController.deleteCoin,
-);
+router.get('/', auth, administrator, coinController.getCoin);
+router.post('/', auth, coinController.createNewCoin);
+router.patch('/', auth, coinController.updateCoin);
+router.delete('/', auth, coinController.deleteCoin);
 module.exports = router;
