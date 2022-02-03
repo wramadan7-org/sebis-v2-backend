@@ -5,8 +5,8 @@ const {
   DataTypes,
 } = require('../config/database');
 
-const Point = sequelize.define(
-  'point',
+const Coin = sequelize.define(
+  'coin',
   {
     id: {
       type: DataTypes.STRING,
@@ -14,7 +14,7 @@ const Point = sequelize.define(
       defaultValue: SequelizeInstance.UUIDV4,
       allowNull: false,
     },
-    point: {
+    coin: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -39,5 +39,5 @@ const Point = sequelize.define(
 );
 
 module.exports = {
-  Point,
+  Coin,
 };

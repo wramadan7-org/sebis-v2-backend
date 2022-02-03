@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const pointController = require('../../controllers/pointController');
+const coinController = require('../../controllers/coinController');
 const auth = require('../../middlewares/auth');
 const {
   admin,
@@ -17,7 +17,7 @@ router.get(
   administrator,
   verifikator,
   finance,
-  pointController.getPoint,
+  coinController.getCoin,
 );
 router.post(
   '/',
@@ -26,7 +26,7 @@ router.post(
   administrator,
   verifikator,
   finance,
-  pointController.createNewPoint,
+  coinController.createNewCoin,
 );
 router.patch(
   '/',
@@ -35,7 +35,7 @@ router.patch(
   administrator,
   verifikator,
   finance,
-  pointController.updatePoint,
+  coinController.updateCoin,
 );
 router.delete(
   '/',
@@ -44,6 +44,6 @@ router.delete(
   administrator,
   verifikator,
   finance,
-  pointController.deletePoint,
+  coinController.deleteCoin,
 );
 module.exports = router;

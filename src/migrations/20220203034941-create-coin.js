@@ -1,12 +1,12 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('points', {
+    await queryInterface.createTable('coins', {
       id: {
         type: Sequelize.STRING,
         primaryKey: true,
         allowNull: false,
       },
-      point: {
+      coin: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -29,6 +29,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('points');
+    await queryInterface.dropTable('coins');
   },
 };
