@@ -25,6 +25,7 @@ const { Wishlist } = require('./Wishlist');
 const { WishlistItem } = require('./WishlistItem');
 const { TutoringTransaction } = require('./TutoringTransaction');
 const { TutoringTransactionDetail } = require('./TutoringTransactionDetail');
+const { TopupCoin } = require('./TopupCoin');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -338,6 +339,14 @@ const setupSequelizeAssociations = async () => {
 
   TutoringTransaction.hasMany(TutoringTransactionDetail, {
     foreignKey: 'tutoringTransactionId',
+  });
+
+  TopupCoin.belongsTo(User, {
+    foreignKey: 'userId',
+  });
+
+  User.hasMany(TopupCoin, {
+    foreignKey: 'userId',
   });
 
   // finally sync sequelize
