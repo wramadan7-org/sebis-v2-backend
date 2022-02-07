@@ -22,6 +22,8 @@ const scheduleRoute = require('./scheduleRoute');
 const wishlistRoute = require('./wishlistRoute');
 const priceRoute = require('./priceRoute');
 const tutoringTransactionRoute = require('./tutoringTransactionRoute');
+const transactionCoinRoute = require('./transactionCoinRoute');
+const topupCoinRouter = require('./topupCoinRoute');
 
 const statusController = require('../../controllers/statusController');
 const cronController = require('../../controllers/cronController');
@@ -119,6 +121,14 @@ const defaultRoutes = [
   {
     path: '/tutoring-transaction',
     route: tutoringTransactionRoute,
+  },
+  {
+    path: '/transaction-coin',
+    route: transactionCoinRoute,
+  },
+  {
+    path: '/topup-coin',
+    route: topupCoinRouter,
   },
 ];
 

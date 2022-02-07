@@ -1,9 +1,9 @@
-// const httpStatus = require('http-status');
-// const moment = require('moment');
-// const ApiError = require('../utils/ApiError');
-// const catchAsync = require('../utils/catchAsync');
+const httpStatus = require('http-status');
+const moment = require('moment');
+const ApiError = require('../utils/ApiError');
+const catchAsync = require('../utils/catchAsync');
 
-// const transactionCoinService = require('../services/transactionCoinService');
+const transactionCoinService = require('../services/transactionCoinService');
 
 // const transactionCoin = catchAsync(async (req, res) => {
 //   let transactioBody = {
@@ -50,12 +50,12 @@
 //   res.sendWrapped(transaction, httpStatus.OK);
 // });
 
-// const paymentNotif = catchAsync(async (req, res) => {
-//   const { body } = req;
-//   await transactionCoinService.notificationSuccessTransaction(body);
-// });
+const paymentNotif = catchAsync(async (req, res) => {
+  const { body } = req;
+  await transactionCoinService.notificationSuccessTransaction(body);
+});
 
-// module.exports = {
-//   transactionCoin,
-//   paymentNotif,
-// };
+module.exports = {
+  // transactionCoin,
+  paymentNotif,
+};
