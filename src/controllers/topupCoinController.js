@@ -1,5 +1,4 @@
 const httpStatus = require('http-status');
-const uuid = require('uuid');
 const moment = require('moment');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
@@ -37,8 +36,6 @@ const topupCoin = catchAsync(async (req, res) => {
   const user = await userService.getUserById(id);
 
   if (!user) throw new ApiError(httpStatus.CONFLICT, 'Tidak dapat menemukan user.');
-
-  const uuidv4 = uuid.v4();
 
   const dataTransaction = {
     item_details: {
