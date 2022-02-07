@@ -64,6 +64,11 @@ switch (MIDTRANS_ENVIRONMENT) {
     break;
 }
 
+/**
+ * Create request transaction in midtrans use snap
+ * @param {object} parameter
+ * @returns object
+ */
 const transactionCoin = async (parameter) => {
   const create = await snap.createTransaction(parameter);
 
@@ -71,6 +76,10 @@ const transactionCoin = async (parameter) => {
   return create;
 };
 
+/**
+ * Get notification callback from midtrans use snap
+ * @param {object} body
+ */
 const notificationSuccessTransaction = async (body) => {
   const notification = await snap.transaction.notification(body);
 
