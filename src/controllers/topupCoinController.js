@@ -29,7 +29,7 @@ const topupCoin = catchAsync(async (req, res) => {
 
   const checkCoinTransaction = await topupService.firstTopupCoin(id);
 
-  if (checkCoinTransaction) throw new ApiError(httpStatus.BAD_REQUEST, 'Pembelian koin dengan harga Rp. 100.000,00. Hanya dapat dilakukan sekali.');
+  if (checkCoinTransaction && checkCoinTransaction.id == coinId) throw new ApiError(httpStatus.BAD_REQUEST, 'Pembelian koin dengan harga Rp. 100.000,00. Hanya dapat dilakukan sekali.');
 
   const topupData = {
     userId: id,

@@ -22,7 +22,7 @@ const firstTopupCoin = async (userId) => {
 
   if (!topupCoin) return false;
 
-  return true;
+  return topupCoin;
 };
 
 /**
