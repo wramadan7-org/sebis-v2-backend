@@ -6,6 +6,7 @@ const catchAsync = require('../utils/catchAsync');
 const topupService = require('../services/topupCoinService');
 const userService = require('../services/userService');
 const transactionCoinService = require('../services/transactionCoinService');
+const coinService = require('../services/coinService');
 
 const {
   PENDING,
@@ -19,17 +20,25 @@ const {
 } = process.env;
 
 const topupCoin = catchAsync(async (req, res) => {
-  const topupBody = req.body;
+  const { coinId } = req.body;
   const { id } = req.user;
+
+  const coin = await coinService.getCoinById(coinId);
+
+  if (!coin) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan koin yang anda maksud.');
+
+  const checkCoinTransaction = await topupService.firstTopupCoin(id);
+
+  if (checkCoinTransaction) throw new ApiError(httpStatus.BAD_REQUEST, 'Pembelian koin dengan harga Rp. 100.000,00. Hanya dapat dilakukan sekali.');
 
   const topupData = {
     userId: id,
-    coin: topupBody.coin,
-    price: topupBody.price,
+    coin: coin.coin,
+    price: coin.price,
     statusCoin: PENDING,
   };
 
-  const topup = await topupService.topup(id, topupBody);
+  const topup = await topupService.topup(id, topupData);
 
   if (!topup) throw new ApiError(httpStatus.CONFLICT, 'Gagal melakukan topup.');
 
@@ -42,7 +51,7 @@ const topupCoin = catchAsync(async (req, res) => {
       id: topup.id,
       quantity: 1,
       name: `${topup.coin} coin`,
-      category: 'global',
+      category: coin.price == 100000 ? 'limit' : 'global',
       merchant_name: 'SEBIS',
       price: topup.price,
     },
