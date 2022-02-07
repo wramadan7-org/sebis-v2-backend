@@ -2,6 +2,24 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const { TopupCoin } = require('../models/TopupCoin');
 
+const { DONE } = process.env;
+
+const firstTopupCoin = async (userId) => {
+  const topupCoin = await TopupCoin.findOne(
+    {
+      where: {
+        userId,
+        price: 100000,
+        statusCoin: DONE,
+      },
+    },
+  );
+
+  if (!topupCoin) return false;
+
+  return true;
+};
+
 const topupById = async (id, opts = {}) => {
   const topup = await TopupCoin.findOne(
     {
@@ -41,6 +59,7 @@ const updateStatusTopUp = async (id, status) => {
 };
 
 module.exports = {
+  firstTopupCoin,
   topup,
   topupById,
   updateStatusTopUp,
