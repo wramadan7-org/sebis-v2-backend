@@ -144,6 +144,12 @@ const notificationSuccessTransaction = async (body) => {
         paymentAt: moment(),
       };
 
+      if (topup.statusCoin == 'pending') {
+        const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
+
+        await userService.updateUserById(topup.userId, { coin: totalSaldo });
+      }
+
       Object.assign(transaction, dataTransaction);
       Object.assign(topup, { statusCoin: DONE });
 
