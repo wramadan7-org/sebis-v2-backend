@@ -53,6 +53,12 @@ const registerByPhoneNumber = catchAsync(async (req, res) => {
 const resendEmailConfirmation = catchAsync(async (req, res) => {
   const { email } = req.query;
   const user = await userService.getUserByEmail(email, { include: 'role' });
+  if (!user) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      'User not found, please input your registered email',
+    );
+  }
   const { access } = await tokenService.generateAuthTokens(user);
   const url = `${req.protocol}://${req.headers.host}/v1/auth/confirmation/${access.token}`;
   let textEmail = `Hello ${email}, <br>`;

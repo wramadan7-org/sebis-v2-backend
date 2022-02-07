@@ -24,6 +24,7 @@ const priceRoute = require('./priceRoute');
 const tutoringTransactionRoute = require('./tutoringTransactionRoute');
 const transactionCoinRoute = require('./transactionCoinRoute');
 const topupCoinRouter = require('./topupCoinRoute');
+const coinRoute = require('./coinRoute');
 
 const statusController = require('../../controllers/statusController');
 const cronController = require('../../controllers/cronController');
@@ -129,6 +130,10 @@ const defaultRoutes = [
   {
     path: '/topup-coin',
     route: topupCoinRouter,
+  },
+  {
+    path: '/coin',
+    route: coinRoute,
   },
 ];
 

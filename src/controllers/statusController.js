@@ -51,9 +51,9 @@ const updateStatus = catchAsync(async (req, res) => {
       const validStatusUpdateUnreducePoint = [PENDING, ACCEPT, PROCESS, DONE];
 
       if (validStatusUpdateReducePoint.some((o) => status.includes(o))) {
-        const total = schedule.tutoringTransactionDetails[0].price + user.point;
+        const total = schedule.tutoringTransactionDetails[0].price + user.coin;
 
-        const reducePoint = await userService.updateUserById(user.id, { point: total });
+        const reducePoint = await userService.updateUserById(user.id, { coin: total });
 
         if (!reducePoint) throw new ApiError(httpStatus.CONFLICT, 'Gagal melakukan pengembalian point');
 
@@ -73,7 +73,7 @@ const updateStatus = catchAsync(async (req, res) => {
         const data = {
           status,
           pengembalianPoint: schedule.tutoringTransactionDetails[0].price,
-          pointSemula: user.point,
+          pointSemula: user.coin,
           totalPoint: total,
         };
 

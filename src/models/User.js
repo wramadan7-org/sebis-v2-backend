@@ -74,7 +74,7 @@ const User = sequelize.define(
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },
-    point: {
+    coin: {
       type: DataTypes.BIGINT,
       allowNull: true,
       defaultValue: 0,

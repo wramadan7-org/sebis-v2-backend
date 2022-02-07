@@ -149,9 +149,9 @@ const notificationSuccessTransaction = async (body) => {
     // if (!topup) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan data topup.');
 
     if (topup.statusCoin == 'pending') {
-      const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.point);
+      const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
 
-      await userService.updateUserById(topup.userId, { point: totalSaldo });
+      await userService.updateUserById(topup.userId, { coin: totalSaldo });
     }
 
     Object.assign(topup, { statusCoin: DONE });

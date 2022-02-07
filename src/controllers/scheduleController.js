@@ -137,10 +137,10 @@ const createSchedule = catchAsync(async (req, res) => {
     discount,
     subtotal,
     total,
-    paid: user.point,
+    paid: user.coin,
   };
 
-  if (user.point < total) throw new ApiError(httpStatus.CONFLICT, 'Point anda tidak cukup untuk membeli kelas ini.');
+  if (user.coin < total) throw new ApiError(httpStatus.CONFLICT, 'Point anda tidak cukup untuk membeli kelas ini.');
 
   const schedule = await scheduleService.createSchedule(arrayDataBody);
 
@@ -171,12 +171,12 @@ const createSchedule = catchAsync(async (req, res) => {
 
   if (!transactionDetail) throw new ApiError(httpStatus.BAD_REQUEST, 'Gagal membuat transaksi detail.');
 
-  const paying = user.point - total;
+  const paying = user.coin - total;
 
   const updatePoint = await userService.updateUserById(
     id,
     {
-      point: paying,
+      coin: paying,
     },
   );
   if (!updatePoint) throw new ApiError(httpStatus.CONFLICT, 'Gagal mengupdate saldo.');
@@ -204,7 +204,7 @@ const createSchedule = catchAsync(async (req, res) => {
 
     if (!teacherPrice) throw new ApiError(httpStatus.NOT_FOUND, 'Tutor belum melengkapi profilnya.');
 
-    const { point } = user;
+    const { coin } = user;
     const { price } = teacherPrice;
 
     const schedule = await scheduleService.createSchedule(scheduleBody);
