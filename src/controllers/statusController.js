@@ -12,6 +12,7 @@ const { CartItem } = require('../models/CartItem');
 const {
   PENDING, ACCEPT, REJECT, CANCEL, EXPIRE, PROCESS, DONE,
 } = process.env;
+
 const updateStatus = catchAsync(async (req, res) => {
   const { id } = req.params;
   let { model, status } = req.body;
