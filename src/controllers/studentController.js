@@ -1,6 +1,7 @@
-// const httpStatus = require('http-status');
-// const catchAsync = require('../utils/catchAsync');
+const httpStatus = require('http-status');
+const catchAsync = require('../utils/catchAsync');
 // const cartService = require('../services/cartService');
+const { getUserById } = require('../services/userService');
 
 // const viewCart = catchAsync(async (req, res) => {
 //   const studentId = req.user.id;
@@ -10,6 +11,14 @@
 //   res.sendWrapped(cart[0], httpStatus.OK);
 // });
 
-// module.exports = {
-//   viewCart,
-// };
+const getCurrentStudentProfile = catchAsync(async (req, res) => {
+  const { id } = req.user;
+
+  const student = await getUserById(id, { include: 'school' });
+  res.sendWrapped(student, httpStatus.OK);
+});
+
+module.exports = {
+  //   viewCart,
+  getCurrentStudentProfile,
+};

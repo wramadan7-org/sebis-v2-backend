@@ -1,6 +1,9 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-const { createNewSchool } = require('../services/schoolService');
+const {
+  createNewSchool,
+  getSchoolByName,
+} = require('../services/schoolService');
 
 const createSchool = catchAsync(async (req, res) => {
   const schoolBody = req.body;
@@ -8,6 +11,11 @@ const createSchool = catchAsync(async (req, res) => {
   res.sendWrapped(school, httpStatus.CREATED);
 });
 
+const getSchool = catchAsync(async (req, res) => {
+  const school = await getSchoolByName(req.query.scoolName);
+  res.sendWrapped(school, httpStatus.OK);
+});
 module.exports = {
   createSchool,
+  getSchool,
 };
