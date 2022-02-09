@@ -86,7 +86,7 @@ const notificationSuccessTransaction = async (body) => {
   let orderId = notification.order_id;
   let transactionStatus = notification.transaction_status;
   let fraudStatus = notification.fraud_status;
-
+  // console.log('ini notifikasi kartu kredit', notification);
   console.log(`Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`);
 
   let dataTransaction = {
@@ -94,8 +94,10 @@ const notificationSuccessTransaction = async (body) => {
     paymentType: notification.payment_type,
     status: transactionStatus,
     order_id: orderId,
-    paymentAt: notification.settlement_time ? moment(notification.settlement_time) : null,
+    paymentAt: notification.settlement_time ? moment(notification.settlement_time).format('YYYY-MM-DD HH:mm:ss') : null,
   };
+
+  // console.log('ini data transaksi', dataTransaction);
 
   // Ambil data topup untuk mengecek status topup
   const topup = await topupService.topupById(orderId, { include: User });
@@ -105,7 +107,7 @@ const notificationSuccessTransaction = async (body) => {
   const transaction = await TransactionCoin.findOne(
     {
       where: {
-        id: dataTransaction.id,
+        id: notification.transaction_id,
       },
     },
   );
@@ -118,6 +120,8 @@ const notificationSuccessTransaction = async (body) => {
     await TransactionCoin.create(dataTransaction);
   }
 
+  // console.log('ini awal transaksi', transaction);
+
   if (transactionStatus == 'capture') {
     if (fraudStatus == 'challenge') {
       dataTransaction = {
@@ -125,15 +129,15 @@ const notificationSuccessTransaction = async (body) => {
         paymentType: notification.payment_type,
         status: 'challenge',
         order_id: orderId,
-        paymentAt: moment(),
+        paymentAt: moment(notification.transaction_time).format('YYYY-MM-DD HH:mm:ss'),
       };
 
       Object.assign(transaction, dataTransaction);
-      Object.assign(topup, { statusCoin: PENDING });
+      Object.assign(topup, { statusCoin: PROCESS });
 
       transaction.save();
       topup.save();
-
+      // console.log('ini status ketika challenge', notification);
       console.log('challenge');
     } else if (fraudStatus == 'accept') {
       dataTransaction = {
@@ -141,21 +145,21 @@ const notificationSuccessTransaction = async (body) => {
         paymentType: notification.payment_type,
         status: transactionStatus,
         order_id: orderId,
-        paymentAt: moment(),
+        paymentAt: moment(notification.transaction_time).format('YYYY-MM-DD HH:mm:ss'),
       };
 
-      // if (topup.statusCoin == 'pending') {
-      //   const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
-
-      //   await userService.updateUserById(topup.userId, { coin: totalSaldo });
-      // }
+      // console.log('ini transaction', transaction);
 
       Object.assign(transaction, dataTransaction);
       Object.assign(topup, { statusCoin: DONE });
 
+      if (transaction) {
+        const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
+        await userService.updateUserById(topup.userId, { coin: totalSaldo });
+      }
       transaction.save();
       topup.save();
-
+      // console.log('ini status ketika berhasil/accept', notification);
       console.log('accept');
     }
   } else if (transactionStatus == 'settlement') {
