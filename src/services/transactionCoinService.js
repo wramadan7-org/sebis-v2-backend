@@ -64,6 +64,11 @@ switch (MIDTRANS_ENVIRONMENT) {
     break;
 }
 
+/**
+ * Create request transaction in midtrans use snap
+ * @param {object} parameter
+ * @returns object
+ */
 const transactionCoin = async (parameter) => {
   const create = await snap.createTransaction(parameter);
 
@@ -71,6 +76,10 @@ const transactionCoin = async (parameter) => {
   return create;
 };
 
+/**
+ * Get notification callback from midtrans use snap
+ * @param {object} body
+ */
 const notificationSuccessTransaction = async (body) => {
   const notification = await snap.transaction.notification(body);
 
@@ -135,6 +144,12 @@ const notificationSuccessTransaction = async (body) => {
         paymentAt: moment(),
       };
 
+      // if (topup.statusCoin == 'pending') {
+      //   const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
+
+      //   await userService.updateUserById(topup.userId, { coin: totalSaldo });
+      // }
+
       Object.assign(transaction, dataTransaction);
       Object.assign(topup, { statusCoin: DONE });
 
@@ -149,9 +164,9 @@ const notificationSuccessTransaction = async (body) => {
     // if (!topup) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan data topup.');
 
     if (topup.statusCoin == 'pending') {
-      const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.point);
+      const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
 
-      await userService.updateUserById(topup.userId, { point: totalSaldo });
+      await userService.updateUserById(topup.userId, { coin: totalSaldo });
     }
 
     Object.assign(topup, { statusCoin: DONE });
