@@ -114,14 +114,14 @@ const notificationSuccessTransaction = async (body) => {
 
   // Jika sudah ada data transaksi di DB, maka update, jika tidak ada maka buat data
   if (transaction) {
-    console.log('transaksiiiii', transaction);
+    // console.log('transaksiiiii', transaction);
     Object.assign(transaction, dataTransaction);
     transaction.save();
   } else {
     transaction = await TransactionCoin.create(dataTransaction);
   }
 
-  console.log('ini awal transaksi', transaction);
+  // console.log('ini awal transaksi', transaction);
 
   if (transactionStatus == 'capture') {
     if (fraudStatus == 'challenge') {
