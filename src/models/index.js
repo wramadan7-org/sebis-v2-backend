@@ -354,7 +354,7 @@ const setupSequelizeAssociations = async () => {
     foreignKey: 'order_id',
   });
 
-  TopupCoin.hasOne(TransactionCoin, {
+  TopupCoin.hasMany(TransactionCoin, {
     foreignKey: 'order_id',
   });
 
