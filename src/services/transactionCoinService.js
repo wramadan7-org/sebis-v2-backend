@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const moment = require('moment');
+const axios = require('axios');
 const midtransClient = require('midtrans-client');
 const ApiError = require('../utils/ApiError');
 const { midtransEnvironment } = require('../config/midtrans');
@@ -28,6 +29,8 @@ const {
 
 let snap;
 let midtransApiUrl;
+let defaultMidtransApi;
+let midtransAuth;
 
 switch (MIDTRANS_ENVIRONMENT) {
   case midtransEnvironment.PRODUCTION:
@@ -39,6 +42,8 @@ switch (MIDTRANS_ENVIRONMENT) {
       },
     );
     midtransApiUrl = 'https://api.midtrans.com/v2/token';
+    defaultMidtransApi = 'https://api.midtrans.com/v2';
+    midtransAuth = MIDTRANS_SERVER_KEY_PROD;
     break;
 
   case midtransEnvironment.DEVELOPMENT:
@@ -50,6 +55,8 @@ switch (MIDTRANS_ENVIRONMENT) {
       },
     );
     midtransApiUrl = 'https://api.sandbox.midtrans.com/v2/token';
+    defaultMidtransApi = 'https://api.sandbox.midtrans.com/v2';
+    midtransAuth = MIDTRANS_SERVER_KEY_DEV;
     break;
 
   default:
@@ -200,7 +207,25 @@ const notificationSuccessTransaction = async (body) => {
   }
 };
 
+const actionTransaction = async (orderId, type) => {
+  const approve = await axios({
+    method: 'post',
+    url: `${defaultMidtransApi}/${orderId}/${type}`,
+    headers: {
+      'content-type': 'application/json',
+    },
+    auth: {
+      username: midtransAuth,
+      password: '',
+    },
+  });
+
+  // console.log(approve);
+  return approve.data;
+};
+
 module.exports = {
   transactionCoin,
   notificationSuccessTransaction,
+  actionTransaction,
 };
