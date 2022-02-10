@@ -45,6 +45,40 @@ const topupById = async (id, opts = {}) => {
 };
 
 /**
+ * Get all own data topup
+ * @param {string} userId
+ * @param {object} opts
+ * @returns array
+ */
+const ownTopupCoin = async (userId, opts = {}) => {
+  const topupCoin = await TopupCoin.findAll(
+    {
+      where: {
+        userId,
+      },
+      ...opts,
+    },
+  );
+
+  return topupCoin;
+};
+
+/**
+ * Get all data topup coin
+ * @param {object} opts
+ * @returns array
+ */
+const allTopupCoin = async (opts = {}) => {
+  const topupCoin = await TopupCoin.findAll(
+    {
+      ...opts,
+    },
+  );
+
+  return topupCoin;
+};
+
+/**
  * Create data topup and send link snap to process checkout/payment
  * @param {string} userId
  * @param {object} topupBody
@@ -83,6 +117,8 @@ const updateStatusTopUp = async (id, status) => {
 
 module.exports = {
   firstTopupCoin,
+  ownTopupCoin,
+  allTopupCoin,
   topup,
   topupById,
   updateStatusTopUp,
