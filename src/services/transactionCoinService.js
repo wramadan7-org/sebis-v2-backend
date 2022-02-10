@@ -104,7 +104,7 @@ const notificationSuccessTransaction = async (body) => {
 
   if (!topup) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan data topup.');
 
-  const transaction = await TransactionCoin.findOne(
+  let transaction = await TransactionCoin.findOne(
     {
       where: {
         id: notification.transaction_id,
@@ -114,13 +114,14 @@ const notificationSuccessTransaction = async (body) => {
 
   // Jika sudah ada data transaksi di DB, maka update, jika tidak ada maka buat data
   if (transaction) {
+    console.log('transaksiiiii', transaction);
     Object.assign(transaction, dataTransaction);
     transaction.save();
   } else {
-    await TransactionCoin.create(dataTransaction);
+    transaction = await TransactionCoin.create(dataTransaction);
   }
 
-  // console.log('ini awal transaksi', transaction);
+  console.log('ini awal transaksi', transaction);
 
   if (transactionStatus == 'capture') {
     if (fraudStatus == 'challenge') {
@@ -149,14 +150,14 @@ const notificationSuccessTransaction = async (body) => {
       };
 
       // console.log('ini transaction', transaction);
+      if (topup.statusCoin == PROCESS) {
+        const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
+        await userService.updateUserById(topup.userId, { coin: totalSaldo });
+      }
 
       Object.assign(transaction, dataTransaction);
       Object.assign(topup, { statusCoin: DONE });
 
-      if (transaction) {
-        const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
-        await userService.updateUserById(topup.userId, { coin: totalSaldo });
-      }
       transaction.save();
       topup.save();
       // console.log('ini status ketika berhasil/accept', notification);
@@ -167,7 +168,7 @@ const notificationSuccessTransaction = async (body) => {
 
     // if (!topup) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan data topup.');
 
-    if (topup.statusCoin == 'pending') {
+    if (topup.statusCoin == PENDING) {
       const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
 
       await userService.updateUserById(topup.userId, { coin: totalSaldo });
