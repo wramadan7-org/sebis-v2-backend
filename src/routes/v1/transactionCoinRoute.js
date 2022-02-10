@@ -9,5 +9,6 @@ const transactionCoinController = require('../../controllers/transactionCoinCont
 router.post('/payment-notif', transactionCoinController.paymentNotif);
 router.post('/action/:orderId', transactionCoinController.actionTransaction);
 router.get('/history', auth, transactionCoinController.historyTransaction);
+router.get('/history-detail/:id', auth, transactionCoinController.historyTransactionDetail);
 
 module.exports = router;

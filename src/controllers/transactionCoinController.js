@@ -3,6 +3,10 @@ const moment = require('moment');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const pagination = require('../utils/pagination');
+const statusPayment = require('../utils/statusPayment');
+
+const { TopupCoin } = require('../models/TopupCoin');
+const { Coin } = require('../models/Coin');
 
 const transactionCoinService = require('../services/transactionCoinService');
 
@@ -130,26 +134,11 @@ const historyTransaction = catchAsync(async (req, res) => {
   if (!history || history.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Anda belum pernah melakukan topup koin');
 
   const mapHistory = history.map((o) => {
-    let status;
-
-    if (o.statusCoin == PENDING) {
-      status = 'Menunggu pembayaran';
-    } else if (o.statusCoin == PROCESS) {
-      status = 'Pembayaran sedang diproses';
-    } else if (o.statusCoin == CANCEL) {
-      status = 'Pembayaran dibatalkan';
-    } else if (o.statusCoin == EXPIRE) {
-      status = 'Pembayaran kadaluarsa';
-    } else if (o.statusCoin == REJECT) {
-      status = 'Pembayaran gagal';
-    } else if (o.statusCoin == DONE) {
-      status = 'Pembayaran berhasil';
-    } else {
-      status = '';
-    }
+    const status = statusPayment(o.statusCoin);
 
     const data = {
-      transactionId: o.transactionCoin.id,
+      transactionId: o.transactionCoins[0].id,
+      orderId: o.id,
       status,
       createdAt: o.createdAt,
       updatedAt: o.updatedAt,
@@ -165,9 +154,42 @@ const historyTransaction = catchAsync(async (req, res) => {
   res.sendWrapped('', httpStatus.OK, paginating);
 });
 
+const historyTransactionDetail = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const transaction = await transactionCoinService.transactionCoinById(id, { include: TopupCoin });
+
+  if (!transaction) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan transaksi.');
+
+  const coin = await Coin.findOne(
+    {
+      where: {
+        coin: transaction.topupCoin.coin,
+      },
+    },
+  );
+
+  if (!coin) throw new ApiError(httpStatus.NOT_FOUND, 'Koin tidak ditemukan.');
+
+  const data = {
+    transactionId: id,
+    orderId: transaction.order_id,
+    coinId: coin.id,
+    name: 'Sebis Koin',
+    coin: transaction.topupCoin.coin,
+    price: transaction.topupCoin.price,
+    referalCode: null,
+    subtotal: transaction.topupCoin.price,
+    total: transaction.topupCoin.price,
+  };
+
+  res.sendWrapped(data, httpStatus.OK);
+});
+
 module.exports = {
   // transactionCoin,
   paymentNotif,
   actionTransaction,
   historyTransaction,
+  historyTransactionDetail,
 };

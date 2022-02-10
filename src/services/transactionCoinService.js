@@ -241,9 +241,28 @@ const historyTransaction = async (userId) => {
   return history;
 };
 
+/**
+ * Get transaction coin by id
+ * @param {string} id
+ * @returns object
+ */
+const transactionCoinById = async (id, opts = {}) => {
+  const transaction = await TransactionCoin.findOne(
+    {
+      where: {
+        id,
+      },
+      ...opts,
+    },
+  );
+
+  return transaction;
+};
+
 module.exports = {
   transactionCoin,
   notificationSuccessTransaction,
   actionTransaction,
   historyTransaction,
+  transactionCoinById,
 };
