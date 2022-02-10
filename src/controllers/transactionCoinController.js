@@ -2,8 +2,20 @@ const httpStatus = require('http-status');
 const moment = require('moment');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
+const pagination = require('../utils/pagination');
 
 const transactionCoinService = require('../services/transactionCoinService');
+
+const {
+  PENDING,
+  ACCEPT,
+  REJECT,
+  CANCEL,
+  EXPIRE,
+  PROCESS,
+  DONE,
+  DELETE,
+} = process.env;
 
 /*
 const transactionCoin = catchAsync(async (req, res) => {
@@ -96,8 +108,66 @@ const actionTransaction = catchAsync(async (req, res) => {
   res.send(response);
 });
 
+const historyTransaction = catchAsync(async (req, res) => {
+  const { id } = req.user;
+
+  let { page, limit } = req.query;
+
+  if (limit) {
+    limit = parseInt(limit);
+  } else {
+    limit = 10;
+  }
+
+  if (page) {
+    page = parseInt(page);
+  } else {
+    page = 1;
+  }
+
+  const history = await transactionCoinService.historyTransaction(id);
+
+  if (!history || history.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Anda belum pernah melakukan topup koin');
+
+  const mapHistory = history.map((o) => {
+    let status;
+
+    if (o.statusCoin == PENDING) {
+      status = 'Menunggu pembayaran';
+    } else if (o.statusCoin == PROCESS) {
+      status = 'Pembayaran sedang diproses';
+    } else if (o.statusCoin == CANCEL) {
+      status = 'Pembayaran dibatalkan';
+    } else if (o.statusCoin == EXPIRE) {
+      status = 'Pembayaran kadaluarsa';
+    } else if (o.statusCoin == REJECT) {
+      status = 'Pembayaran gagal';
+    } else if (o.statusCoin == DONE) {
+      status = 'Pembayaran berhasil';
+    } else {
+      status = '';
+    }
+
+    const data = {
+      transactionId: o.transactionCoin.id,
+      status,
+      createdAt: o.createdAt,
+      updatedAt: o.updatedAt,
+    };
+
+    return data;
+  });
+
+  const results = mapHistory.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+  const paginating = pagination(results, page, limit);
+
+  res.sendWrapped('', httpStatus.OK, paginating);
+});
+
 module.exports = {
   // transactionCoin,
   paymentNotif,
   actionTransaction,
+  historyTransaction,
 };

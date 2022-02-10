@@ -207,6 +207,12 @@ const notificationSuccessTransaction = async (body) => {
   }
 };
 
+/**
+ * Action to change status midtrans
+ * @param {string} orderId
+ * @param {string} type
+ * @returns
+ */
 const actionTransaction = async (orderId, type) => {
   const approve = await axios({
     method: 'post',
@@ -224,8 +230,20 @@ const actionTransaction = async (orderId, type) => {
   return approve.data;
 };
 
+/**
+ * Get own history data transaction coin
+ * @param {string} userId
+ * @returns array
+ */
+const historyTransaction = async (userId) => {
+  const history = await topupService.ownTopupCoin(userId, { include: TransactionCoin });
+
+  return history;
+};
+
 module.exports = {
   transactionCoin,
   notificationSuccessTransaction,
   actionTransaction,
+  historyTransaction,
 };
