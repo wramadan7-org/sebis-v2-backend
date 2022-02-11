@@ -44,6 +44,18 @@ const checkerCartItem = async (teacherSubjectId, dateStart, cartId, opts = {}) =
    */
   const convertToDate = new Date(dateStart);
 
+  const checkListCart = await CartItem.findOne(
+    {
+      where: {
+        teacherSubjectId,
+        startTIme: convertToDate,
+        cartItemStatus: PENDING,
+      },
+    },
+  );
+
+  if (checkListCart) throw new ApiError(httpStatus.CONFLICT, 'Adnda sudah menambahkan item ini ke keranjang sebelumnya, mohon periksa!');
+
   const cartItem = await CartItem.findOne(
     {
       where: {
