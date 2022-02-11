@@ -434,7 +434,7 @@ const historySchedule = catchAsync(async (req, res) => {
   );
 
   if (history && history.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Belum melakukan les.');
-  console.log(history);
+
   const mapHistory = history.map((o) => {
     const lesStatus = statusLes(o.statusSchedule);
 
