@@ -542,6 +542,8 @@ const historyScheduleDetail = catchAsync(async (req, res) => {
     teacher: dataTutor,
     les: dataLes,
     transaction: dataTransaction,
+    createdAt: historyDetail.createdAt,
+    updatedAt: historyDetail.updatedAt,
   };
 
   res.sendWrapped(dataResult, httpStatus.OK);
