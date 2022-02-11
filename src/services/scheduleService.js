@@ -173,6 +173,25 @@ const getScheduleById = async (id, opts = {}) => {
 };
 
 /**
+ * Mengambil data jadwal les milik sendiri
+ * @param {string} userId
+ * @param {object} opts
+ * @returns array
+ */
+const getOwnSchedule = async (userId, opts = {}) => {
+  const schedule = await Schedule.findAll(
+    {
+      where: {
+        studentId: userId,
+      },
+      ...opts,
+    },
+  );
+
+  return schedule;
+};
+
+/**
  * Update jadwal les berdasarkan id
  * @param {string} id
  * @param {object} scheduleBody
@@ -240,6 +259,7 @@ module.exports = {
   createSchedule,
   getSchedule,
   getScheduleById,
+  getOwnSchedule,
   updateScheduleById,
   deleteSchedule,
 };
