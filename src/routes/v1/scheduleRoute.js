@@ -10,6 +10,7 @@ const router = Router();
 router.post('/', auth, scheduleController.createSchedule);
 router.get('/', scheduleController.getSchedule);
 router.get('/history', auth, scheduleController.historySchedule);
+router.get('/history-detail/:id', auth, scheduleController.historyScheduleDetail);
 router.get('/:id', scheduleController.getScheduleById);
 router.patch('/:id', scheduleController.updateSchedule);
 router.delete('/:id', scheduleController.deleteSchedule);

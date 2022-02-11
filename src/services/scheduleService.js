@@ -255,7 +255,7 @@ const deleteSchedule = async (id) => {
 
 /**
  * Mengambil data riwayat les berdasarkan user atau semua data
- * @param {string} userId
+ * @param {string} userId userId/null
  * @param {object} opts
  * @returns array
  */
@@ -292,6 +292,25 @@ const historySchedule = async (userId, opts = {}) => {
   return history;
 };
 
+/**
+ * Mengambil data detail history
+ * @param {string} id
+ * @param {object} opts
+ * @returns object
+ */
+const historyScheduleDetail = async (id, opts = {}) => {
+  const historyDetail = await Schedule.findOne(
+    {
+      where: {
+        id,
+      },
+      ...opts,
+    },
+  );
+
+  return historyDetail;
+};
+
 module.exports = {
   checkerSchedule,
   checkAvailDateSchedule,
@@ -302,4 +321,5 @@ module.exports = {
   updateScheduleById,
   deleteSchedule,
   historySchedule,
+  historyScheduleDetail,
 };

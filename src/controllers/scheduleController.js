@@ -16,8 +16,11 @@ const { Cart } = require('../models/Cart');
 const { TeacherSubject } = require('../models/TeacherSubject');
 const { Subject } = require('../models/Subject');
 const { Grade } = require('../models/Grade');
+const { GradeGroup } = require('../models/GradeGroup');
+const { Curriculum } = require('../models/Curriculum');
 const { AvailabilityHours } = require('../models/AvailabilityHours');
 const { Price } = require('../models/Price');
+const { TutoringTransactionDetail } = require('../models/TutoringTransactionDetail');
 
 const pagination = require('../utils/pagination');
 const dates = require('../utils/date');
@@ -464,6 +467,86 @@ const historySchedule = catchAsync(async (req, res) => {
   res.sendWrapped('', httpStatus.OK, paginate);
 });
 
+const historyScheduleDetail = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const historyDetail = await scheduleService.historyScheduleDetail(
+    id,
+    {
+      include: [
+        {
+          model: User,
+          as: 'teacher',
+        },
+        {
+          model: TeacherSubject,
+          include: [
+            {
+              model: Subject,
+            },
+            {
+              model: Grade,
+              include: {
+                model: GradeGroup,
+                include: {
+                  model: Curriculum,
+                },
+              },
+            },
+          ],
+        },
+        {
+          model: AvailabilityHours,
+        },
+        {
+          model: TutoringTransactionDetail,
+        },
+      ],
+    },
+  );
+
+  if (!historyDetail) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan les.');
+
+  const convertDay = days(historyDetail.availabilityHour.dayCode);
+  const convertDate = dates(historyDetail.dateSchedule);
+
+  const dataTutor = {
+    profile: historyDetail.teacher.profile,
+    name: `${historyDetail.teacher.firstName} ${historyDetail.teacher.lastName}`,
+    aboutTeacher: `${historyDetail.teacherSubject.subject.subjectName} - ${historyDetail.teacherSubject.grade.gradeGroup.curriculum.curriculumName} - ${historyDetail.teacherSubject.grade.gradeGroup.gradeGroupName} - Kelas ${historyDetail.teacherSubject.grade.gradeCode}`,
+  };
+
+  const dataLes = {
+    date: `${convertDay}, ${convertDate} | ${historyDetail.availabilityHour.timeStart} - ${historyDetail.availabilityHour.timeEnd}`,
+    subject: `${historyDetail.teacherSubject.subject.subjectName} - ${historyDetail.teacherSubject.grade.gradeGroup.gradeGroupName} - Kelas ${historyDetail.teacherSubject.grade.gradeCode}`,
+    typeClass: historyDetail.typeClass,
+    material: historyDetail.requestMaterial,
+    materialImage: historyDetail.imageMaterial,
+  };
+
+  const dataTransaction = {
+    transactionId: historyDetail.tutoringTransactionDetails[0].tutoringTransactionId,
+    transactionDetailId: historyDetail.tutoringTransactionDetails[0].id,
+    createdAt: moment(historyDetail.tutoringTransactionDetails[0].createdAt).format('DD MMM, HH:MM'),
+  };
+
+  const dataResult = {
+    scheduleId: historyDetail.id,
+    teacherId: historyDetail.teacherId,
+    studentId: historyDetail.studentId,
+    availabilityHoursId: historyDetail.availabilityHoursId,
+    teacherSubjectId: historyDetail.teacherSubjectId,
+    subjectId: historyDetail.teacherSubject.subjectId,
+    gradeId: historyDetail.teacherSubject.gradeId,
+    gradeGroupId: historyDetail.teacherSubject.grade.gradeGroupId,
+    curriculumId: historyDetail.teacherSubject.grade.gradeGroup.curriculumId,
+    teacher: dataTutor,
+    les: dataLes,
+    transaction: dataTransaction,
+  };
+
+  res.sendWrapped(dataResult, httpStatus.OK);
+});
+
 module.exports = {
   createSchedule,
   getSchedule,
@@ -471,4 +554,5 @@ module.exports = {
   updateSchedule,
   deleteSchedule,
   historySchedule,
+  historyScheduleDetail,
 };
