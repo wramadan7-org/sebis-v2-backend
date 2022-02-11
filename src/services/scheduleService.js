@@ -6,7 +6,7 @@ const { User } = require('../models/User');
 const ApiError = require('../utils/ApiError');
 
 const {
-  PENDING, ACCEPT, PROCESS, REJECT, EXPIRE, DONE,
+  PENDING, ACCEPT, PROCESS, REJECT, CANCEL, EXPIRE, DONE,
 } = process.env;
 
 /**
@@ -253,6 +253,45 @@ const deleteSchedule = async (id) => {
   return schedule;
 };
 
+/**
+ * Mengambil data riwayat les berdasarkan user atau semua data
+ * @param {string} userId
+ * @param {object} opts
+ * @returns array
+ */
+const historySchedule = async (userId, opts = {}) => {
+  let history;
+  const valueArray = [PENDING, ACCEPT, PROCESS, REJECT, CANCEL, EXPIRE, DONE];
+
+  if (userId) {
+    console.log(userId);
+    history = await Schedule.findAll(
+      {
+        where: {
+          studentId: userId,
+          statusSchedule: {
+            [Op.in]: valueArray,
+          },
+        },
+        ...opts,
+      },
+    );
+  } else {
+    history = await Schedule.findAll(
+      {
+        where: {
+          statusSchedule: {
+            [Op.in]: valueArray,
+          },
+        },
+        ...opts,
+      },
+    );
+  }
+
+  return history;
+};
+
 module.exports = {
   checkerSchedule,
   checkAvailDateSchedule,
@@ -262,4 +301,5 @@ module.exports = {
   getOwnSchedule,
   updateScheduleById,
   deleteSchedule,
+  historySchedule,
 };

@@ -22,6 +22,7 @@ const { Price } = require('../models/Price');
 const pagination = require('../utils/pagination');
 const dates = require('../utils/date');
 const days = require('../utils/day');
+const statusLes = require('../utils/statusSchedule');
 
 const {
   PENDING, ACCEPT, REJECT, CANCEL, PROCESS, EXPIRE, DONE, DELETE,
@@ -345,7 +346,7 @@ const getScheduleById = catchAsync(async (req, res) => {
     },
   );
 
-  if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found.');
+  if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Jadwal les tidak ditemukan.');
 
   // Ambil data original
   const originalData = JSON.stringify(schedule);
@@ -399,10 +400,75 @@ const deleteSchedule = catchAsync(async (req, res) => {
   res.sendWrapped(schedule, httpStatus.OK);
 });
 
+const historySchedule = catchAsync(async (req, res) => {
+  const { id } = req.user;
+  let { page, limit } = req.query;
+
+  if (page) {
+    page = parseInt(page);
+  } else {
+    page = 1;
+  }
+
+  if (limit) {
+    limit = parseInt(limit);
+  } else {
+    limit = 10;
+  }
+
+  const history = await scheduleService.historySchedule(
+    id,
+    {
+      include: {
+        model: TeacherSubject,
+        include: [
+          {
+            model: Subject,
+          },
+          {
+            model: Grade,
+          },
+        ],
+      },
+    },
+  );
+
+  if (history && history.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Belum melakukan les.');
+  console.log(history);
+  const mapHistory = history.map((o) => {
+    const lesStatus = statusLes(o.statusSchedule);
+
+    const data = {
+      scheduleId: o.id,
+      tutorId: o.teacherId,
+      studentId: o.studentId,
+      teacherSubjectId: o.teacherSubjectId,
+      subjectId: o.teacherSubject.subject.id,
+      gradeId: o.teacherSubject.grade.id,
+      availabilityHoursId: o.availabilityHoursId,
+      name: `Les ${o.teacherSubject.subject.subjectName}`,
+      lesStatus,
+      grade: o.teacherSubject.grade.gradeName,
+      createdAt: o.createdAt,
+      updatedAt: o.updatedAt,
+    };
+
+    return data;
+  });
+
+  // Sorting schedule
+  const sorting = mapHistory.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+  // Pagination data
+  const paginate = pagination(sorting, page, limit);
+
+  res.sendWrapped('', httpStatus.OK, paginate);
+});
+
 module.exports = {
   createSchedule,
   getSchedule,
   getScheduleById,
   updateSchedule,
   deleteSchedule,
+  historySchedule,
 };
