@@ -59,7 +59,51 @@ const getMyFavoriteTeacher = catchAsync(async (req, res) => {
     },
   );
 
-  // Sorting schedule
+  // Sorting
+  const sorting = favorite.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+  // Pagination data
+  const paginate = pagination(sorting, page, limit);
+
+  res.sendWrapped('', httpStatus.OK, paginate);
+});
+
+const getAllFavoriteTeacher = catchAsync(async (req, res) => {
+  let { page, limit } = req.query;
+
+  if (page) {
+    page = parseInt(page);
+  } else {
+    page = 1;
+  }
+
+  if (limit) {
+    limit = parseInt(limit);
+  } else {
+    limit = 10;
+  }
+
+  const favorite = await favoriteTeacherService.getAllFavoriteTeacher(
+    {
+      include: [
+        {
+          model: User,
+          as: 'student',
+          attributes: {
+            exclude: ['password'],
+          },
+        },
+        {
+          model: User,
+          as: 'teacher',
+          attributes: {
+            exclude: ['password'],
+          },
+        },
+      ],
+    },
+  );
+
+  // Sorting
   const sorting = favorite.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
   // Pagination data
   const paginate = pagination(sorting, page, limit);
@@ -70,4 +114,5 @@ const getMyFavoriteTeacher = catchAsync(async (req, res) => {
 module.exports = {
   createFavorite,
   getMyFavoriteTeacher,
+  getAllFavoriteTeacher,
 };
