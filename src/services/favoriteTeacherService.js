@@ -107,10 +107,26 @@ const getAllFavoriteTeacher = async (opts = {}) => {
   return favorite;
 };
 
+/**
+ * Update favorite teacher
+ * @param {string} id
+ * @param {object} body
+ * @returns object
+ */
+const updateFavoriteTeacher = async (id, body) => {
+  const favorite = await getFavoriteById(id);
+
+  Object.assign(favorite, body);
+  favorite.save();
+
+  return favorite;
+};
+
 module.exports = {
   createFavorite,
   getFavoriteByStudentAndTeacher,
   getFavoriteById,
   getMyFavoriteTeacher,
   getAllFavoriteTeacher,
+  updateFavoriteTeacher,
 };
