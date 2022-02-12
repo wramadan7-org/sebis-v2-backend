@@ -54,7 +54,25 @@ const getFavoriteByStudentAndTeacher = async (studentId, teacherId, opts = {}) =
   return favorite;
 };
 
+/**
+ * Get favorite by id
+ * @param {string} id
+ * @returns object
+ */
+const getFavoriteById = async (id) => {
+  const favorite = await FavoriteTeacher.findOne(
+    {
+      where: {
+        id,
+      },
+    },
+  );
+
+  return favorite;
+};
+
 module.exports = {
   createFavorite,
   getFavoriteByStudentAndTeacher,
+  getFavoriteById,
 };
