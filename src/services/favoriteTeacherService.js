@@ -98,9 +98,12 @@ const getMyFavoriteTeacher = async (studentId, status, opts = {}) => {
  * @param {object} opts
  * @returns array
  */
-const getAllFavoriteTeacher = async (opts = {}) => {
+const getAllFavoriteTeacher = async (status, opts = {}) => {
   const favorite = await FavoriteTeacher.findAll(
     {
+      where: {
+        like: status,
+      },
       ...opts,
     },
   );
