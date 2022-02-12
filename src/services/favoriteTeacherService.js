@@ -71,8 +71,26 @@ const getFavoriteById = async (id) => {
   return favorite;
 };
 
+/**
+ * Get my favorite teacher
+ * @param {string} studentId
+ * @returns array
+ */
+const getMyFavoriteTeacher = async (studentId) => {
+  const favorite = await FavoriteTeacher.findAll(
+    {
+      where: {
+        studentId,
+      },
+    },
+  );
+
+  return favorite;
+};
+
 module.exports = {
   createFavorite,
   getFavoriteByStudentAndTeacher,
   getFavoriteById,
+  getMyFavoriteTeacher,
 };
