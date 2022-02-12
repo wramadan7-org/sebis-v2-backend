@@ -27,6 +27,7 @@ const { TutoringTransaction } = require('./TutoringTransaction');
 const { TutoringTransactionDetail } = require('./TutoringTransactionDetail');
 const { TopupCoin } = require('./TopupCoin');
 const { TransactionCoin } = require('./TransactionCoin');
+const { FavoriteTeacher } = require('./FavoriteTeacher');
 
 const setupSequelizeAssociations = async () => {
   User.belongsTo(Role);
@@ -356,6 +357,24 @@ const setupSequelizeAssociations = async () => {
 
   TopupCoin.hasMany(TransactionCoin, {
     foreignKey: 'order_id',
+  });
+
+  FavoriteTeacher.belongsTo(User, {
+    foreignKey: 'studentId',
+    as: 'student',
+  });
+
+  User.hasMany(FavoriteTeacher, {
+    foreignKey: 'studentId',
+  });
+
+  FavoriteTeacher.belongsTo(User, {
+    foreignKey: 'teacherId',
+    as: 'teacher',
+  });
+
+  User.hasMany(FavoriteTeacher, {
+    foreignKey: 'teacherId',
   });
 
   // finally sync sequelize
