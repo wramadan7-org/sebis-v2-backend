@@ -45,7 +45,6 @@ const getFavoriteByStudentAndTeacher = async (studentId, teacherId, opts = {}) =
       where: {
         studentId,
         teacherId,
-        like: true,
       },
       ...opts,
     },
