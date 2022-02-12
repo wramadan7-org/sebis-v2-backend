@@ -92,9 +92,25 @@ const getMyFavoriteTeacher = async (studentId, opts = {}) => {
   return favorite;
 };
 
+/**
+ * Get all favorite teacher
+ * @param {object} opts
+ * @returns array
+ */
+const getAllFavoriteTeacher = async (opts = {}) => {
+  const favorite = await FavoriteTeacher.findAll(
+    {
+      ...opts,
+    },
+  );
+
+  return favorite;
+};
+
 module.exports = {
   createFavorite,
   getFavoriteByStudentAndTeacher,
   getFavoriteById,
   getMyFavoriteTeacher,
+  getAllFavoriteTeacher,
 };
