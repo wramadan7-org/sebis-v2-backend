@@ -57,14 +57,16 @@ const getFavoriteByStudentAndTeacher = async (studentId, teacherId, opts = {}) =
 /**
  * Get favorite by id
  * @param {string} id
+ * @param {object} opts
  * @returns object
  */
-const getFavoriteById = async (id) => {
+const getFavoriteById = async (id, opts = {}) => {
   const favorite = await FavoriteTeacher.findOne(
     {
       where: {
         id,
       },
+      ...opts,
     },
   );
 
@@ -74,14 +76,16 @@ const getFavoriteById = async (id) => {
 /**
  * Get my favorite teacher
  * @param {string} studentId
+ * @param {object} opts
  * @returns array
  */
-const getMyFavoriteTeacher = async (studentId) => {
+const getMyFavoriteTeacher = async (studentId, opts = {}) => {
   const favorite = await FavoriteTeacher.findAll(
     {
       where: {
         studentId,
       },
+      ...opts,
     },
   );
 
