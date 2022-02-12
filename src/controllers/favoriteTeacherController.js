@@ -23,7 +23,7 @@ const createFavorite = catchAsync(async (req, res) => {
 
 const getMyFavoriteTeacher = catchAsync(async (req, res) => {
   const { id } = req.user;
-  let { page, limit } = req.query;
+  let { page, limit, like } = req.query;
 
   if (page) {
     page = parseInt(page);
@@ -37,8 +37,17 @@ const getMyFavoriteTeacher = catchAsync(async (req, res) => {
     limit = 10;
   }
 
+  if (!like) {
+    like = 1;
+  } else if (like == 'true') {
+    like = 1;
+  } else if (like == 'false') {
+    like = 0;
+  }
+
   const favorite = await favoriteTeacherService.getMyFavoriteTeacher(
     id,
+    like,
     {
       include: [
         {
@@ -68,7 +77,7 @@ const getMyFavoriteTeacher = catchAsync(async (req, res) => {
 });
 
 const getAllFavoriteTeacher = catchAsync(async (req, res) => {
-  let { page, limit } = req.query;
+  let { page, limit, like } = req.query;
 
   if (page) {
     page = parseInt(page);
@@ -82,7 +91,16 @@ const getAllFavoriteTeacher = catchAsync(async (req, res) => {
     limit = 10;
   }
 
+  if (!like) {
+    like = 1;
+  } else if (like == 'true') {
+    like = 1;
+  } else if (like == 'false') {
+    like = 0;
+  }
+
   const favorite = await favoriteTeacherService.getAllFavoriteTeacher(
+    like,
     {
       include: [
         {
@@ -111,8 +129,26 @@ const getAllFavoriteTeacher = catchAsync(async (req, res) => {
   res.sendWrapped('', httpStatus.OK, paginate);
 });
 
+const updateOrCreateFavoriteTeacher = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const favoriteBody = req.body;
+
+  const checkFavorite = await favoriteTeacherService.getFavoriteByStudentAndTeacher(userId, favoriteBody.teacherId);
+
+  if (!checkFavorite) {
+    const create = await favoriteTeacherService.createFavorite(userId, favoriteBody.teacherId);
+
+    return res.sendWrapped(create, httpStatus.CREATED);
+  }
+
+  const update = await favoriteTeacherService.updateFavoriteTeacher(checkFavorite.id, favoriteBody);
+
+  res.sendWrapped(update, httpStatus.OK);
+});
+
 module.exports = {
   createFavorite,
   getMyFavoriteTeacher,
   getAllFavoriteTeacher,
+  updateOrCreateFavoriteTeacher,
 };
