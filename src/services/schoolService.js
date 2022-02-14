@@ -1,5 +1,7 @@
-const { Op, Transaction } = require('sequelize');
+const httpStatus = require('http-status');
+const { Op } = require('sequelize');
 const { School } = require('../models/School');
+const ApiError = require('../utils/ApiError');
 
 const createNewSchool = async (schoolBody) => School.create(schoolBody);
 
@@ -13,28 +15,53 @@ const getSchoolById = async (schoolId, opts = {}) => {
   return school;
 };
 
-const getSchoolByName = async (schoolName, opts = {}) => {
-  const school = School.findAndCountAll({
+const getAllSchool = async (limit, offset) => {
+  const school = await School.findAll({});
+  return school;
+};
+
+const getSchoolByName = async (schoolName) => {
+  const school = School.findAll({
     where: {
-      [Op.like]: `%${schoolName}%`,
+      schoolName: {
+        [Op.like]: `%${schoolName}%`,
+      },
     },
-    ...opts,
   });
   return school;
 };
 
-const getSchoolByAddress = async (schoolAddress, opts = {}) => {
-  const school = School.findAndCountAll({
+const getSchoolByAddress = async (schoolAddress) => {
+  const school = School.findAll({
     where: {
-      [Op.like]: `%${schoolAddress}%`,
+      schoolAddress: {
+        [Op.like]: `%${schoolAddress}%`,
+      },
     },
-    ...opts,
   });
+  return school;
 };
 
+const updateSchoolById = async (schoolId, schoolBody) => {
+  const school = await getSchoolById(schoolId);
+  if (!school) throw new ApiError(httpStatus.NOT_FOUND, 'School not found');
+  Object.assign(school, schoolBody);
+  school.save();
+  return school;
+};
+
+const deleteSchoolById = async (schoolId) => {
+  const school = await getSchoolById(schoolId);
+  if (!school) throw new ApiError(httpStatus.NOT_FOUND, 'School not found');
+  school.destroy();
+  return school;
+};
 module.exports = {
   createNewSchool,
   getSchoolById,
   getSchoolByName,
   getSchoolByAddress,
+  getAllSchool,
+  updateSchoolById,
+  deleteSchoolById,
 };

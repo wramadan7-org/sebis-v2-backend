@@ -1,6 +1,9 @@
 const httpStatus = require('http-status');
 const { User } = require('../models/User');
 const ApiError = require('../utils/ApiError');
+const { UserDetail } = require('../models/UserDetail');
+const { School } = require('../models/School');
+const { Role } = require('../models/Role');
 
 /**
  * Get user by phone number
@@ -48,6 +51,16 @@ const getUserById = async (userId, opts = {}) => {
       id: userId,
     },
     ...opts,
+  });
+  if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
+  return user;
+};
+const getUserByIds = async (userId) => {
+  const user = await User.findOne({
+    where: {
+      id: userId,
+    },
+    include: [{ model: UserDetail }, { model: School }, { model: Role }],
   });
   if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
   return user;
@@ -135,6 +148,7 @@ module.exports = {
   createUser,
   getUserByEmail,
   getUserById,
+  getUserByIds,
   updateUserById,
   updateProfile,
   deleteUserById,

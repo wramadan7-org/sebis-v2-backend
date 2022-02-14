@@ -6,8 +6,7 @@ const { UserDetail } = require('../models/UserDetail');
 const { Price } = require('../models/Price');
 
 const publicService = require('../services/publicService');
-
-const pagination = require('../utils/pagination');
+const { paginator } = require('../utils/pagination');
 
 const publicHome = catchAsync(async (req, res) => {
   let { page, limit } = req.query;
@@ -28,9 +27,11 @@ const publicHome = catchAsync(async (req, res) => {
 
   if (!home || home.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'List tutor masih kosong.');
 
-  const results = home.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const results = home.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+  );
 
-  const paginating = pagination(results, page, limit);
+  const paginating = paginator(results, page, limit);
 
   // if (!paginating || paginating.data.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'List tutor masih kosong.');
 
@@ -79,7 +80,12 @@ const availabilityHours = catchAsync(async (req, res) => {
     },
   );
 
-  if (!availabilityHoursTutor) throw new ApiError(httpStatus.NOT_FOUND, 'Teacher don\'t have availability hours.');
+  if (!availabilityHoursTutor) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      "Teacher don't have availability hours.",
+    );
+  }
 
   res.sendWrapped('', httpStatus.OK, availabilityHoursTutor);
 });
