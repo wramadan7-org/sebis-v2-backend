@@ -16,12 +16,16 @@ const { Cart } = require('../models/Cart');
 const { TeacherSubject } = require('../models/TeacherSubject');
 const { Subject } = require('../models/Subject');
 const { Grade } = require('../models/Grade');
+const { GradeGroup } = require('../models/GradeGroup');
+const { Curriculum } = require('../models/Curriculum');
 const { AvailabilityHours } = require('../models/AvailabilityHours');
 const { Price } = require('../models/Price');
+const { TutoringTransactionDetail } = require('../models/TutoringTransactionDetail');
 
 const pagination = require('../utils/pagination');
 const dates = require('../utils/date');
 const days = require('../utils/day');
+const statusLes = require('../utils/statusSchedule');
 
 const {
   PENDING, ACCEPT, REJECT, CANCEL, PROCESS, EXPIRE, DONE, DELETE,
@@ -375,7 +379,7 @@ const getScheduleById = catchAsync(async (req, res) => {
     ],
   });
 
-  if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found.');
+  if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Jadwal les tidak ditemukan.');
 
   // Ambil data original
   const originalData = JSON.stringify(schedule);
@@ -433,10 +437,158 @@ const deleteSchedule = catchAsync(async (req, res) => {
   res.sendWrapped(schedule, httpStatus.OK);
 });
 
+const historySchedule = catchAsync(async (req, res) => {
+  const { id } = req.user;
+  let { page, limit } = req.query;
+
+  if (page) {
+    page = parseInt(page);
+  } else {
+    page = 1;
+  }
+
+  if (limit) {
+    limit = parseInt(limit);
+  } else {
+    limit = 10;
+  }
+
+  const history = await scheduleService.historySchedule(
+    id,
+    {
+      include: {
+        model: TeacherSubject,
+        include: [
+          {
+            model: Subject,
+          },
+          {
+            model: Grade,
+          },
+        ],
+      },
+    },
+  );
+
+  if (history && history.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Belum melakukan les.');
+
+  const mapHistory = history.map((o) => {
+    const lesStatus = statusLes(o.statusSchedule);
+
+    const data = {
+      scheduleId: o.id,
+      tutorId: o.teacherId,
+      studentId: o.studentId,
+      teacherSubjectId: o.teacherSubjectId,
+      subjectId: o.teacherSubject.subject.id,
+      gradeId: o.teacherSubject.grade.id,
+      availabilityHoursId: o.availabilityHoursId,
+      name: `Les ${o.teacherSubject.subject.subjectName}`,
+      lesStatus,
+      grade: o.teacherSubject.grade.gradeName,
+      createdAt: o.createdAt,
+      updatedAt: o.updatedAt,
+    };
+
+    return data;
+  });
+
+  // Sorting schedule
+  const sorting = mapHistory.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+  // Pagination data
+  const paginate = pagination(sorting, page, limit);
+
+  res.sendWrapped('', httpStatus.OK, paginate);
+});
+
+const historyScheduleDetail = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const historyDetail = await scheduleService.historyScheduleDetail(
+    id,
+    {
+      include: [
+        {
+          model: User,
+          as: 'teacher',
+        },
+        {
+          model: TeacherSubject,
+          include: [
+            {
+              model: Subject,
+            },
+            {
+              model: Grade,
+              include: {
+                model: GradeGroup,
+                include: {
+                  model: Curriculum,
+                },
+              },
+            },
+          ],
+        },
+        {
+          model: AvailabilityHours,
+        },
+        {
+          model: TutoringTransactionDetail,
+        },
+      ],
+    },
+  );
+
+  if (!historyDetail) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan les.');
+
+  const convertDay = days(historyDetail.availabilityHour.dayCode);
+  const convertDate = dates(historyDetail.dateSchedule);
+
+  const dataTutor = {
+    profile: historyDetail.teacher.profile,
+    name: `${historyDetail.teacher.firstName} ${historyDetail.teacher.lastName}`,
+    aboutTeacher: `${historyDetail.teacherSubject.subject.subjectName} - ${historyDetail.teacherSubject.grade.gradeGroup.curriculum.curriculumName} - ${historyDetail.teacherSubject.grade.gradeGroup.gradeGroupName} - Kelas ${historyDetail.teacherSubject.grade.gradeCode}`,
+  };
+
+  const dataLes = {
+    date: `${convertDay}, ${convertDate} | ${historyDetail.availabilityHour.timeStart} - ${historyDetail.availabilityHour.timeEnd}`,
+    subject: `${historyDetail.teacherSubject.subject.subjectName} - ${historyDetail.teacherSubject.grade.gradeGroup.gradeGroupName} - Kelas ${historyDetail.teacherSubject.grade.gradeCode}`,
+    typeClass: historyDetail.typeClass,
+    material: historyDetail.requestMaterial,
+    materialImage: historyDetail.imageMaterial,
+  };
+
+  const dataTransaction = {
+    transactionId: historyDetail.tutoringTransactionDetails[0].tutoringTransactionId,
+    transactionDetailId: historyDetail.tutoringTransactionDetails[0].id,
+    createdAt: moment(historyDetail.tutoringTransactionDetails[0].createdAt).format('DD MMM, HH:MM'),
+  };
+
+  const dataResult = {
+    scheduleId: historyDetail.id,
+    teacherId: historyDetail.teacherId,
+    studentId: historyDetail.studentId,
+    availabilityHoursId: historyDetail.availabilityHoursId,
+    teacherSubjectId: historyDetail.teacherSubjectId,
+    subjectId: historyDetail.teacherSubject.subjectId,
+    gradeId: historyDetail.teacherSubject.gradeId,
+    gradeGroupId: historyDetail.teacherSubject.grade.gradeGroupId,
+    curriculumId: historyDetail.teacherSubject.grade.gradeGroup.curriculumId,
+    teacher: dataTutor,
+    les: dataLes,
+    transaction: dataTransaction,
+    createdAt: historyDetail.createdAt,
+    updatedAt: historyDetail.updatedAt,
+  };
+
+  res.sendWrapped(dataResult, httpStatus.OK);
+});
+
 module.exports = {
   createSchedule,
   getSchedule,
   getScheduleById,
   updateSchedule,
   deleteSchedule,
+  historySchedule,
+  historyScheduleDetail,
 };

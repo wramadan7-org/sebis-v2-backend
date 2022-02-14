@@ -3,7 +3,6 @@ const cron = require('node-cron');
 const authRoute = require('./authRoute');
 const profileRoute = require('./profileRoute');
 const schoolRoute = require('./schoolRoute');
-// const studentRoute = require('./studentRoute');
 const teacherRoute = require('./teacherRoute');
 const referralRoute = require('./referralRoute');
 const availabilityHoursRoute = require('./availabilityHoursRoute');
@@ -26,6 +25,7 @@ const transactionCoinRoute = require('./transactionCoinRoute');
 const topupCoinRouter = require('./topupCoinRoute');
 const coinRoute = require('./coinRoute');
 const studentRoute = require('./studentRoute');
+const favoriteTeacherRoute = require('./favoriteTeacherRoute');
 
 const statusController = require('../../controllers/statusController');
 const cronController = require('../../controllers/cronController');
@@ -135,6 +135,10 @@ const defaultRoutes = [
   {
     path: '/coin',
     route: coinRoute,
+  },
+  {
+    path: '/favorite-teacher',
+    route: favoriteTeacherRoute,
   },
 ];
 

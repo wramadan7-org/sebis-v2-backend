@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const moment = require('moment');
+const axios = require('axios');
 const midtransClient = require('midtrans-client');
 const ApiError = require('../utils/ApiError');
 const { midtransEnvironment } = require('../config/midtrans');
@@ -28,6 +29,8 @@ const {
 
 let snap;
 let midtransApiUrl;
+let defaultMidtransApi;
+let midtransAuth;
 
 switch (MIDTRANS_ENVIRONMENT) {
   case midtransEnvironment.PRODUCTION:
@@ -39,6 +42,8 @@ switch (MIDTRANS_ENVIRONMENT) {
       },
     );
     midtransApiUrl = 'https://api.midtrans.com/v2/token';
+    defaultMidtransApi = 'https://api.midtrans.com/v2';
+    midtransAuth = MIDTRANS_SERVER_KEY_PROD;
     break;
 
   case midtransEnvironment.DEVELOPMENT:
@@ -50,6 +55,8 @@ switch (MIDTRANS_ENVIRONMENT) {
       },
     );
     midtransApiUrl = 'https://api.sandbox.midtrans.com/v2/token';
+    defaultMidtransApi = 'https://api.sandbox.midtrans.com/v2';
+    midtransAuth = MIDTRANS_SERVER_KEY_DEV;
     break;
 
   default:
@@ -86,7 +93,7 @@ const notificationSuccessTransaction = async (body) => {
   let orderId = notification.order_id;
   let transactionStatus = notification.transaction_status;
   let fraudStatus = notification.fraud_status;
-
+  // console.log('ini notifikasi kartu kredit', notification);
   console.log(`Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`);
 
   let dataTransaction = {
@@ -94,29 +101,34 @@ const notificationSuccessTransaction = async (body) => {
     paymentType: notification.payment_type,
     status: transactionStatus,
     order_id: orderId,
-    paymentAt: notification.settlement_time ? moment(notification.settlement_time) : null,
+    paymentAt: notification.settlement_time ? moment(notification.settlement_time).format('YYYY-MM-DD HH:mm:ss') : null,
   };
+
+  // console.log('ini data transaksi', dataTransaction);
 
   // Ambil data topup untuk mengecek status topup
   const topup = await topupService.topupById(orderId, { include: User });
 
   if (!topup) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan data topup.');
 
-  const transaction = await TransactionCoin.findOne(
+  let transaction = await TransactionCoin.findOne(
     {
       where: {
-        id: dataTransaction.id,
+        id: notification.transaction_id,
       },
     },
   );
 
   // Jika sudah ada data transaksi di DB, maka update, jika tidak ada maka buat data
   if (transaction) {
+    // console.log('transaksiiiii', transaction);
     Object.assign(transaction, dataTransaction);
     transaction.save();
   } else {
-    await TransactionCoin.create(dataTransaction);
+    transaction = await TransactionCoin.create(dataTransaction);
   }
+
+  // console.log('ini awal transaksi', transaction);
 
   if (transactionStatus == 'capture') {
     if (fraudStatus == 'challenge') {
@@ -125,15 +137,15 @@ const notificationSuccessTransaction = async (body) => {
         paymentType: notification.payment_type,
         status: 'challenge',
         order_id: orderId,
-        paymentAt: moment(),
+        paymentAt: moment(notification.transaction_time).format('YYYY-MM-DD HH:mm:ss'),
       };
 
       Object.assign(transaction, dataTransaction);
-      Object.assign(topup, { statusCoin: PENDING });
+      Object.assign(topup, { statusCoin: PROCESS });
 
       transaction.save();
       topup.save();
-
+      // console.log('ini status ketika challenge', notification);
       console.log('challenge');
     } else if (fraudStatus == 'accept') {
       dataTransaction = {
@@ -141,21 +153,21 @@ const notificationSuccessTransaction = async (body) => {
         paymentType: notification.payment_type,
         status: transactionStatus,
         order_id: orderId,
-        paymentAt: moment(),
+        paymentAt: moment(notification.transaction_time).format('YYYY-MM-DD HH:mm:ss'),
       };
 
-      // if (topup.statusCoin == 'pending') {
-      //   const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
-
-      //   await userService.updateUserById(topup.userId, { coin: totalSaldo });
-      // }
+      // console.log('ini transaction', transaction);
+      if (topup.statusCoin == PROCESS) {
+        const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
+        await userService.updateUserById(topup.userId, { coin: totalSaldo });
+      }
 
       Object.assign(transaction, dataTransaction);
       Object.assign(topup, { statusCoin: DONE });
 
       transaction.save();
       topup.save();
-
+      // console.log('ini status ketika berhasil/accept', notification);
       console.log('accept');
     }
   } else if (transactionStatus == 'settlement') {
@@ -163,7 +175,7 @@ const notificationSuccessTransaction = async (body) => {
 
     // if (!topup) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan data topup.');
 
-    if (topup.statusCoin == 'pending') {
+    if (topup.statusCoin == PENDING) {
       const totalSaldo = parseInt(topup.coin) + parseInt(topup.user.coin);
 
       await userService.updateUserById(topup.userId, { coin: totalSaldo });
@@ -195,7 +207,62 @@ const notificationSuccessTransaction = async (body) => {
   }
 };
 
+/**
+ * Action to change status midtrans
+ * @param {string} orderId
+ * @param {string} type
+ * @returns
+ */
+const actionTransaction = async (orderId, type) => {
+  const approve = await axios({
+    method: 'post',
+    url: `${defaultMidtransApi}/${orderId}/${type}`,
+    headers: {
+      'content-type': 'application/json',
+    },
+    auth: {
+      username: midtransAuth,
+      password: '',
+    },
+  });
+
+  // console.log(approve);
+  return approve.data;
+};
+
+/**
+ * Get own history data transaction coin
+ * @param {string} userId
+ * @returns array
+ */
+const historyTransaction = async (userId) => {
+  const history = await topupService.ownTopupCoin(userId, { include: TransactionCoin });
+
+  return history;
+};
+
+/**
+ * Get transaction coin by id
+ * @param {string} id
+ * @returns object
+ */
+const transactionCoinById = async (id, opts = {}) => {
+  const transaction = await TransactionCoin.findOne(
+    {
+      where: {
+        id,
+      },
+      ...opts,
+    },
+  );
+
+  return transaction;
+};
+
 module.exports = {
   transactionCoin,
   notificationSuccessTransaction,
+  actionTransaction,
+  historyTransaction,
+  transactionCoinById,
 };
