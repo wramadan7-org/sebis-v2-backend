@@ -16,7 +16,7 @@ const getAllReport = async (opts = {}) => Report.findAll({ ...opts });
  * @param {object} opts
  * @returns object
  */
-const getReportDetail = async (id, opts = {}) => {
+const getReportById = async (id, opts = {}) => {
   const report = await Report.findOne(
     {
       where: {
@@ -29,7 +29,15 @@ const getReportDetail = async (id, opts = {}) => {
   return report;
 };
 
+const updateReport = async (id, reportData, reportBody) => {
+  Object.assign(reportData, reportBody);
+  reportData.save();
+
+  return reportData;
+};
+
 module.exports = {
   getAllReport,
-  getReportDetail,
+  getReportById,
+  updateReport,
 };
