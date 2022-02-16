@@ -11,8 +11,6 @@ const { Price } = require('../models/Price');
 const { Subject } = require('../models/Subject');
 const { Grade } = require('../models/Grade');
 const { UserDetail } = require('../models/UserDetail');
-const cartService = require('../services/cartService');
-const scheduleService = require('../services/scheduleService');
 const ApiError = require('../utils/ApiError');
 const days = require('../utils/day');
 const dates = require('../utils/date');
@@ -20,8 +18,12 @@ const pagination = require('../utils/pagination');
 const multering = require('../utils/multer');
 const resizing = require('../utils/resizeImage');
 
+const cartService = require('../services/cartService');
+const scheduleService = require('../services/scheduleService');
+const userService = require('../services/userService');
+
 const {
-  PENDING, ACCEPT, REJECT, CANCEL, EXPIRE, DONE, OFFSET_ORDER_HOURS,
+  PENDING, ACCEPT, PROCESS, REJECT, CANCEL, EXPIRE, DONE, OFFSET_ORDER_HOURS,
 } = process.env;
 
 // teacher
@@ -274,7 +276,7 @@ const viewCart = catchAsync(async (req, res) => {
       student: `${o.student.firstName} ${o.student.lastName}`,
       teacher: `${o.teacher.firstName} ${o.teacher.lastName}`,
       profile: o.student.profile,
-      referralCOde: o.student.referralCode,
+      referralCode: o.student.referralCode,
       referredBy: o.student.referredBy,
       cartItems: sortingItem,
       createdAt: o.createdAt,
@@ -335,7 +337,7 @@ const viewCart = catchAsync(async (req, res) => {
     studentId: convertData.studentId,
     student: `${convertData.student.firstName} ${convertData.lastName}`,
     profile: convertData.student.profile,
-    referralCOde: convertData.student.referralCode,
+    referralCode: convertData.student.referralCode,
     referredBy: convertData.student.referredBy,
     cartItems: arrayCartItems,
   };
@@ -445,6 +447,14 @@ const updateRequestMateri = catchAsync(async (req, res) => {
   const { id } = req.params;
   const destination = 'images/material';
 
+  const conditionStatus = [PENDING, ACCEPT, PROCESS];
+
+  const checkCartItem = await cartService.getCartItemById(id);
+
+  if (checkCartItem.cartItemStatus !== conditionStatus.some((value) => checkCartItem.cartItemStatus.includes(value))) {
+    throw new ApiError(httpStatus.NOT_FOUND, `Hanya dapat request materi pada keranjang yang berstatus ${PENDING}, ${ACCEPT}, ${PROCESS}`);
+  }
+
   multering.options('./', id).single('fileMaterial')(req, res, async (err) => {
     if (err) {
       res.sendWrapped(err);
@@ -453,11 +463,102 @@ const updateRequestMateri = catchAsync(async (req, res) => {
         return res.sendWrapped('Please insert file/photo!', httpStatus.BAD_REQUEST);
       }
 
-      const { requestMaterial } = req.body;
+      const {
+        requestMaterial, email1, email2, phone1, phone2,
+      } = req.body;
+
+      let arrayFriend = [];
 
       const updateMaterial = await cartService.updateRequestMateri(id, `static/${destination}/${req.file.filename}`, requestMaterial);
 
       await resizing(req.file.path, 200, 200, 90, `./public/${destination}/${req.file.filename}`);
+
+      const group = [
+        {
+          email: email1,
+          phone: phone1,
+        },
+        {
+          email: email2,
+          phone: phone2,
+        },
+      ];
+
+      if (checkCartItem.typeCourse == 'group') {
+        const filtering = group.filter((o) => o.email !== '' && o.phone !== '');
+
+        if (filtering.length > 0) {
+          if (filtering.length == 1) {
+            const user = await userService.getUserByEmail(filtering[0].email);
+
+            if (!user) {
+              return res.sendWrapped(`${filtering[0].email} belum terdaftar di aplikasi. Yuk ajak temanmu untuk register di SEBISLES!`, httpStatus.NOT_FOUND);
+            }
+            const updateFriend = await CartItem.update(
+              {
+                friend1: user.id,
+              },
+              {
+                where: {
+                  id,
+                },
+              },
+            );
+
+            console.log('have data and update friend', updateFriend);
+          } else if (filtering.length == 2) {
+            const user1 = await userService.getUserByEmail(filtering[0].email);
+            const user2 = await userService.getUserByEmail(filtering[1].email);
+
+            if (!user1) {
+              arrayFriend.push(filtering[0].email);
+              // return res.sendWrapped(`${filtering[0].email} belum terdaftar di aplikasi. Yuk ajak temanmu untuk register di SEBISLES!`, httpStatus.NOT_FOUND);
+            } else {
+              const updateFriend1 = await CartItem.update(
+                {
+                  friend1: user1.id,
+                },
+                {
+                  where: {
+                    id,
+                  },
+                },
+              );
+
+              console.log('have data and update friend 1', updateFriend1);
+            }
+
+            // USER 2
+            if (!user2) {
+              arrayFriend.push(filtering[1].email);
+              // return res.sendWrapped(`${filtering[1].email} belum terdaftar di aplikasi. Yuk ajak temanmu untuk register di SEBISLES!`, httpStatus.NOT_FOUND);
+            } else {
+              const updateFriend2 = await CartItem.update(
+                {
+                  friend2: user2.id,
+                },
+                {
+                  where: {
+                    id,
+                  },
+                },
+              );
+
+              console.log('user ada, update friend 2', updateFriend2);
+            }
+          }
+        }
+
+        if (arrayFriend.length == 2) {
+          return res.sendWrapped(`${arrayFriend[0]} dan ${arrayFriend[1]} belum terdaftar di aplikasi. Yuk ajak temanmu untuk register di SEBISLES`, httpStatus.NOT_FOUND);
+        }
+
+        if (arrayFriend.length == 1) {
+          return res.sendWrapped(`${arrayFriend[0]} belum terdaftar di aplikasi. Yuk ajak temanmu untuk register di SEBISLES`, httpStatus.NOT_FOUND);
+        }
+      } else {
+        return res.sendWrapped('Menambahkan teman hanya dapat dilakukan pada keranjang yang memiliki tipe group', httpStatus.CONFLICT);
+      }
 
       res.sendWrapped(updateMaterial, httpStatus.OK);
     }
