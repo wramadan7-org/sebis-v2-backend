@@ -37,6 +37,14 @@ const CartItem = sequelize.define('cartItem', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  friend1: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  friend2: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,
