@@ -6,7 +6,7 @@ const { User } = require('../models/User');
 const ApiError = require('../utils/ApiError');
 
 const {
-  PENDING, ACCEPT, PROCESS, REJECT, EXPIRE, DONE,
+  PENDING, ACCEPT, PROCESS, REJECT, CANCEL, EXPIRE, DONE,
 } = process.env;
 
 /**
@@ -173,6 +173,25 @@ const getScheduleById = async (id, opts = {}) => {
 };
 
 /**
+ * Mengambil data jadwal les milik sendiri
+ * @param {string} userId
+ * @param {object} opts
+ * @returns array
+ */
+const getOwnSchedule = async (userId, opts = {}) => {
+  const schedule = await Schedule.findAll(
+    {
+      where: {
+        studentId: userId,
+      },
+      ...opts,
+    },
+  );
+
+  return schedule;
+};
+
+/**
  * Update jadwal les berdasarkan id
  * @param {string} id
  * @param {object} scheduleBody
@@ -234,12 +253,73 @@ const deleteSchedule = async (id) => {
   return schedule;
 };
 
+/**
+ * Mengambil data riwayat les berdasarkan user atau semua data
+ * @param {string} userId userId/null
+ * @param {object} opts
+ * @returns array
+ */
+const historySchedule = async (userId, opts = {}) => {
+  let history;
+  const valueArray = [PENDING, ACCEPT, PROCESS, REJECT, CANCEL, EXPIRE, DONE];
+
+  if (userId) {
+    console.log(userId);
+    history = await Schedule.findAll(
+      {
+        where: {
+          studentId: userId,
+          statusSchedule: {
+            [Op.in]: valueArray,
+          },
+        },
+        ...opts,
+      },
+    );
+  } else {
+    history = await Schedule.findAll(
+      {
+        where: {
+          statusSchedule: {
+            [Op.in]: valueArray,
+          },
+        },
+        ...opts,
+      },
+    );
+  }
+
+  return history;
+};
+
+/**
+ * Mengambil data detail history
+ * @param {string} id
+ * @param {object} opts
+ * @returns object
+ */
+const historyScheduleDetail = async (id, opts = {}) => {
+  const historyDetail = await Schedule.findOne(
+    {
+      where: {
+        id,
+      },
+      ...opts,
+    },
+  );
+
+  return historyDetail;
+};
+
 module.exports = {
   checkerSchedule,
   checkAvailDateSchedule,
   createSchedule,
   getSchedule,
   getScheduleById,
+  getOwnSchedule,
   updateScheduleById,
   deleteSchedule,
+  historySchedule,
+  historyScheduleDetail,
 };

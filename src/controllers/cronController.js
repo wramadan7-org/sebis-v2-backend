@@ -15,6 +15,7 @@ const {
 } = process.env;
 
 const cronJobCartPendingTwoHoursBeforeLes = async () => {
+  const dateNow = moment().format('YYYY-MM-DD HH:mm:ss');
   const twoHoursBeforeLes = moment().add(2, 'hours').format('YYYY-MM-DD HH:mm:00');
   const aDayBeforeNow = moment().add(-1, 'days').format('YYYY-MM-DD HH:mm:00');
 
@@ -29,6 +30,12 @@ const cronJobCartPendingTwoHoursBeforeLes = async () => {
           {
             cartItemStatus: PENDING,
             createdAt: aDayBeforeNow,
+          },
+          {
+            cartItemStatus: PENDING,
+            startTime: {
+              [Op.lte]: dateNow,
+            },
           },
         ],
       },
@@ -54,6 +61,7 @@ const cronJobCartPendingTwoHoursBeforeLes = async () => {
 };
 
 const cronJobExpireScheduleLes = async (req, res) => {
+  const dateNow = moment().format('YYYY-MM-DD HH:mm:ss');
   const twoHoursBeforeLes = moment().add(2, 'hours').format('YYYY-MM-DD HH:mm:00');
   const aDayBeforeNow = moment().add(-1, 'days').format('YYYY-MM-DD HH:mm:00');
 
@@ -67,6 +75,12 @@ const cronJobExpireScheduleLes = async (req, res) => {
           },
           {
             createdAt: aDayBeforeNow,
+            statusSchedule: PENDING,
+          },
+          {
+            dateSchedule: {
+              [Op.lte]: dateNow,
+            },
             statusSchedule: PENDING,
           },
         ],

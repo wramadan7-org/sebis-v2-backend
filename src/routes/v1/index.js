@@ -26,6 +26,8 @@ const transactionCoinRoute = require('./transactionCoinRoute');
 const topupCoinRouter = require('./topupCoinRoute');
 const coinRoute = require('./coinRoute');
 const studentRoute = require('./studentRoute');
+const favoriteTeacherRoute = require('./favoriteTeacherRoute');
+const reportRoute = require('./reportRoute');
 
 const statusController = require('../../controllers/statusController');
 const cronController = require('../../controllers/cronController');
@@ -135,6 +137,14 @@ const defaultRoutes = [
   {
     path: '/coin',
     route: coinRoute,
+  },
+  {
+    path: '/favorite-teacher',
+    route: favoriteTeacherRoute,
+  },
+  {
+    path: '/report',
+    route: reportRoute,
   },
 ];
 
