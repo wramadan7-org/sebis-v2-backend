@@ -18,6 +18,40 @@ const { Report } = require('../models/Reports');
 const reportService = require('../services/reportService');
 const scheduleService = require('../services/scheduleService');
 
+const createReport = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const reportBody = req.body;
+
+  const checkSchedule = await scheduleService.getScheduleById(id);
+
+  if (!checkSchedule) throw new ApiError(httpStatus.NOT_FOUND, 'Jadwal les tidak ditemukan');
+
+  const dataUser = {
+    studentId: checkSchedule.studentId,
+    friend1: checkSchedule.friend1,
+    friend2: checkSchedule.friend2,
+  };
+
+  const convertArray = Object.values(dataUser);
+
+  const mapBody = reportBody.map((o) => {
+    if (!convertArray.some((itm) => o.userId.includes(itm))) {
+      return false;
+    }
+    return true;
+  });
+
+  console.log(mapBody);
+
+  if (!mapBody[0]) throw new ApiError(httpStatus.CONFLICT, 'Hanya dapat membuat raport berdasarkan user di dalam jadwal tersebut.');
+
+  const report = await reportService.createReport(id, reportBody);
+
+  if (!report) throw new ApiError(httpStatus.CONFLICT, 'Gagal menambah raport');
+
+  res.sendWrapped(report, httpStatus.CREATED);
+});
+
 const getOwnListReport = catchAsync(async (req, res) => {
   const { id } = req.user;
   let { page, limit } = req.query;
@@ -224,6 +258,7 @@ const updateReport = catchAsync(async (req, res) => {
 });
 
 module.exports = {
+  createReport,
   getOwnListReport,
   getReportDetail,
   updateReport,

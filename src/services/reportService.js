@@ -3,6 +3,24 @@ const ApiError = require('../utils/ApiError');
 
 const { Report } = require('../models/Reports');
 
+const createReport = async (scheduleId, bodyReport) => {
+  const arrayReport = [];
+
+  for (const loopReport of bodyReport) {
+    const data = {
+      scheduleId,
+      ...loopReport,
+      isReported: true,
+    };
+
+    arrayReport.push(data);
+  }
+
+  const create = await Report.bulkCreate(arrayReport);
+
+  return create;
+};
+
 /**
  * Get all data report
  * @param {object} opts
@@ -37,6 +55,7 @@ const updateReport = async (id, reportData, reportBody) => {
 };
 
 module.exports = {
+  createReport,
   getAllReport,
   getReportById,
   updateReport,
