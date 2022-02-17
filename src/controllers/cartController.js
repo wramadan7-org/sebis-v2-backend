@@ -205,6 +205,24 @@ const viewCart = catchAsync(async (req, res) => {
           {
             model: AvailabilityHours,
           },
+          {
+            model: User,
+            attributes: {
+              exclude: ['password'],
+            },
+            as: 'firstFriend',
+            include: {
+              model: Role,
+              attributes: ['roleName'],
+            },
+          },
+          {
+            model: User,
+            as: 'secondFriend',
+            attributes: {
+              exclude: ['password'],
+            },
+          },
         ],
       },
     ],
@@ -214,6 +232,8 @@ const viewCart = catchAsync(async (req, res) => {
   const originalData = JSON.stringify(cart);
   // Kemudian parsing ke JSON untuk pendefinisian
   const convertData = JSON.parse(originalData);
+
+  console.log(convertData);
 
   let privatePrice = 0;
   let groupPrice = 0;
@@ -259,6 +279,8 @@ const viewCart = catchAsync(async (req, res) => {
         imageMaterial: itm.imageMaterial ? itm.imageMaterial : null,
         createdAt: itm.createdAt,
         updatedAt: itm.updatedAt,
+        friend1: itm.firstFriend,
+        friend2: itm.secondFriend,
       };
 
       total += dataCartItem.price;
