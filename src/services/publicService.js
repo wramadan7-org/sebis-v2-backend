@@ -15,62 +15,63 @@ const { Price } = require('../models/Price');
 const availabilityHoursService = require('./availabilityHoursService');
 
 const nameDay = require('../utils/day');
-const pagination = require('../utils/pagination');
+const { paginator } = require('../utils/pagination');
 
 const homePublic = async () => {
-  const teacherRole = await Role.findOne(
-    {
-      where: {
-        roleName: 'teacher',
-      },
+  const teacherRole = await Role.findOne({
+    where: {
+      roleName: 'teacher',
     },
-  );
+  });
 
-  const users = await User.findAll(
-    {
-      where: {
-        roleId: teacherRole.id,
-      },
-      attributes: {
-        exclude: ['password'],
-      },
-      include: [
-        {
-          model: UserDetail,
-          include: {
-            model: Price,
-          },
-        },
-        {
-          model: TeacherSubject,
-          include: [
-            {
-              model: Grade,
-            },
-            {
-              model: Subject,
-            },
-          ],
-        },
-      ],
+  const users = await User.findAll({
+    where: {
+      roleId: teacherRole.id,
     },
-  );
+    attributes: {
+      exclude: ['password'],
+    },
+    include: [
+      {
+        model: UserDetail,
+        include: {
+          model: Price,
+        },
+      },
+      {
+        model: TeacherSubject,
+        include: [
+          {
+            model: Grade,
+          },
+          {
+            model: Subject,
+          },
+        ],
+      },
+    ],
+  });
 
   return users;
 };
 
-const timeAvailabilityPublic = async (teacherId, month, year, page, limit, opts = {}) => {
-  const user = await User.findOne(
-    {
-      where: {
-        id: teacherId,
-      },
-      attributes: {
-        exclude: 'password',
-      },
-      ...opts,
+const timeAvailabilityPublic = async (
+  teacherId,
+  month,
+  year,
+  page,
+  limit,
+  opts = {},
+) => {
+  const user = await User.findOne({
+    where: {
+      id: teacherId,
     },
-  );
+    attributes: {
+      exclude: 'password',
+    },
+    ...opts,
+  });
 
   let privatePrice = 0;
   let groupPrice = 0;
@@ -79,13 +80,11 @@ const timeAvailabilityPublic = async (teacherId, month, year, page, limit, opts 
     privatePrice = user.userDetail.price.private;
     groupPrice = user.userDetail.price.group;
   } else {
-    const defaultPrice = await Price.findOne(
-      {
-        where: {
-          type: 'A',
-        },
+    const defaultPrice = await Price.findOne({
+      where: {
+        type: 'A',
       },
-    );
+    });
 
     privatePrice = defaultPrice.private;
     groupPrice = defaultPrice.group;
@@ -100,14 +99,12 @@ const timeAvailabilityPublic = async (teacherId, month, year, page, limit, opts 
     const day = moment().date(dayInMonth).days();
     const namingDay = nameDay(day);
 
-    const findDay = await AvailabilityHours.findAll(
-      {
-        where: {
-          dayCode: day,
-          teacherId,
-        },
+    const findDay = await AvailabilityHours.findAll({
+      where: {
+        dayCode: day,
+        teacherId,
       },
-    );
+    });
 
     if (findDay && findDay.length > 0) {
       const mapFindDay = findDay.map((o) => {
@@ -132,7 +129,7 @@ const timeAvailabilityPublic = async (teacherId, month, year, page, limit, opts 
 
   results.sort((a, b) => new Date(a.dateSort) - new Date(b.dateSort));
 
-  const paginating = pagination(results, page, limit);
+  const paginating = paginator(results, page, limit);
 
   return { user, ...paginating };
 };

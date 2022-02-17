@@ -25,14 +25,12 @@ const createUserDetail = async (userId, userDetailBody) => {
  * @returns {Promise<UserDetail | ApiError>}
  */
 const getUserDetailByUserId = async (userId, opts = {}) => {
-  const userDetail = await UserDetail.findOne(
-    {
-      where: {
-        userId,
-      },
-      ...opts,
+  const userDetail = await UserDetail.findOne({
+    where: {
+      userId,
     },
-  );
+    ...opts,
+  });
 
   return userDetail;
 };
@@ -43,20 +41,22 @@ const getUserDetailByUserId = async (userId, opts = {}) => {
  * @param {object} opts
  * @returns {Promise<UserDetail | ApiError>}
  */
-const getAnotherUserDetailByCardNumber = async (cardNumber, userId, opts = {}) => {
-  const userDetail = await UserDetail.findOne(
-    {
-      where: {
-        idCardNumber: {
-          [Op.eq]: cardNumber,
-        },
-        userId: {
-          [Op.ne]: userId,
-        },
+const getAnotherUserDetailByCardNumber = async (
+  cardNumber,
+  userId,
+  opts = {},
+) => {
+  const userDetail = await UserDetail.findOne({
+    where: {
+      idCardNumber: {
+        [Op.eq]: cardNumber,
       },
-      ...opts,
+      userId: {
+        [Op.ne]: userId,
+      },
     },
-  );
+    ...opts,
+  });
 
   if (userDetail) throw new ApiError(httpStatus.CONFLICT, 'Card number already exists');
 
@@ -71,7 +71,7 @@ const getAnotherUserDetailByCardNumber = async (cardNumber, userId, opts = {}) =
  */
 const updateUserDetailByUserId = async (userId, userDetailBody) => {
   const userDetail = await getUserDetailByUserId(userId);
-
+  if (!userDetail) throw new ApiError(httpStatus.NOT_FOUND, 'User detail not found');
   Object.assign(userDetail, userDetailBody);
   await userDetail.save();
 

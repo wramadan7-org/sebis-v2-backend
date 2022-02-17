@@ -44,53 +44,63 @@ const createSchedule = catchAsync(async (req, res) => {
   let subtotal = 0;
   let total = 0;
 
-  const conditionStatus = [PENDING, REJECT, CANCEL, PROCESS, EXPIRE, DONE, DELETE];
+  const conditionStatus = [
+    PENDING,
+    REJECT,
+    CANCEL,
+    PROCESS,
+    EXPIRE,
+    DONE,
+    DELETE,
+  ];
 
   for (const loopBody of scheduleBody) {
-    const checkCart = await cartService.getCartItemById(
-      loopBody,
-      {
-        include: [
-          {
-            model: Cart,
-            include: [
-              {
-                model: User,
-                as: 'student',
-              },
-              {
-                model: User,
-                as: 'teacher',
+    const checkCart = await cartService.getCartItemById(loopBody, {
+      include: [
+        {
+          model: Cart,
+          include: [
+            {
+              model: User,
+              as: 'student',
+            },
+            {
+              model: User,
+              as: 'teacher',
+              include: {
+                model: UserDetail,
                 include: {
-                  model: UserDetail,
-                  include: {
-                    model: Price,
-                  },
+                  model: Price,
                 },
               },
-            ],
-          },
-          {
-            model: TeacherSubject,
-            include: [
-              {
-                model: Subject,
-              },
-              {
-                model: Grade,
-              },
-            ],
-          },
-          {
-            model: AvailabilityHours,
-          },
-        ],
-      },
-    );
+            },
+          ],
+        },
+        {
+          model: TeacherSubject,
+          include: [
+            {
+              model: Subject,
+            },
+            {
+              model: Grade,
+            },
+          ],
+        },
+        {
+          model: AvailabilityHours,
+        },
+      ],
+    });
 
     const checkStatusCartItem = conditionStatus.some((value) => checkCart.cartItemStatus.includes(value));
 
-    if (checkStatusCartItem) throw new ApiError(httpStatus.BAD_REQUEST, 'Hanya bisa menambah item yang sudah di setujui oleh guru.');
+    if (checkStatusCartItem) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        'Hanya bisa menambah item yang sudah di setujui oleh guru.',
+      );
+    }
 
     let pricePrivate = 0;
     let priceGroup = 0;
@@ -100,13 +110,11 @@ const createSchedule = catchAsync(async (req, res) => {
       pricePrivate = checkCart.cart.teacher.userDetail.price.private;
       priceGroup = checkCart.cart.teacher.userDetail.price.group;
     } else {
-      const pricing = await Price.findOne(
-        {
-          where: {
-            type: 'A',
-          },
+      const pricing = await Price.findOne({
+        where: {
+          type: 'A',
         },
-      );
+      });
 
       pricePrivate = pricing.private;
       priceGroup = pricing.group;
@@ -120,7 +128,9 @@ const createSchedule = catchAsync(async (req, res) => {
       availabilityHoursId: checkCart.availabilityHoursId,
       teacherId: checkCart.teacherId,
       studentId: checkCart.cart.studentId,
-      requestMaterial: checkCart.requestMaterial ? checkCart.requestMaterial : null,
+      requestMaterial: checkCart.requestMaterial
+        ? checkCart.requestMaterial
+        : null,
       imageMaterial: checkCart.imageMaterial ? checkCart.imageMaterial : null,
       price: checkCart.typeCourse == 'private' ? pricePrivate : priceGroup,
       // data untuk transaksi detail
@@ -131,7 +141,7 @@ const createSchedule = catchAsync(async (req, res) => {
       discount,
     };
 
-    subtotal += Math.abs(((discount / 100) * dataBody.price) - dataBody.price);
+    subtotal += Math.abs((discount / 100) * dataBody.price - dataBody.price);
     total += dataBody.price;
     arrayDataBody.push(dataBody);
   }
@@ -144,13 +154,26 @@ const createSchedule = catchAsync(async (req, res) => {
     paid: user.coin,
   };
 
-  if (user.coin < total) throw new ApiError(httpStatus.CONFLICT, 'Point anda tidak cukup untuk membeli kelas ini.');
+  if (user.coin < total) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      'Point anda tidak cukup untuk membeli kelas ini.',
+    );
+  }
 
   const schedule = await scheduleService.createSchedule(arrayDataBody);
 
-  if (!schedule) throw new ApiError(httpStatus.CONFLICT, 'Gagal membuat jadwal les. Harap hubungi administrator kita.');
+  if (!schedule) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      'Gagal membuat jadwal les. Harap hubungi administrator kita.',
+    );
+  }
 
-  const transaction = await tutoringTransactionService.createTransactionLes(id, dataTransaction);
+  const transaction = await tutoringTransactionService.createTransactionLes(
+    id,
+    dataTransaction,
+  );
 
   if (!transaction) throw new ApiError(httpStatus.BAD_REQUEST, 'Gagal membuat transaksi');
 
@@ -171,18 +194,22 @@ const createSchedule = catchAsync(async (req, res) => {
     arrayDataTransactionDetail.push(dataTransactionDetail);
   }
 
-  const transactionDetail = await tutoringTransactionService.createTransactionDetailLes(arrayDataTransactionDetail);
+  const transactionDetail = await tutoringTransactionService.createTransactionDetailLes(
+    arrayDataTransactionDetail,
+  );
 
-  if (!transactionDetail) throw new ApiError(httpStatus.BAD_REQUEST, 'Gagal membuat transaksi detail.');
+  if (!transactionDetail) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Gagal membuat transaksi detail.',
+    );
+  }
 
   const paying = user.coin - total;
 
-  const updatePoint = await userService.updateUserById(
-    id,
-    {
-      coin: paying,
-    },
-  );
+  const updatePoint = await userService.updateUserById(id, {
+    coin: paying,
+  });
   if (!updatePoint) throw new ApiError(httpStatus.CONFLICT, 'Gagal mengupdate saldo.');
   res.sendWrapped(arrayDataTransactionDetail, httpStatus.CREATED);
 
@@ -230,42 +257,40 @@ const getSchedule = catchAsync(async (req, res) => {
     limit = 10;
   }
 
-  const schedule = await scheduleService.getSchedule(
-    {
-      include: [
-        {
-          model: User,
-          as: 'teacher',
-          attributes: {
-            exclude: ['password'],
+  const schedule = await scheduleService.getSchedule({
+    include: [
+      {
+        model: User,
+        as: 'teacher',
+        attributes: {
+          exclude: ['password'],
+        },
+      },
+      {
+        model: User,
+        as: 'student',
+        attributes: {
+          exclude: ['password'],
+        },
+      },
+      {
+        model: TeacherSubject,
+        include: [
+          {
+            model: Subject,
           },
-        },
-        {
-          model: User,
-          as: 'student',
-          attributes: {
-            exclude: ['password'],
+          {
+            model: Grade,
           },
-        },
-        {
-          model: TeacherSubject,
-          include: [
-            {
-              model: Subject,
-            },
-            {
-              model: Grade,
-            },
-          ],
-        },
-        {
-          model: AvailabilityHours,
-        },
-      ],
-    },
-  );
+        ],
+      },
+      {
+        model: AvailabilityHours,
+      },
+    ],
+  });
 
-  if (!schedule && schedule.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Don\'t have data schedule.');
+  if (!schedule && schedule.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, "Don't have data schedule.");
 
   // Ambil data original
   const originalData = JSON.stringify(schedule);
@@ -276,7 +301,9 @@ const getSchedule = catchAsync(async (req, res) => {
 
   for (const loopSchedule of convertData) {
     const convertDay = days(loopSchedule.availabilityHour.dayCode);
-    const convertDate = loopSchedule.dateSchedule ? dates(loopSchedule.dateSchedule) : null;
+    const convertDate = loopSchedule.dateSchedule
+      ? dates(loopSchedule.dateSchedule)
+      : null;
 
     const dataSchedule = {
       scheduleId: loopSchedule.id,
@@ -292,8 +319,12 @@ const getSchedule = catchAsync(async (req, res) => {
       grade: loopSchedule.teacherSubject.grade.gradeName,
       date: `${convertDay}, ${convertDate}`,
       time: `${loopSchedule.availabilityHour.timeStart} - ${loopSchedule.availabilityHour.timeEnd}`,
-      requestMaterial: loopSchedule.requestMaterial ? loopSchedule.requestMaterial : null,
-      imageMaterial: loopSchedule.imageMaterial ? loopSchedule.imageMaterial : null,
+      requestMaterial: loopSchedule.requestMaterial
+        ? loopSchedule.requestMaterial
+        : null,
+      imageMaterial: loopSchedule.imageMaterial
+        ? loopSchedule.imageMaterial
+        : null,
       createdAt: loopSchedule.createdAt,
       updatedAt: loopSchedule.updatedAt,
       dateSortingSchedule: loopSchedule.dateSchedule,
@@ -303,9 +334,11 @@ const getSchedule = catchAsync(async (req, res) => {
   }
 
   // Sorting schedule
-  const sortingSchedule = arrayResults.sort((a, b) => new Date(a.dateSortingSchedule) - new Date(b.dateSortingSchedule));
+  const sortingSchedule = arrayResults.sort(
+    (a, b) => new Date(a.dateSortingSchedule) - new Date(b.dateSortingSchedule),
+  );
   // Pagination data
-  const paginateData = pagination(sortingSchedule, page, limit);
+  const paginateData = pagination.paginator(sortingSchedule, page, limit);
 
   res.sendWrapped('', httpStatus.OK, paginateData);
 });
@@ -313,41 +346,38 @@ const getSchedule = catchAsync(async (req, res) => {
 const getScheduleById = catchAsync(async (req, res) => {
   const { id } = req.params;
 
-  const schedule = await scheduleService.getScheduleById(
-    id,
-    {
-      include: [
-        {
-          model: User,
-          as: 'teacher',
-          attributes: {
-            exclude: ['password'],
+  const schedule = await scheduleService.getScheduleById(id, {
+    include: [
+      {
+        model: User,
+        as: 'teacher',
+        attributes: {
+          exclude: ['password'],
+        },
+      },
+      {
+        model: User,
+        as: 'student',
+        attributes: {
+          exclude: ['password'],
+        },
+      },
+      {
+        model: TeacherSubject,
+        include: [
+          {
+            model: Grade,
           },
-        },
-        {
-          model: User,
-          as: 'student',
-          attributes: {
-            exclude: ['password'],
+          {
+            model: Subject,
           },
-        },
-        {
-          model: TeacherSubject,
-          include: [
-            {
-              model: Grade,
-            },
-            {
-              model: Subject,
-            },
-          ],
-        },
-        {
-          model: AvailabilityHours,
-        },
-      ],
-    },
-  );
+        ],
+      },
+      {
+        model: AvailabilityHours,
+      },
+    ],
+  });
 
   if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Jadwal les tidak ditemukan.');
 
@@ -357,7 +387,9 @@ const getScheduleById = catchAsync(async (req, res) => {
   const convertData = JSON.parse(originalData);
 
   const convertDay = days(convertData.availabilityHour.dayCode);
-  const convertDate = convertData.dateSchedule ? dates(convertData.dateSchedule) : null;
+  const convertDate = convertData.dateSchedule
+    ? dates(convertData.dateSchedule)
+    : null;
 
   const dataSchedule = {
     scheduleId: convertData.id,
@@ -373,7 +405,9 @@ const getScheduleById = catchAsync(async (req, res) => {
     grade: convertData.teacherSubject.grade.gradeName,
     date: `${convertDay}, ${convertDate}`,
     time: `${convertData.availabilityHour.timeStart} - ${convertData.availabilityHour.timeEnd}`,
-    requestMaterial: convertData.requestMaterial ? convertData.requestMaterial : null,
+    requestMaterial: convertData.requestMaterial
+      ? convertData.requestMaterial
+      : null,
     imageMaterial: convertData.imageMaterial ? convertData.imageMaterial : null,
     createdAt: convertData.createdAt,
     updatedAt: convertData.updatedAt,

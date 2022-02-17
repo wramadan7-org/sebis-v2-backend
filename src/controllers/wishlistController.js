@@ -50,7 +50,9 @@ const addWishlist = catchAsync(async (req, res) => {
     teacherSubjectId: wishlistBody.teacherSubjectId,
     availabilityHoursId: wishlistBody.availabilityHoursId,
     typeCourse: wishlistBody.typeCourse,
-    dateTimeStart: moment(wishlistBody.dateTimeStart).format('YYYY-MM-DD HH:mm:ss'),
+    dateTimeStart: moment(wishlistBody.dateTimeStart).format(
+      'YYYY-MM-DD HH:mm:ss',
+    ),
     dateTimeEnd: moment(wishlistBody.dateTimeEnd).format('YYYY-MM-DD HH:mm:ss'),
   };
 
@@ -61,7 +63,12 @@ const addWishlist = catchAsync(async (req, res) => {
     offsetHours,
   );
 
-  if (!checkBetweenHours) throw new ApiError(httpStatus.CONFLICT, `Penambahan wishlist maksimal ${offsetHours} jam sebelum kelas dimulai`);
+  if (!checkBetweenHours) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      `Penambahan wishlist maksimal ${offsetHours} jam sebelum kelas dimulai`,
+    );
+  }
 
   // Cek untuk melihat apakah sudah ada wishlist yang sama
   const ownWishlist = await wishlistService.getWishlistByStudentId(id);
@@ -74,9 +81,17 @@ const addWishlist = catchAsync(async (req, res) => {
     wishlistBody.availabilityHoursId,
   );
 
-  if (wishlistChecker) throw new ApiError(httpStatus.CONFLICT, 'Anda sudah memiliki wishlist ini.');
+  if (wishlistChecker) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      'Anda sudah memiliki wishlist ini.',
+    );
+  }
 
-  const createWishlistItem = await wishlistService.createWishlistItem(wishlist[0].id, dataWishlistItem);
+  const createWishlistItem = await wishlistService.createWishlistItem(
+    wishlist[0].id,
+    dataWishlistItem,
+  );
 
   if (!createWishlistItem) throw new ApiError(httpStatus.CONFLICT, 'Gagal menambahkan item wishlist.');
 
@@ -99,52 +114,49 @@ const getWishlist = catchAsync(async (req, res) => {
     limit = 10;
   }
 
-  const wishlist = await wishlistService.getWishlistByStudentId(
-    studentId,
-    {
-      include: [
-        {
-          model: User,
-          as: 'student',
-          attributes: {
-            exclude: ['password'],
-          },
+  const wishlist = await wishlistService.getWishlistByStudentId(studentId, {
+    include: [
+      {
+        model: User,
+        as: 'student',
+        attributes: {
+          exclude: ['password'],
         },
-        {
-          model: User,
-          as: 'teacher',
-          attributes: {
-            exclude: ['password'],
-          },
+      },
+      {
+        model: User,
+        as: 'teacher',
+        attributes: {
+          exclude: ['password'],
+        },
+        include: {
+          model: UserDetail,
           include: {
-            model: UserDetail,
-            include: {
-              model: Price,
-            },
+            model: Price,
           },
         },
-        {
-          model: WishlistItem,
-          include: [
-            {
-              model: TeacherSubject,
-              include: [
-                {
-                  model: Subject,
-                },
-                {
-                  model: Grade,
-                },
-              ],
-            },
-            {
-              model: AvailabilityHours,
-            },
-          ],
-        },
-      ],
-    },
-  );
+      },
+      {
+        model: WishlistItem,
+        include: [
+          {
+            model: TeacherSubject,
+            include: [
+              {
+                model: Subject,
+              },
+              {
+                model: Grade,
+              },
+            ],
+          },
+          {
+            model: AvailabilityHours,
+          },
+        ],
+      },
+    ],
+  });
 
   // Ambil data original
   const originalData = JSON.stringify(wishlist);
@@ -154,17 +166,19 @@ const getWishlist = catchAsync(async (req, res) => {
   let privatePrice = 0;
   let groupPrice = 0;
 
-  if (convertData.teacher && convertData.teacher.userDetail && convertData.teacher.userDetail.price) {
+  if (
+    convertData.teacher
+    && convertData.teacher.userDetail
+    && convertData.teacher.userDetail.price
+  ) {
     privatePrice = convertData.teacher.userDetail.price.private;
     groupPrice = convertData.teacher.userDetail.price.group;
   } else {
-    const defaultPrice = await Price.findOne(
-      {
-        where: {
-          type: 'A',
-        },
+    const defaultPrice = await Price.findOne({
+      where: {
+        type: 'A',
       },
-    );
+    });
 
     privatePrice = defaultPrice.private;
     groupPrice = defaultPrice.group;
@@ -175,7 +189,9 @@ const getWishlist = catchAsync(async (req, res) => {
 
     if (o.WishlistItems && o.WishlistItems.length > 0) {
       o.WishlistItems.map((itm) => {
-        const convertDay = itm.availabilityHour ? days(itm.availabilityHour.dayCode) : days(moment(itm.dateTimeStart).day());
+        const convertDay = itm.availabilityHour
+          ? days(itm.availabilityHour.dayCode)
+          : days(moment(itm.dateTimeStart).day());
         const convertDate = itm.dateTimeStart ? dates(itm.dateTimeStart) : null;
 
         const dataWishlistItem = {
@@ -185,7 +201,9 @@ const getWishlist = catchAsync(async (req, res) => {
           teacherId: itm.teacherId,
           typeCourse: itm.typeCourse,
           date: `${convertDay}, ${convertDate}`,
-          time: `${moment(itm.dateTimeStart).format('HH:mm')} - ${moment(itm.dateTimeEnd).format('HH:mm')}`,
+          time: `${moment(itm.dateTimeStart).format('HH:mm')} - ${moment(
+            itm.dateTimeEnd,
+          ).format('HH:mm')}`,
           subject: itm.teacherSubject.subject.subjectName,
           grade: itm.teacherSubject.gradeName,
           price: itm.typeCourse == 'private' ? privatePrice : groupPrice,
@@ -198,7 +216,9 @@ const getWishlist = catchAsync(async (req, res) => {
     }
 
     // Sorting isi item
-    const sortingItem = arrayWishlistItem.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const sortingItem = arrayWishlistItem.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+    );
 
     const data = {
       wishlistId: o.id,
@@ -217,8 +237,10 @@ const getWishlist = catchAsync(async (req, res) => {
   // Filter untuk menampikan data yang memiliki item wishlist
   const filteringItem = mapingData.filter((o) => o.wishlistItems.length > 0);
   // Sorting parent
-  const sorting = filteringItem.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  const paginateData = pagination(sorting, page, limit);
+  const sorting = filteringItem.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+  );
+  const paginateData = pagination.paginator(sorting, page, limit);
 
   res.sendWrapped('', httpStatus.OK, paginateData);
 });
@@ -227,69 +249,71 @@ const getWihslistItemById = catchAsync(async (req, res) => {
   const { id } = req.params;
   const studentId = req.user.id;
 
-  const wishlist = await wishlistService.getWishlistItemById(
-    id,
-    studentId,
-    {
-      include: [
-        {
-          model: User,
-          as: 'teacher',
-          include: [
-            {
-              model: UserDetail,
-              include: {
-                model: Price,
-              },
+  const wishlist = await wishlistService.getWishlistItemById(id, studentId, {
+    include: [
+      {
+        model: User,
+        as: 'teacher',
+        include: [
+          {
+            model: UserDetail,
+            include: {
+              model: Price,
             },
-          ],
-        },
-        {
-          model: TeacherSubject,
-          include: [
-            {
-              model: Subject,
-            },
-            {
-              model: Grade,
-            },
-          ],
-        },
-        {
-          model: AvailabilityHours,
-        },
-        {
-          model: Wishlist,
-          include: {
-            model: User,
-            as: 'student',
           },
+        ],
+      },
+      {
+        model: TeacherSubject,
+        include: [
+          {
+            model: Subject,
+          },
+          {
+            model: Grade,
+          },
+        ],
+      },
+      {
+        model: AvailabilityHours,
+      },
+      {
+        model: Wishlist,
+        include: {
+          model: User,
+          as: 'student',
         },
-      ],
-    },
-  );
+      },
+    ],
+  });
 
   let privatePrice = 0;
   let groupPrice = 0;
 
-  if (wishlist.teacher && wishlist.teacher.userDetail && wishlist.teacher.userDetail.price) {
+  if (
+    wishlist.teacher
+    && wishlist.teacher.userDetail
+    && wishlist.teacher.userDetail.price
+  ) {
     privatePrice = wishlist.teacher.userDetail.price.private;
     groupPrice = wishlist.teacher.userDetail.price.group;
   } else {
-    const defaultPrice = await Price.findOne(
-      {
-        where: {
-          type: 'A',
-        },
+    const defaultPrice = await Price.findOne({
+      where: {
+        type: 'A',
       },
-    );
+    });
 
     privatePrice = defaultPrice.private;
     groupPrice = defaultPrice.group;
   }
 
-  const convertDay = wishlist.availabilityHour ? days(wishlist.availabilityHour.dayCode) : days(moment(wishlist.dateTimeStart).day());
-  const convertDate = wishlist.dateTimeStart ? dates(wishlist.dateTimeStart) : null;
+  const convertDay = wishlist.availabilityHour
+    ? days(wishlist.availabilityHour.dayCode)
+    : days(moment(wishlist.dateTimeStart).day());
+  const convertDate = wishlist.dateTimeStart
+    ? dates(wishlist.dateTimeStart)
+    : null;
 
   const data = {
     wishlistItemId: wishlist.id,
@@ -301,7 +325,9 @@ const getWihslistItemById = catchAsync(async (req, res) => {
     student: `${wishlist.wishlist.student.firstName} ${wishlist.wishlist.student.lastName}`,
     typeCourse: wishlist.typeCourse,
     date: `${convertDay}, ${convertDate}`,
-    time: `${moment(wishlist.dateTimeStart).format('HH:mm')} - ${moment(wishlist.dateTimeEnd).format('HH:mm')}`,
+    time: `${moment(wishlist.dateTimeStart).format('HH:mm')} - ${moment(
+      wishlist.dateTimeEnd,
+    ).format('HH:mm')}`,
     subject: wishlist.teacherSubject.subject.subjectName,
     grade: wishlist.teacherSubject.gradeName,
     price: wishlist.typeCourse == 'private' ? privatePrice : groupPrice,
@@ -317,9 +343,16 @@ const deleteWishlistItemById = catchAsync(async (req, res) => {
 
   const wishlist = await wishlistService.getWishlistItemById(id);
 
-  if (!wishlist) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat menemukan item wishlist.');
+  if (!wishlist) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      'Tidak dapat menemukan item wishlist.',
+    );
+  }
 
-  const deleteWishlist = await wishlistService.deleteWishlistItemById(wishlist.id);
+  const deleteWishlist = await wishlistService.deleteWishlistItemById(
+    wishlist.id,
+  );
 
   if (!deleteWishlist) throw new ApiError(httpStatus.CONFLICT, 'Gagal menghapus item wishlist.');
 

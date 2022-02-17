@@ -25,7 +25,18 @@ const personalData = {
   }),
 };
 
+const updateProfile = {
+  body: Joi.object().keys({
+    phoneNumber: Joi.string().max(15),
+    firstName: Joi.string().max(15),
+    lastName: Joi.string().max(15),
+    profile: Joi.string().max(50),
+    schoolId: Joi.string().max(50),
+  }),
+};
+
 module.exports = {
   basicInfo,
   personalData,
+  updateProfile,
 };
