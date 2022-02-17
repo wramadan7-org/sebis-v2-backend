@@ -6,7 +6,7 @@ const userService = require('../services/userService');
 const authService = require('../services/authService');
 const tokenService = require('../services/tokenService');
 const { tokenTypes } = require('../config/tokens');
-const { googleAuth, googleAuthStudent } = require('../utils/googleOauth');
+const { googleAuth } = require('../utils/googleOauth');
 const { roleId } = require('../config/roles');
 const ApiError = require('../utils/ApiError');
 const { sendMail } = require('../utils/mailer');
@@ -127,7 +127,7 @@ const loginByGoogleTeacher = catchAsync(async (req, res) => {
 const loginByGoogleStudent = catchAsync(async (req, res) => {
   const { idToken } = req.body;
   const role = roleId.STUDENT;
-  const user = await googleAuthStudent(idToken, role);
+  const user = await googleAuth(idToken, role);
   const { access, refresh } = await tokenService.generateAuthTokens(user);
 
   const message = 'Login Sucessfully';
