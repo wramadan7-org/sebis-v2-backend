@@ -226,33 +226,30 @@ const updateReport = catchAsync(async (req, res) => {
   if (!report) throw new ApiError(httpStatus.NOT_FOUND, 'Report tidak ditemukan.');
 
   const data = {
+    ...report,
     presence: reportBody.presence ? reportBody.presence.toString() : report.presence.toString(),
     connection: reportBody.connection ? reportBody.connection.toString() : report.connection.toString(),
     understand: reportBody.understand ? reportBody.understand.toString() : report.understand.toString(),
     master: reportBody.master ? reportBody.master.toString() : report.master.toString(),
     complete: reportBody.complete ? reportBody.complete.toString() : report.complete.toString(),
     conclude: reportBody.conclude ? reportBody.conclude.toString() : report.conclude.toString(),
-    ...report,
   };
 
   Object.assign(reportBody, data);
 
-  const update = await reportService.updateReport(id, report, reportBody);
-
-  if (!update) throw new ApiError(httpStatus.CONFLICT, 'Gagal memperbarui data report.');
+  await reportService.updateReport(id, reportBody);
 
   const result = {
-    presence: parseInt(update.dataValues.presence),
-    connection: parseInt(update.dataValues.connection),
-    understand: parseInt(update.dataValues.understand),
-    master: parseInt(update.dataValues.master),
-    complete: parseInt(update.dataValues.complete),
-    conclude: parseInt(update.dataValues.conclude),
+    ...reportBody.dataValues,
+    presence: parseInt(reportBody.presence),
+    connection: parseInt(reportBody.connection),
+    understand: parseInt(reportBody.understand),
+    master: parseInt(reportBody.master),
+    complete: parseInt(reportBody.complete),
+    conclude: parseInt(reportBody.conclude),
   };
 
-  Object.assign(update, result);
-
-  res.sendWrapped(update, httpStatus.OK);
+  res.sendWrapped(result, httpStatus.OK);
 });
 
 module.exports = {
