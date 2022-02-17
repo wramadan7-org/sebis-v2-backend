@@ -3,6 +3,12 @@ const ApiError = require('../utils/ApiError');
 
 const { Report } = require('../models/Reports');
 
+/**
+ * Create report
+ * @param {string} scheduleId
+ * @param {array} bodyReport
+ * @returns array
+ */
 const createReport = async (scheduleId, bodyReport) => {
   const arrayReport = [];
 
