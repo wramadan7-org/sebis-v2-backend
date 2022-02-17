@@ -394,6 +394,24 @@ const setupSequelizeAssociations = async () => {
     foreignKey: 'scheduleId',
   });
 
+  CartItem.belongsTo(User, {
+    foreignKey: 'friend1',
+    as: 'firstFriend',
+  });
+
+  User.hasOne(CartItem, {
+    foreignKey: 'friend1',
+  });
+
+  CartItem.belongsTo(User, {
+    foreignKey: 'friend2',
+    as: 'secondFriend',
+  });
+
+  User.hasOne(CartItem, {
+    foreignKey: 'friend2',
+  });
+
   // finally sync sequelize
   // await sequelize.sync();
 };
