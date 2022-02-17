@@ -6,20 +6,20 @@ const {
   createSlider,
   updateSliderById,
   deleteSliderById,
+  updateSliderPicture,
 } = require('../services/sliderService');
 const catchAsync = require('../utils/catchAsync');
 const { definePage, getPagingData } = require('../utils/pagination');
+const multering = require('../utils/multer');
+const resizing = require('../utils/resizeImage');
 
 const getSlider = catchAsync(async (req, res) => {
-  const { title, id } = req.query;
+  const { title } = req.query;
   const { page, size, offset } = definePage(req.query.page, req.query.size);
   let slider;
   slider = await getAllSlider(size, offset);
   if (title) {
     slider = await getSliderByTitle(title, size, offset);
-  }
-  if (id) {
-    slider = await getSliderById(id);
   }
 
   const result = getPagingData(slider, page, size);
@@ -45,9 +45,43 @@ const deleteSlider = catchAsync(async (req, res) => {
   await deleteSliderById(id);
   res.sendWrapped('Slider berahsil di hapus', httpStatus.OK);
 });
+
+const createFilePictureSlider = catchAsync(async (req, res) => {
+  const { id } = req.query;
+  const destination = 'images/slider';
+
+  multering.options('./', id).single('filePicture')(req, res, async (err) => {
+    if (err) {
+      res.sendWrapped(err);
+    } else {
+      if (!req.file.filename) {
+        return res.sendWrapped(
+          'Please insert file/photo!',
+          httpStatus.BAD_REQUEST,
+        );
+      }
+
+      const profile = await updateSliderPicture(
+        id,
+        `static/${destination}/${req.file.filename}`,
+      );
+
+      await resizing(
+        req.file.path,
+        800,
+        500,
+        100,
+        `./public/${destination}/${req.file.filename}`,
+      );
+
+      res.sendWrapped(profile, httpStatus.OK);
+    }
+  });
+});
 module.exports = {
   getSlider,
   createNewSlider,
   updateSlider,
   deleteSlider,
+  createFilePictureSlider,
 };

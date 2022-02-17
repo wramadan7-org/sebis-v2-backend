@@ -11,13 +11,11 @@ const getAllSlider = async (limit, offset) => {
   return slider;
 };
 
-const getSliderById = async (sliderId, limit, offset) => {
-  const slider = await Slider.findAndCountAll({
+const getSliderById = async (sliderId) => {
+  const slider = await Slider.findAll({
     where: {
       id: sliderId,
     },
-    limit,
-    offset,
   });
   return slider;
 };
@@ -47,6 +45,22 @@ const updateSliderById = async (sliderId, sliderBody) => {
   return slider;
 };
 
+const updateSliderPicture = async (sliderId, file) => {
+  let slider = await getSliderById(sliderId);
+  console.log(file);
+  if (!slider) throw new ApiError(httpStatus.NOT_FOUND, 'Slider not found');
+
+  await Slider.update(
+    {
+      picture: file,
+    },
+    { where: { id: sliderId } },
+  );
+
+  slider = await getSliderById(sliderId);
+  return slider;
+};
+
 const deleteSliderById = async (sliderId) => {
   const slider = await getSliderById(sliderId);
   if (!slider) throw new ApiError(httpStatus.NOT_FOUND, 'Slider not found');
@@ -60,4 +74,5 @@ module.exports = {
   updateSliderById,
   deleteSliderById,
   createSlider,
+  updateSliderPicture,
 };

@@ -4,6 +4,7 @@ const { student } = require('../../middlewares/roleValidation');
 const studentController = require('../../controllers/studentController');
 const validate = require('../../middlewares/validate');
 const userProfileValidation = require('../../validations/userProfileValidation');
+const fileValidation = require('../../validations/fileValidation');
 // const cartController = require('../../controllers/cartController');
 
 const router = express.Router();
@@ -23,6 +24,14 @@ router.patch(
   student,
   validate(userProfileValidation.updateProfile),
   studentController.updateCurrentStudentProfie,
+);
+
+router.patch(
+  '/profile/file-profile',
+  auth,
+  student,
+  validate(fileValidation.createFileProfile),
+  studentController.createdFilesProfile,
 );
 
 module.exports = router;
