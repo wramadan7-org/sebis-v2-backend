@@ -223,7 +223,6 @@ const resetPasswordByEmail = catchAsync(async (req, res) => {
     const user = await userService.getUserById(userId, { include: 'role' });
     const secret = config.jwt.secret + user.password;
     const verify = await jwt.verify(token, secret);
-    console.log(verify);
     await authService.updatePassword(userId, password);
     res.sendWrapped('Password updated', httpStatus.OK);
   } catch (error) {
