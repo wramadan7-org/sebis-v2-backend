@@ -129,6 +129,8 @@ const createSchedule = catchAsync(async (req, res) => {
       subject: checkCart.teacherSubject.subject.subjectName,
       grade: checkCart.teacherSubject.grade.gradeName,
       discount,
+      friend1: checkCart.friend1 ? checkCart.friend1 : null,
+      friend2: checkCart.friend2 ? checkCart.friend2 : null,
     };
 
     subtotal += Math.abs(((discount / 100) * dataBody.price) - dataBody.price);
