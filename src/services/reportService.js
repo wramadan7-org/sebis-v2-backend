@@ -53,11 +53,26 @@ const getReportById = async (id, opts = {}) => {
   return report;
 };
 
-const updateReport = async (id, reportData, reportBody) => {
-  Object.assign(reportData, reportBody);
-  reportData.save();
+/**
+ * Update report
+ * @param {string} id
+ * @param {object} reportBody
+ * @returns object
+ */
+const updateReport = async (id, reportBody) => {
+  const update = await Report.update(
+    reportBody,
+    {
+      where:
+    {
+      id,
+    },
+    },
+  );
 
-  return reportData;
+  if (!update) throw new ApiError(httpStatus.CONFLICT, 'Gagal memperbarui data report.');
+
+  return update;
 };
 
 module.exports = {
