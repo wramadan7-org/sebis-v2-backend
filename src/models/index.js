@@ -412,6 +412,24 @@ const setupSequelizeAssociations = async () => {
     foreignKey: 'friend2',
   });
 
+  Schedule.belongsTo(User, {
+    foreignKey: 'friend1',
+    as: 'firstFriend',
+  });
+
+  User.hasOne(Schedule, {
+    foreignKey: 'friend1',
+  });
+
+  Schedule.belongsTo(User, {
+    foreignKey: 'friend2',
+    as: 'secondFriend',
+  });
+
+  User.hasOne(Schedule, {
+    foreignKey: 'friend2',
+  });
+
   // finally sync sequelize
   // await sequelize.sync();
 };
