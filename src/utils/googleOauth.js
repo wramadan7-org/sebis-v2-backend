@@ -1,7 +1,7 @@
 const { OAuth2Client } = require('google-auth-library');
 const { getUserByEmail, createUser } = require('../services/userService');
 
-const { GOOGLE_CLIENT_ID } = process.env;
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_ID_STUDENT } = process.env;
 
 const googleAuth = async (idToken, role) => {
   const client = new OAuth2Client(GOOGLE_CLIENT_ID);
@@ -35,7 +35,40 @@ const googleAuth = async (idToken, role) => {
 
   return checkUser;
 };
+const googleAuthStudent = async (idToken, role) => {
+  const client = new OAuth2Client(GOOGLE_CLIENT_ID_STUDENT);
+  const tiket = await client.verifyIdToken({
+    idToken,
+    audience: GOOGLE_CLIENT_ID_STUDENT,
+  });
+  const payload = tiket.getPayload();
+  let { email, given_name, family_name } = payload;
+
+  const checkUser = await getUserByEmail(email, {
+    include: 'role',
+  });
+  try {
+    if (!checkUser) {
+      const user = await createUser({
+        email,
+        firstName: given_name,
+        lastName: family_name,
+        roleId: role,
+        isVerified: true,
+      });
+      const createdUser = await getUserByEmail(user.email, {
+        include: 'role',
+      });
+      return createdUser;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+
+  return checkUser;
+};
 
 module.exports = {
   googleAuth,
+  googleAuthStudent,
 };
