@@ -182,7 +182,17 @@ const getOwnSchedule = async (userId, opts = {}) => {
   const schedule = await Schedule.findAll(
     {
       where: {
-        studentId: userId,
+        [Op.or]: [
+          {
+            studentId: userId,
+          },
+          {
+            friend1: userId,
+          },
+          {
+            friend2: userId,
+          },
+        ],
       },
       ...opts,
     },
