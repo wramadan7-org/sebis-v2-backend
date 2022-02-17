@@ -41,8 +41,6 @@ const createReport = catchAsync(async (req, res) => {
     return true;
   });
 
-  console.log(mapBody);
-
   if (!mapBody[0]) throw new ApiError(httpStatus.CONFLICT, 'Hanya dapat membuat raport berdasarkan user di dalam jadwal tersebut.');
 
   const report = await reportService.createReport(id, reportBody);
