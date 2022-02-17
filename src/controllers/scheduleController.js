@@ -263,6 +263,20 @@ const getSchedule = catchAsync(async (req, res) => {
         {
           model: AvailabilityHours,
         },
+        {
+          model: User,
+          as: 'firstFriend',
+          attributes: {
+            exclude: ['password'],
+          },
+        },
+        {
+          model: User,
+          as: 'secondFriend',
+          attributes: {
+            exclude: ['password'],
+          },
+        },
       ],
     },
   );
@@ -296,6 +310,122 @@ const getSchedule = catchAsync(async (req, res) => {
       time: `${loopSchedule.availabilityHour.timeStart} - ${loopSchedule.availabilityHour.timeEnd}`,
       requestMaterial: loopSchedule.requestMaterial ? loopSchedule.requestMaterial : null,
       imageMaterial: loopSchedule.imageMaterial ? loopSchedule.imageMaterial : null,
+      firiend1: loopSchedule.firstFriend ? loopSchedule.firstFriend : null,
+      friend2: loopSchedule.secondFriend ? loopSchedule.secondFriend : null,
+      createdAt: loopSchedule.createdAt,
+      updatedAt: loopSchedule.updatedAt,
+      dateSortingSchedule: loopSchedule.dateSchedule,
+    };
+
+    arrayResults.push(dataSchedule);
+  }
+
+  // Sorting schedule
+  const sortingSchedule = arrayResults.sort((a, b) => new Date(a.dateSortingSchedule) - new Date(b.dateSortingSchedule));
+  // Pagination data
+  const paginateData = pagination(sortingSchedule, page, limit);
+
+  res.sendWrapped('', httpStatus.OK, paginateData);
+});
+
+const getMySchedule = catchAsync(async (req, res) => {
+  console.log('alooooooo');
+  const { id } = req.user;
+  let { page, limit } = req.query;
+
+  if (page) {
+    page = parseInt(page);
+  } else {
+    page = 1;
+  }
+
+  if (limit) {
+    limit = parseInt(limit);
+  } else {
+    limit = 10;
+  }
+
+  const schedule = await scheduleService.getOwnSchedule(
+    id,
+    {
+      include: [
+        {
+          model: User,
+          as: 'teacher',
+          attributes: {
+            exclude: ['password'],
+          },
+        },
+        {
+          model: User,
+          as: 'student',
+          attributes: {
+            exclude: ['password'],
+          },
+        },
+        {
+          model: TeacherSubject,
+          include: [
+            {
+              model: Subject,
+            },
+            {
+              model: Grade,
+            },
+          ],
+        },
+        {
+          model: AvailabilityHours,
+        },
+        {
+          model: User,
+          as: 'firstFriend',
+          attributes: {
+            exclude: ['password'],
+          },
+        },
+        {
+          model: User,
+          as: 'secondFriend',
+          attributes: {
+            exclude: ['password'],
+          },
+        },
+      ],
+    },
+  );
+
+  if (!schedule && schedule.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Don\'t have data schedule.');
+
+  // Ambil data original
+  const originalData = JSON.stringify(schedule);
+  // Kemudian parsing ke JSON untuk pendefinisian
+  const convertData = JSON.parse(originalData);
+
+  const arrayResults = [];
+
+  for (const loopSchedule of convertData) {
+    const convertDay = days(loopSchedule.availabilityHour.dayCode);
+    const convertDate = loopSchedule.dateSchedule ? dates(loopSchedule.dateSchedule) : null;
+
+    const dataSchedule = {
+      scheduleId: loopSchedule.id,
+      teacherId: loopSchedule.teacherId,
+      studentId: loopSchedule.studentId,
+      teacherSubjectId: loopSchedule.teacherSubjectId,
+      availabilityHoursId: loopSchedule.availabilityHoursId,
+      gradeId: loopSchedule.teacherSubject.gradeId,
+      subjectId: loopSchedule.teacherSubject.subjectId,
+      type: loopSchedule.typeClass,
+      status: loopSchedule.statusSchedule,
+      subject: loopSchedule.teacherSubject.subject.subjectName,
+      grade: loopSchedule.teacherSubject.grade.gradeName,
+      date: `${convertDay}, ${convertDate}`,
+      time: `${loopSchedule.availabilityHour.timeStart} - ${loopSchedule.availabilityHour.timeEnd}`,
+      requestMaterial: loopSchedule.requestMaterial ? loopSchedule.requestMaterial : null,
+      imageMaterial: loopSchedule.imageMaterial ? loopSchedule.imageMaterial : null,
+      firiend1: loopSchedule.firstFriend ? loopSchedule.firstFriend : null,
+      friend2: loopSchedule.secondFriend ? loopSchedule.secondFriend : null,
       createdAt: loopSchedule.createdAt,
       updatedAt: loopSchedule.updatedAt,
       dateSortingSchedule: loopSchedule.dateSchedule,
@@ -554,6 +684,7 @@ const historyScheduleDetail = catchAsync(async (req, res) => {
 module.exports = {
   createSchedule,
   getSchedule,
+  getMySchedule,
   getScheduleById,
   updateSchedule,
   deleteSchedule,

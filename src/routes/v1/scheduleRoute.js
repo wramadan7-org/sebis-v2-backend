@@ -9,6 +9,7 @@ const router = Router();
 
 router.post('/', auth, scheduleController.createSchedule);
 router.get('/', scheduleController.getSchedule);
+router.get('/my', auth, scheduleController.getMySchedule);
 router.get('/history', auth, scheduleController.historySchedule);
 router.get('/history-detail/:id', auth, scheduleController.historyScheduleDetail);
 router.get('/:id', scheduleController.getScheduleById);
