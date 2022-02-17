@@ -350,7 +350,7 @@ const getSchedule = catchAsync(async (req, res) => {
   // Sorting schedule
   const sortingSchedule = arrayResults.sort((a, b) => new Date(a.dateSortingSchedule) - new Date(b.dateSortingSchedule));
   // Pagination data
-  const paginateData = pagination(sortingSchedule, page, limit);
+  const paginateData = pagination.paginator(sortingSchedule, page, limit);
 
   res.sendWrapped('', httpStatus.OK, paginateData);
 });
@@ -624,7 +624,7 @@ const historySchedule = catchAsync(async (req, res) => {
   // Sorting schedule
   const sorting = mapHistory.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
   // Pagination data
-  const paginate = pagination(sorting, page, limit);
+  const paginate = pagination.paginator(sorting, page, limit);
 
   res.sendWrapped('', httpStatus.OK, paginate);
 });

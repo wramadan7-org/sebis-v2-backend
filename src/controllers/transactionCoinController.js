@@ -149,7 +149,7 @@ const historyTransaction = catchAsync(async (req, res) => {
 
   const results = mapHistory.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 
-  const paginating = pagination(results, page, limit);
+  const paginating = pagination.paginator(results, page, limit);
 
   res.sendWrapped('', httpStatus.OK, paginating);
 });

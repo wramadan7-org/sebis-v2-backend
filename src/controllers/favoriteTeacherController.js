@@ -71,7 +71,7 @@ const getMyFavoriteTeacher = catchAsync(async (req, res) => {
   // Sorting
   const sorting = favorite.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
   // Pagination data
-  const paginate = pagination(sorting, page, limit);
+  const paginate = pagination.paginator(sorting, page, limit);
 
   res.sendWrapped('', httpStatus.OK, paginate);
 });
@@ -124,7 +124,7 @@ const getAllFavoriteTeacher = catchAsync(async (req, res) => {
   // Sorting
   const sorting = favorite.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
   // Pagination data
-  const paginate = pagination(sorting, page, limit);
+  const paginate = pagination.paginator(sorting, page, limit);
 
   res.sendWrapped('', httpStatus.OK, paginate);
 });
