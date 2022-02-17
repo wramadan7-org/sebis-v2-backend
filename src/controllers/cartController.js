@@ -14,9 +14,9 @@ const { UserDetail } = require('../models/UserDetail');
 const ApiError = require('../utils/ApiError');
 const days = require('../utils/day');
 const dates = require('../utils/date');
-const pagination = require('../utils/pagination');
 const multering = require('../utils/multer');
 const resizing = require('../utils/resizeImage');
+const { paginator } = require('../utils/pagination');
 
 const cartService = require('../services/cartService');
 const scheduleService = require('../services/scheduleService');
@@ -31,27 +31,23 @@ const getOrderList = catchAsync(async (req, res) => {
   const teacherId = req.user.id;
   const { cartItemStatus } = req.query;
 
-  const cartItems = await cartService.orderList(
-    teacherId,
-    cartItemStatus,
-    {
-      include: [
-        {
-          model: Cart,
-          include: [
-            {
-              model: User,
-              as: 'student',
-            },
-          ],
-        },
-        {
-          model: User,
-          as: 'teacher',
-        },
-      ],
-    },
-  );
+  const cartItems = await cartService.orderList(teacherId, cartItemStatus, {
+    include: [
+      {
+        model: Cart,
+        include: [
+          {
+            model: User,
+            as: 'student',
+          },
+        ],
+      },
+      {
+        model: User,
+        as: 'teacher',
+      },
+    ],
+  });
 
   if (!cartItems || cartItems.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'List order kosong.');
 
@@ -86,7 +82,12 @@ const addCart = catchAsync(async (req, res) => {
 
   // Pengecekan jam untuk melakukan pemesanan les
   const currentHour = parseInt(moment().format('H'));
-  if (currentHour >= 22 || currentHour <= 5) throw new ApiError(httpStatus.BAD_REQUEST, 'Batas jam pemesanan les hanya pukul 06:00 WIB - 21:59 WIB!');
+  if (currentHour >= 22 || currentHour <= 5) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Batas jam pemesanan les hanya pukul 06:00 WIB - 21:59 WIB!',
+    );
+  }
 
   const createCart = await cartService.findOrCreateCart(studentId, teacherId);
 
@@ -104,9 +105,17 @@ const addCart = catchAsync(async (req, res) => {
 
   // Cek apakah jam sekarang berseilih lebih dari 2 jam dari jadwal les
   const offsetHours = parseInt(OFFSET_ORDER_HOURS);
-  const checkBetweenHours = await cartService.checkBetweenHours(cartItemData.startTime, offsetHours);
+  const checkBetweenHours = await cartService.checkBetweenHours(
+    cartItemData.startTime,
+    offsetHours,
+  );
 
-  if (!checkBetweenHours) throw new ApiError(httpStatus.CONFLICT, `Jam kursus hanya bisa diatas ${offsetHours} Jam dari sekarang`);
+  if (!checkBetweenHours) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      `Jam kursus hanya bisa diatas ${offsetHours} Jam dari sekarang`,
+    );
+  }
 
   // Ambil semua data keranjang milik kita sendiri
   const ownCart = await cartService.getCartByStudentId(studentId);
@@ -123,13 +132,29 @@ const addCart = catchAsync(async (req, res) => {
   );
 
   // Jika hasil dari pengecekan true(cart sudah ada), maka tampilkan error
-  if (checkCartItem) throw new ApiError(httpStatus.CONFLICT, `Sudah ada yang membeli jadwal di jam dan tanggal ini ${moment(startTime).format('YYYY-MM-DD HH:mm:ss')}`);
+  if (checkCartItem) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      `Sudah ada yang membeli jadwal di jam dan tanggal ini ${moment(
+        startTime,
+      ).format('YYYY-MM-DD HH:mm:ss')}`,
+    );
+  }
 
   // Cek apakah sudah memiliki les di tanggal dan jam yang sama
-  const checkSchedule = await scheduleService.checkAvailDateSchedule(studentId, moment(startTime).format('YYYY-MM-DD'), availabilityHoursId);
+  const checkSchedule = await scheduleService.checkAvailDateSchedule(
+    studentId,
+    moment(startTime).format('YYYY-MM-DD'),
+    availabilityHoursId,
+  );
 
   // Jika ada maka response true dan mengirim pesan error
-  if (checkSchedule) throw new ApiError(httpStatus.CONFLICT, 'Anda sudah memiliki jadwal les di jam dan tanggal ini.');
+  if (checkSchedule) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      'Anda sudah memiliki jadwal les di jam dan tanggal ini.',
+    );
+  }
 
   // Buat item cart
   const createCartItem = await cartService.createCartItem(
@@ -239,17 +264,19 @@ const viewCart = catchAsync(async (req, res) => {
   let groupPrice = 0;
   let total = 0;
 
-  if (convertData.teacher && convertData.teacher.userDetail && convertData.teacher.userDetail.price) {
+  if (
+    convertData.teacher
+    && convertData.teacher.userDetail
+    && convertData.teacher.userDetail.price
+  ) {
     privatePrice = convertData.teacher.userDetail.price.private;
     groupPrice = convertData.teacher.userDetail.price.group;
   } else {
-    const defaultPrice = await Price.findOne(
-      {
-        where: {
-          type: 'A',
-        },
+    const defaultPrice = await Price.findOne({
+      where: {
+        type: 'A',
       },
-    );
+    });
 
     privatePrice = defaultPrice.private;
     groupPrice = defaultPrice.group;
@@ -258,7 +285,9 @@ const viewCart = catchAsync(async (req, res) => {
   const mapingData = convertData.map((o) => {
     const arrayResults = [];
     const item = o.cartItems.map((itm) => {
-      const convertDay = itm.availabilityHour ? days(itm.availabilityHour.dayCode) : days(moment(itm.startTime).day());
+      const convertDay = itm.availabilityHour
+        ? days(itm.availabilityHour.dayCode)
+        : days(moment(itm.startTime).day());
       const convertDate = itm.startTime ? dates(itm.startTime) : null;
 
       const dataCartItem = {
@@ -272,7 +301,9 @@ const viewCart = catchAsync(async (req, res) => {
         subject: itm.teacherSubject.subject.subjectName,
         grade: itm.teacherSubject.grade.gradeName,
         date: `${convertDay}, ${convertDate}`,
-        time: `${moment(itm.startTime).format('HH:mm')} - ${moment(itm.endTime).format('HH:mm')}`,
+        time: `${moment(itm.startTime).format('HH:mm')} - ${moment(
+          itm.endTime,
+        ).format('HH:mm')}`,
         status: itm.cartItemStatus,
         price: itm.typeCourse == 'private' ? privatePrice : groupPrice,
         requestMaterial: itm.requestMaterial ? itm.requestMaterial : null,
@@ -289,7 +320,9 @@ const viewCart = catchAsync(async (req, res) => {
     });
 
     // Sorting item cart
-    const sortingItem = arrayResults.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const sortingItem = arrayResults.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+    );
 
     const data = {
       cartId: o.id,
@@ -311,8 +344,10 @@ const viewCart = catchAsync(async (req, res) => {
   // Filter untuk menampikan data yang memiliki item wishlist
   const filteringItem = mapingData.filter((o) => o.cartItems.length > 0);
   // Sorting parent cart
-  const sorting = filteringItem.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  const paginateData = pagination(sorting, page, limit);
+  const sorting = filteringItem.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+  );
+  const paginateData = paginator(sorting, page, limit);
   const concatData = {
     ...paginateData,
     total,
@@ -374,59 +409,60 @@ const viewCart = catchAsync(async (req, res) => {
 
 const getCartById = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const cartItem = await cartService.getCartItemById(
-    id,
-    {
-      include: [
-        {
-          model: User,
-          as: 'teacher',
-        },
-        {
-          model: TeacherSubject,
-          include: [
-            {
-              model: Subject,
-            },
-            {
-              model: Grade,
-            },
-          ],
-        },
-        {
-          model: AvailabilityHours,
-        },
-        {
-          model: Cart,
-          include: {
-            model: User,
-            as: 'student',
+  const cartItem = await cartService.getCartItemById(id, {
+    include: [
+      {
+        model: User,
+        as: 'teacher',
+      },
+      {
+        model: TeacherSubject,
+        include: [
+          {
+            model: Subject,
           },
+          {
+            model: Grade,
+          },
+        ],
+      },
+      {
+        model: AvailabilityHours,
+      },
+      {
+        model: Cart,
+        include: {
+          model: User,
+          as: 'student',
         },
-      ],
-    },
-  );
+      },
+    ],
+  });
 
   let privatePrice = 0;
   let groupPrice = 0;
 
-  if (cartItem.teacher && cartItem.teacher.userDetail && cartItem.teacher.userDetail.price) {
+  if (
+    cartItem.teacher
+    && cartItem.teacher.userDetail
+    && cartItem.teacher.userDetail.price
+  ) {
     privatePrice = cartItem.teacher.userDetail.price.private;
     groupPrice = cartItem.teacher.userDetail.price.group;
   } else {
-    const defaultPrice = await Price.findOne(
-      {
-        where: {
-          type: 'A',
-        },
+    const defaultPrice = await Price.findOne({
+      where: {
+        type: 'A',
       },
-    );
+    });
 
     privatePrice = defaultPrice.private;
     groupPrice = defaultPrice.group;
   }
 
-  const convertDay = cartItem.availabilityHour ? days(cartItem.availabilityHour.dayCode) : days(moment(cartItem.startTime).day());
+  const convertDay = cartItem.availabilityHour
+    ? days(cartItem.availabilityHour.dayCode)
+    : days(moment(cartItem.startTime).day());
   const convertDate = cartItem.startTime ? dates(cartItem.startTime) : null;
 
   const data = {
@@ -443,7 +479,9 @@ const getCartById = catchAsync(async (req, res) => {
     subject: cartItem.teacherSubject.subject.subjectName,
     grade: cartItem.teacherSubject.grade.gradeName,
     date: `${convertDay}, ${convertDate}`,
-    time: `${moment(cartItem.startTime).format('HH:mm')} - ${moment(cartItem.endTime).format('HH:mm')}`,
+    time: `${moment(cartItem.startTime).format('HH:mm')} - ${moment(
+      cartItem.endTime,
+    ).format('HH:mm')}`,
     status: cartItem.cartItemStatus,
     price: cartItem.typeCourse == 'private' ? privatePrice : groupPrice,
     requestMaterial: cartItem.requestMaterial ? cartItem.requestMaterial : null,
@@ -482,7 +520,10 @@ const updateRequestMateri = catchAsync(async (req, res) => {
       res.sendWrapped(err);
     } else {
       if (!req.file.filename) {
-        return res.sendWrapped('Please insert file/photo!', httpStatus.BAD_REQUEST);
+        return res.sendWrapped(
+          'Please insert file/photo!',
+          httpStatus.BAD_REQUEST,
+        );
       }
 
       const {
@@ -491,9 +532,19 @@ const updateRequestMateri = catchAsync(async (req, res) => {
 
       let arrayFriend = [];
 
-      const updateMaterial = await cartService.updateRequestMateri(id, `static/${destination}/${req.file.filename}`, requestMaterial);
+      const updateMaterial = await cartService.updateRequestMateri(
+        id,
+        `static/${destination}/${req.file.filename}`,
+        requestMaterial,
+      );
 
-      await resizing(req.file.path, 200, 200, 90, `./public/${destination}/${req.file.filename}`);
+      await resizing(
+        req.file.path,
+        200,
+        200,
+        90,
+        `./public/${destination}/${req.file.filename}`,
+      );
 
       const group = [
         {
