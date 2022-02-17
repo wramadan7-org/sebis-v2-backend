@@ -27,6 +27,7 @@ const coinRoute = require('./coinRoute');
 const studentRoute = require('./studentRoute');
 const favoriteTeacherRoute = require('./favoriteTeacherRoute');
 const sliderRoute = require('./sliderRoute');
+const reportRoute = require('./reportRoute');
 
 const statusController = require('../../controllers/statusController');
 const cronController = require('../../controllers/cronController');
@@ -144,6 +145,10 @@ const defaultRoutes = [
   {
     path: '/slider',
     route: sliderRoute,
+  },
+  {
+    path: '/report',
+    route: reportRoute,
   },
 ];
 
