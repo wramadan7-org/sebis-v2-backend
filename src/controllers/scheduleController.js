@@ -284,38 +284,27 @@ const getSchedule = catchAsync(async (req, res) => {
           {
             model: Grade,
           },
+        ],
+      },
+      {
+        model: AvailabilityHours,
+      },
+      {
+        model: User,
+        as: 'firstFriend',
+        attributes: {
+          exclude: ['password'],
         },
-        {
-          model: TeacherSubject,
-          include: [
-            {
-              model: Subject,
-            },
-            {
-              model: Grade,
-            },
-          ],
+      },
+      {
+        model: User,
+        as: 'secondFriend',
+        attributes: {
+          exclude: ['password'],
         },
-        {
-          model: AvailabilityHours,
-        },
-        {
-          model: User,
-          as: 'firstFriend',
-          attributes: {
-            exclude: ['password'],
-          },
-        },
-        {
-          model: User,
-          as: 'secondFriend',
-          attributes: {
-            exclude: ['password'],
-          },
-        },
-      ],
-    },
-  );
+      },
+    ],
+  });
 
   if (!schedule && schedule.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, "Don't have data schedule.");
 
@@ -346,7 +335,6 @@ const getSchedule = catchAsync(async (req, res) => {
       grade: loopSchedule.teacherSubject.grade.gradeName,
       date: `${convertDay}, ${convertDate}`,
       time: `${loopSchedule.availabilityHour.timeStart} - ${loopSchedule.availabilityHour.timeEnd}`,
-<<<<<<< HEAD
       requestMaterial: loopSchedule.requestMaterial ? loopSchedule.requestMaterial : null,
       imageMaterial: loopSchedule.imageMaterial ? loopSchedule.imageMaterial : null,
       firiend1: loopSchedule.firstFriend ? loopSchedule.firstFriend : null,
@@ -465,14 +453,6 @@ const getMySchedule = catchAsync(async (req, res) => {
       imageMaterial: loopSchedule.imageMaterial ? loopSchedule.imageMaterial : null,
       firiend1: loopSchedule.firstFriend ? loopSchedule.firstFriend : null,
       friend2: loopSchedule.secondFriend ? loopSchedule.secondFriend : null,
-=======
-      requestMaterial: loopSchedule.requestMaterial
-        ? loopSchedule.requestMaterial
-        : null,
-      imageMaterial: loopSchedule.imageMaterial
-        ? loopSchedule.imageMaterial
-        : null,
->>>>>>> origin/development
       createdAt: loopSchedule.createdAt,
       updatedAt: loopSchedule.updatedAt,
       dateSortingSchedule: loopSchedule.dateSchedule,
