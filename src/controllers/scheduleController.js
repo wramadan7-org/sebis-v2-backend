@@ -9,6 +9,8 @@ const userDetailService = require('../services/userDetailService');
 const priceService = require('../services/priceService');
 const tutoringTransactionService = require('../services/tutoringTransactionService');
 const ApiError = require('../utils/ApiError');
+const multering = require('../utils/multer');
+const resizing = require('../utils/resizeImage');
 
 const { User } = require('../models/User');
 const { UserDetail } = require('../models/UserDetail');
@@ -21,6 +23,7 @@ const { Curriculum } = require('../models/Curriculum');
 const { AvailabilityHours } = require('../models/AvailabilityHours');
 const { Price } = require('../models/Price');
 const { TutoringTransactionDetail } = require('../models/TutoringTransactionDetail');
+const { Schedule } = require('../models/Schedule');
 
 const pagination = require('../utils/pagination');
 const dates = require('../utils/date');
@@ -93,7 +96,7 @@ const createSchedule = catchAsync(async (req, res) => {
       ],
     });
 
-    const checkStatusCartItem = conditionStatus.some((value) => checkCart.cartItemStatus.includes(value));
+    const checkStatusCartItem = conditionStatus.some((value) => checkCart.statusSchedule.includes(value));
 
     if (checkStatusCartItem) {
       throw new ApiError(
@@ -711,6 +714,143 @@ const historyScheduleDetail = catchAsync(async (req, res) => {
   res.sendWrapped(dataResult, httpStatus.OK);
 });
 
+const updateRequestMateri = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const destination = 'images/material';
+
+  const conditionStatus = [PENDING, ACCEPT, PROCESS];
+
+  const schedule = await scheduleService.getScheduleById(id);
+
+  if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Jadwal les tidak ditemukan');
+  console.log('awawdawddwa');
+  if (!conditionStatus.some((value) => schedule.statusSchedule.includes(value))) {
+    throw new ApiError(httpStatus.NOT_FOUND, `Hanya dapat request materi pada keranjang yang berstatus ${PENDING}, ${ACCEPT}, ${PROCESS}`);
+  }
+
+  multering.options('./', id).single('fileMaterial')(req, res, async (err) => {
+    if (err) {
+      res.sendWrapped(err);
+    } else {
+      if (!req.file.filename) {
+        return res.sendWrapped(
+          'Please insert file/photo!',
+          httpStatus.BAD_REQUEST,
+        );
+      }
+
+      const {
+        requestMaterial, email1, email2, phone1, phone2,
+      } = req.body;
+
+      let arrayFriend = [];
+
+      const updateMaterial = await scheduleService.updateRequestMateri(
+        id,
+        `static/${destination}/${req.file.filename}`,
+        requestMaterial,
+      );
+
+      await resizing(
+        req.file.path,
+        200,
+        200,
+        90,
+        `./public/${destination}/${req.file.filename}`,
+      );
+
+      const group = [
+        {
+          email: email1,
+          phone: phone1,
+        },
+        {
+          email: email2,
+          phone: phone2,
+        },
+      ];
+
+      if (schedule.typeClass == 'group') {
+        const filtering = group.filter((o) => o.email !== '' && o.phone !== '');
+
+        if (filtering.length > 0) {
+          if (filtering.length == 1) {
+            const user = await userService.getUserByEmail(filtering[0].email);
+
+            if (!user) {
+              return res.sendWrapped(`${filtering[0].email} belum terdaftar di aplikasi. Yuk ajak temanmu untuk register di SEBISLES!`, httpStatus.NOT_FOUND);
+            }
+            const updateFriend = await Schedule.update(
+              {
+                friend1: user.id,
+              },
+              {
+                where: {
+                  id,
+                },
+              },
+            );
+
+            console.log('have data and update friend', updateFriend);
+          } else if (filtering.length == 2) {
+            const user1 = await userService.getUserByEmail(filtering[0].email);
+            const user2 = await userService.getUserByEmail(filtering[1].email);
+
+            if (!user1) {
+              arrayFriend.push(filtering[0].email);
+              // return res.sendWrapped(`${filtering[0].email} belum terdaftar di aplikasi. Yuk ajak temanmu untuk register di SEBISLES!`, httpStatus.NOT_FOUND);
+            } else {
+              const updateFriend1 = await Schedule.update(
+                {
+                  friend1: user1.id,
+                },
+                {
+                  where: {
+                    id,
+                  },
+                },
+              );
+
+              console.log('have data and update friend 1', updateFriend1);
+            }
+
+            // USER 2
+            if (!user2) {
+              arrayFriend.push(filtering[1].email);
+              // return res.sendWrapped(`${filtering[1].email} belum terdaftar di aplikasi. Yuk ajak temanmu untuk register di SEBISLES!`, httpStatus.NOT_FOUND);
+            } else {
+              const updateFriend2 = await Schedule.update(
+                {
+                  friend2: user2.id,
+                },
+                {
+                  where: {
+                    id,
+                  },
+                },
+              );
+
+              console.log('user ada, update friend 2', updateFriend2);
+            }
+          }
+        }
+
+        if (arrayFriend.length == 2) {
+          return res.sendWrapped(`${arrayFriend[0]} dan ${arrayFriend[1]} belum terdaftar di aplikasi. Yuk ajak temanmu untuk register di SEBISLES`, httpStatus.NOT_FOUND);
+        }
+
+        if (arrayFriend.length == 1) {
+          return res.sendWrapped(`${arrayFriend[0]} belum terdaftar di aplikasi. Yuk ajak temanmu untuk register di SEBISLES`, httpStatus.NOT_FOUND);
+        }
+      } else {
+        return res.sendWrapped('Menambahkan teman hanya dapat dilakukan pada jadwal les yang memiliki tipe group', httpStatus.CONFLICT);
+      }
+
+      res.sendWrapped(updateMaterial, httpStatus.OK);
+    }
+  });
+});
+
 module.exports = {
   createSchedule,
   getSchedule,
@@ -720,4 +860,5 @@ module.exports = {
   deleteSchedule,
   historySchedule,
   historyScheduleDetail,
+  updateRequestMateri,
 };

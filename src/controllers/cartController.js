@@ -511,7 +511,7 @@ const updateRequestMateri = catchAsync(async (req, res) => {
 
   const checkCartItem = await cartService.getCartItemById(id);
 
-  if (checkCartItem.cartItemStatus !== conditionStatus.some((value) => checkCartItem.cartItemStatus.includes(value))) {
+  if (!conditionStatus.some((value) => checkCartItem.cartItemStatus.includes(value))) {
     throw new ApiError(httpStatus.NOT_FOUND, `Hanya dapat request materi pada keranjang yang berstatus ${PENDING}, ${ACCEPT}, ${PROCESS}`);
   }
 

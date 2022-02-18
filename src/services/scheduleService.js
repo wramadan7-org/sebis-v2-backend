@@ -321,6 +321,29 @@ const historyScheduleDetail = async (id, opts = {}) => {
   return historyDetail;
 };
 
+/**
+ * Request materi
+ * @param {string} id
+ * @param {string} file
+ * @param {string} description
+ * @returns object
+ */
+const updateRequestMateri = async (id, file, description) => {
+  const schedule = await getScheduleById(id);
+
+  if (!schedule) throw new ApiError(httpStatus.NOT_FOUND, 'Tidak dapat meneukan item.');
+
+  const dataRequestMateri = {
+    requestMaterial: description,
+    imageMaterial: file,
+  };
+
+  Object.assign(schedule, dataRequestMateri);
+
+  await schedule.save();
+  return schedule;
+};
+
 module.exports = {
   checkerSchedule,
   checkAvailDateSchedule,
@@ -332,4 +355,5 @@ module.exports = {
   deleteSchedule,
   historySchedule,
   historyScheduleDetail,
+  updateRequestMateri,
 };
