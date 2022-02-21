@@ -96,9 +96,9 @@ const createSchedule = catchAsync(async (req, res) => {
       ],
     });
 
-    const checkStatusCartItem = conditionStatus.some((value) => checkCart.statusSchedule.includes(value));
+    // const checkStatusCartItem = conditionStatus.some((value) => checkCart.statusSchedule.includes(value));
 
-    if (checkStatusCartItem) {
+    if (conditionStatus.some((value) => checkCart.cartItemStatus.includes(value))) {
       throw new ApiError(
         httpStatus.BAD_REQUEST,
         'Hanya bisa menambah item yang sudah di setujui oleh guru.',
