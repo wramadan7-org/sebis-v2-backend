@@ -359,7 +359,6 @@ const getSchedule = catchAsync(async (req, res) => {
 });
 
 const getMySchedule = catchAsync(async (req, res) => {
-  console.log('alooooooo');
   const { id } = req.user;
   let { page, limit } = req.query;
 
