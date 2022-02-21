@@ -24,6 +24,10 @@ const TransactionCoin = sequelize.define('transactionCoins', {
     type: DataTypes.DATE,
     allowNull: true,
   },
+  paymentUsing: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,
