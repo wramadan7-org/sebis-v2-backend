@@ -4,6 +4,7 @@ const axios = require('axios');
 const midtransClient = require('midtrans-client');
 const ApiError = require('../utils/ApiError');
 const { midtransEnvironment } = require('../config/midtrans');
+const payWith = require('../utils/paymentWith');
 
 const { User } = require('../models/User');
 const { TransactionCoin } = require('../models/TransactionCoin');
@@ -96,11 +97,14 @@ const notificationSuccessTransaction = async (body) => {
   // console.log('ini notifikasi kartu kredit', notification);
   console.log(`Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`);
 
+  const paymentBy = payWith(notification);
+
   let dataTransaction = {
     id: notification.transaction_id,
     paymentType: notification.payment_type,
     status: transactionStatus,
     order_id: orderId,
+    paymentUsing: paymentBy,
     paymentAt: notification.settlement_time ? moment(notification.settlement_time).format('YYYY-MM-DD HH:mm:ss') : null,
   };
 
