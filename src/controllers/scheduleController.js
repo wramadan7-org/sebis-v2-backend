@@ -248,7 +248,7 @@ const createSchedule = catchAsync(async (req, res) => {
 });
 
 const getSchedule = catchAsync(async (req, res) => {
-  let { page, limit } = req.query;
+  let { page, limit, filter } = req.query;
 
   if (page) {
     page = parseInt(page);
@@ -316,13 +316,14 @@ const getSchedule = catchAsync(async (req, res) => {
   // Kemudian parsing ke JSON untuk pendefinisian
   const convertData = JSON.parse(originalData);
 
-  const arrayResults = [];
+  let arrayResults = [];
 
   for (const loopSchedule of convertData) {
     const convertDay = days(loopSchedule.availabilityHour.dayCode);
     const convertDate = loopSchedule.dateSchedule
       ? dates(loopSchedule.dateSchedule)
       : null;
+    const lesStatus = statusLes(loopSchedule.statusSchedule);
 
     const dataSchedule = {
       scheduleId: loopSchedule.id,
@@ -334,6 +335,7 @@ const getSchedule = catchAsync(async (req, res) => {
       subjectId: loopSchedule.teacherSubject.subjectId,
       type: loopSchedule.typeClass,
       status: loopSchedule.statusSchedule,
+      convertStatus: lesStatus,
       subject: loopSchedule.teacherSubject.subject.subjectName,
       grade: loopSchedule.teacherSubject.grade.gradeName,
       date: `${convertDay}, ${convertDate}`,
@@ -350,6 +352,18 @@ const getSchedule = catchAsync(async (req, res) => {
     arrayResults.push(dataSchedule);
   }
 
+  const conditionStatus = [PENDING, ACCEPT, PROCESS];
+
+  if (filter == 'process') {
+    const queryFilter = arrayResults.filter((a) => {
+      // const scheduleDateStart = moment(a.dateSortingSchedule).format('YYYY-MM-DD HH:mm:ss');
+      const scheduleDateEnd = moment(a.dateSortingSchedule).add(1, 'hours').format('YYYY-MM-DD HH:mm:ss');
+
+      return (scheduleDateEnd >= moment().format('YYYY-MM-DD HH:mm:ss') && conditionStatus.some((o) => a.status.includes(o)));
+    });
+    arrayResults = queryFilter;
+  }
+
   // Sorting schedule
   const sortingSchedule = arrayResults.sort((a, b) => new Date(a.dateSortingSchedule) - new Date(b.dateSortingSchedule));
   // Pagination data
@@ -360,7 +374,7 @@ const getSchedule = catchAsync(async (req, res) => {
 
 const getMySchedule = catchAsync(async (req, res) => {
   const { id } = req.user;
-  let { page, limit } = req.query;
+  let { page, limit, filter } = req.query;
 
   if (page) {
     page = parseInt(page);
@@ -431,11 +445,12 @@ const getMySchedule = catchAsync(async (req, res) => {
   // Kemudian parsing ke JSON untuk pendefinisian
   const convertData = JSON.parse(originalData);
 
-  const arrayResults = [];
+  let arrayResults = [];
 
   for (const loopSchedule of convertData) {
     const convertDay = days(loopSchedule.availabilityHour.dayCode);
     const convertDate = loopSchedule.dateSchedule ? dates(loopSchedule.dateSchedule) : null;
+    const lesStatus = statusLes(loopSchedule.statusSchedule);
 
     const dataSchedule = {
       scheduleId: loopSchedule.id,
@@ -447,6 +462,7 @@ const getMySchedule = catchAsync(async (req, res) => {
       subjectId: loopSchedule.teacherSubject.subjectId,
       type: loopSchedule.typeClass,
       status: loopSchedule.statusSchedule,
+      convertStatus: lesStatus,
       subject: loopSchedule.teacherSubject.subject.subjectName,
       grade: loopSchedule.teacherSubject.grade.gradeName,
       date: `${convertDay}, ${convertDate}`,
@@ -461,6 +477,18 @@ const getMySchedule = catchAsync(async (req, res) => {
     };
 
     arrayResults.push(dataSchedule);
+  }
+
+  const conditionStatus = [PENDING, ACCEPT, PROCESS];
+
+  if (filter == 'process') {
+    const queryFilter = arrayResults.filter((a) => {
+      // const scheduleDateStart = moment(a.dateSortingSchedule).format('YYYY-MM-DD HH:mm:ss');
+      const scheduleDateEnd = moment(a.dateSortingSchedule).add(1, 'hours').format('YYYY-MM-DD HH:mm:ss');
+
+      return (scheduleDateEnd >= moment().format('YYYY-MM-DD HH:mm:ss') && conditionStatus.some((o) => a.status.includes(o)));
+    });
+    arrayResults = queryFilter;
   }
 
   // Sorting schedule
@@ -521,6 +549,8 @@ const getScheduleById = catchAsync(async (req, res) => {
     ? dates(convertData.dateSchedule)
     : null;
 
+  const lesStatus = statusLes(convertData.statusSchedule);
+
   const dataSchedule = {
     scheduleId: convertData.id,
     teacherId: convertData.teacherId,
@@ -531,6 +561,7 @@ const getScheduleById = catchAsync(async (req, res) => {
     subjectId: convertData.teacherSubject.subjectId,
     type: convertData.typeClass,
     status: convertData.statusSchedule,
+    convertStatus: lesStatus,
     subject: convertData.teacherSubject.subject.subjectName,
     grade: convertData.teacherSubject.grade.gradeName,
     date: `${convertDay}, ${convertDate}`,
