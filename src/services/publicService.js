@@ -8,6 +8,7 @@ const { Role } = require('../models/Role');
 const { Subject } = require('../models/Subject');
 const { Grade } = require('../models/Grade');
 const { GradeGroup } = require('../models/GradeGroup');
+const { Curriculum } = require('../models/Curriculum');
 const { TeacherSubject } = require('../models/TeacherSubject');
 const { AvailabilityHours } = require('../models/AvailabilityHours');
 const { Price } = require('../models/Price');
@@ -43,6 +44,12 @@ const homePublic = async () => {
         include: [
           {
             model: Grade,
+            include: {
+              model: GradeGroup,
+              include: {
+                model: Curriculum,
+              },
+            },
           },
           {
             model: Subject,
