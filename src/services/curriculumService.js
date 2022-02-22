@@ -25,6 +25,21 @@ const getCurriculumAll = async () => {
 };
 
 /**
+ * Get all curriculum
+ * @param {object} query
+ * @returns {Promise<Curriculum>}
+ */
+const getCurriculumQuery = async (query) => {
+  const curriculum = await Curriculum.findAll(
+    {
+      where: query,
+    },
+  );
+
+  return curriculum;
+};
+
+/**
  * Get curriculum by name
  * @param {string} curriculumName
  * @returns {Promise<Curriculum>}
@@ -110,6 +125,7 @@ const deleteCurriculumById = async (curriculumId) => {
 module.exports = {
   createCurriculum,
   getCurriculumById,
+  getCurriculumQuery,
   getCurriculumAll,
   getCurriculumAnotherByName,
   updateCurriculumById,
