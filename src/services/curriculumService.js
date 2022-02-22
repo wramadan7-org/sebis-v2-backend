@@ -21,8 +21,6 @@ const getCurriculumById = async (curriculumId) => {
 const getCurriculumAll = async () => {
   const curriculum = await Curriculum.findAll();
 
-  if (!curriculum && curriculum.length <= 0) throw new ApiError(httpStatus.NOT_FOUND, 'Don\'t have a curriculum yet.');
-
   return curriculum;
 };
 
