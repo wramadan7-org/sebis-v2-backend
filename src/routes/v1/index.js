@@ -28,6 +28,7 @@ const studentRoute = require('./studentRoute');
 const favoriteTeacherRoute = require('./favoriteTeacherRoute');
 const sliderRoute = require('./sliderRoute');
 const reportRoute = require('./reportRoute');
+const filterRoute = require('./filterRoute');
 
 const statusController = require('../../controllers/statusController');
 const cronController = require('../../controllers/cronController');
@@ -149,6 +150,10 @@ const defaultRoutes = [
   {
     path: '/report',
     route: reportRoute,
+  },
+  {
+    path: '/filter',
+    route: filterRoute,
   },
 ];
 
