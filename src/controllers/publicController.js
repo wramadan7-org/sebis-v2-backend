@@ -6,6 +6,7 @@ const catchAsync = require('../utils/catchAsync');
 
 const { UserDetail } = require('../models/UserDetail');
 const { Price } = require('../models/Price');
+const { Grade } = require('../models/Grade');
 
 const publicService = require('../services/publicService');
 const subjectService = require('../services/subjectService');
@@ -50,6 +51,16 @@ const publicHome = catchAsync(async (req, res) => {
         id: qgrade,
       },
     );
+
+    if (gradeGroup.length <= 0) {
+      gradeGroup = await Grade.findAll(
+        {
+          where: {
+            id: qgrade,
+          },
+        },
+      );
+    }
   }
 
   if (qcurriculum) {
@@ -104,6 +115,16 @@ const publicHome = catchAsync(async (req, res) => {
           id: qgrade,
         },
       );
+
+      if (gradeGroup.length <= 0) {
+        gradeGroup = await Grade.findAll(
+          {
+            where: {
+              id: qgrade,
+            },
+          },
+        );
+      }
     } else {
       gradeGroup = await gradeGroupService.getAllGradeGroup(
         {
@@ -118,7 +139,7 @@ const publicHome = catchAsync(async (req, res) => {
     mapGradeGroupId = gradeGroup.map((o) => o.id);
 
     const filterBahasa = convertData.map((o) => {
-      const filteringSubject = o.teacherSubjects.filter((v) => (mapSubjectId.some((s) => v.subjectId.includes(s)) && mapGradeGroupId.some((g) => v.grade.gradeGroupId.includes(g)) && mapCurriculumId.some((c) => v.grade.gradeGroup.curriculumId.includes(c))));
+      const filteringSubject = o.teacherSubjects.filter((v) => (mapSubjectId.some((s) => v.subjectId.includes(s)) && (mapGradeGroupId.some((g) => v.gradeId.includes(g)) || mapGradeGroupId.some((g) => v.grade.gradeGroupId.includes(g))) && mapCurriculumId.some((c) => v.grade.gradeGroup.curriculumId.includes(c))));
 
       if (filteringSubject.length) {
         const data = {
@@ -160,7 +181,7 @@ const publicHome = catchAsync(async (req, res) => {
   }
 
   const defaultData = convertData.map((o) => {
-    const filteringSubject = o.teacherSubjects.filter((v) => (mapSubjectId.some((s) => v.subjectId.includes(s)) && mapGradeGroupId.some((g) => v.grade.gradeGroupId.includes(g)) && mapCurriculumId.some((c) => v.grade.gradeGroup.curriculumId.includes(c))));
+    const filteringSubject = o.teacherSubjects.filter((v) => (mapSubjectId.some((s) => v.subjectId.includes(s)) && (mapGradeGroupId.some((g) => v.gradeId.includes(g)) || mapGradeGroupId.some((g) => v.grade.gradeGroupId.includes(g))) && mapCurriculumId.some((c) => v.grade.gradeGroup.curriculumId.includes(c))));
 
     if (filteringSubject.length) {
       const data = {
